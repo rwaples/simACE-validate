@@ -1,0 +1,71 @@
+// Layer 3a: sex-structured Wright-Fisher pedigree, the law of simACE's
+// `wright_fisher` mating, written in SLiM's nonWF model.
+//
+//   slim -d N=500 -d G=6 -d SEED=1 -d "OUT='ped.tsv'" slim/wf.slim
+//
+// N founders with independent Bernoulli(1/2) sex. Each tick, N offspring each
+// draw a mother uniformly from the females and a father uniformly from the
+// males (with replacement), with independent Bernoulli(1/2) sex; parents then
+// die. As in simACE, the founders are not recorded: the first offspring
+// generation is recorded generation 0, with unknown parents. SLiM's WF model
+// is not used because it fixes the sex ratio. Writes one row per recorded
+// individual: id, mother, father, sex (0 female, 1 male), generation.
+
+initialize() {
+	setSeed(SEED);
+	initializeSLiMModelType("nonWF");
+	initializeSLiMOptions(keepPedigrees=T);
+	initializeSex();
+	initializeMutationRate(0);
+	initializeMutationType("m1", 0.5, "f", 0.0);
+	initializeGenomicElementType("g1", m1, 1.0);
+	initializeGenomicElement(g1, 0, 0);
+	initializeRecombinationRate(0);
+}
+
+// Tick 1 adds two placeholders, since addEmpty() runs only in reproduction();
+// tick 2 replaces them with the N founders.
+1 early() {
+	sim.addSubpop("p1", 2);
+	writeFile(OUT, "id\tmother\tfather\tsex\tgeneration");
+}
+
+reproduction() {
+	if (community.tick == 2) {
+		for (i in seqLen(N))
+			p1.addEmpty(sex=NULL);
+	} else {
+		females = p1.subsetIndividuals(sex="F", minAge=1);
+		males = p1.subsetIndividuals(sex="M", minAge=1);
+		mothers = sample(females, N, replace=T);
+		fathers = sample(males, N, replace=T);
+		for (i in seqLen(N))
+			p1.addCrossed(mothers[i], fathers[i], sex=NULL);
+	}
+	self.active = 0;
+}
+
+early() {
+	inds = p1.individuals;
+	inds[inds.age > 0].fitnessScaling = 0.0;
+}
+
+late() {
+	kids = p1.subsetIndividuals(maxAge=0);
+	gen = community.tick - 3;
+	if (gen >= 0) {
+		parents = matrix(kids.pedigreeParentIDs, nrow=2);
+		mo = (gen == 0) ? rep(-1, size(kids)) else parents[0, ];
+		fa = (gen == 0) ? rep(-1, size(kids)) else parents[1, ];
+		sex = asInteger(kids.sex == "M");
+		lines = asString(kids.pedigreeID) + "\t" + asString(mo) + "\t" + asString(fa) + "\t" + asString(sex) + "\t" + asString(gen);
+		writeFile(OUT, lines, append=T);
+	}
+	if (gen == G - 1)
+		sim.simulationFinished();
+}
+
+// Keeps the run open past tick 1; late() ends it at generation G - 1.
+100000 late() {
+	stop("did not reach generation G - 1");
+}

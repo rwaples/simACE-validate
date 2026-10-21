@@ -1,0 +1,104 @@
+# Cases for run_harness.py.
+#
+# A case simulates R pedigrees with `simace simulate` (seeds seed0 ..
+# seed0+R-1, flags from `simulate`), hands them to an oracle, and calibrates
+# every statistic the oracle returns over the R seeds (calibration.py).
+#
+# Case keys:
+#   id        unique name
+#   layer     1 (liability oracle), 2 (gene-drop), 3 (structure)
+#   oracle    the oracle script (oracles/<name>.R)
+#   simulate  `simace simulate` flags, without --seed and --output-pedigree
+#   seed0, R  simACE seeds
+#   M         oracle draws per pedigree; M+1 divisible by 10 keeps chi-square bins equal
+#   law       oracle segregation law: constant (simACE's d = 1/2) | infinitesimal
+#   expect    pass (default) | info (not scored; with id_diff, a known gap in differences.md)
+#   mutation  power study only: a deliberate oracle error (see oracles/liability.R)
+
+cases:
+  - id: rm_base
+    layer: 1
+    oracle: liability
+    note: random mating, no C transmission; both traits correlated in A, C and E
+    simulate: &rm_base
+      N: 2000
+      G-ped: 4
+      G-sim: 4
+      mating-model: standard
+      mating-lambda: 0.5
+      p-mztwin: 0.02
+      A1: 0.5
+      C1: 0.2
+      E1: 0.3
+      A2: 0.4
+      C2: 0.1
+      E2: 0.5
+      rA: 0.5
+      rC: 0.3
+      rE: 0.1
+    seed0: 1000
+    R: 50
+    M: 199
+    law: constant
+
+  - id: deep_constant
+    layer: 1
+    oracle: liability
+    note: small N, deep pedigree (inbred parents), scored against simACE's own law d = 1/2
+    simulate: &deep
+      <<: *rm_base
+      N: 100
+      G-ped: 12
+      G-sim: 12
+    seed0: 2000
+    R: 50
+    M: 199
+    law: constant
+
+  - id: deep_infinitesimal
+    layer: 1
+    oracle: liability
+    note: the same pedigrees against the infinitesimal law d = 1/2 - (F_m + F_f)/4; the gap is D1
+    simulate: *deep
+    seed0: 2000
+    R: 50
+    M: 199
+    law: infinitesimal
+    expect: info
+    id_diff: D1
+
+  - id: genedrop_base
+    layer: 2
+    oracle: genedrop
+    note: msprime fixed-pedigree drop of 22 chromosomes through each pedigree; IBD against kinship2, innovations of A1
+    simulate:
+      <<: *rm_base
+      N: 1000
+    genome:
+      chromosomes: 22
+      morgans: 1.5
+      causal_per_chromosome: 50
+    seed0: 3000
+    R: 30
+
+  - id: pedsim_ibd
+    layer: 2
+    oracle: pedsim
+    note: engine check, not simACE - msprime against ped-sim IBD fractions over 2000 copies each of FS, HS and 1C
+    genome:
+      chromosomes: 22
+      morgans: 1.5
+    copies: 2000
+
+  - id: wf_structure
+    layer: 3
+    oracle: slim_wf
+    note: simACE wright_fisher against a SLiM nonWF Wright-Fisher with Bernoulli sex; one statistic per pedigree
+    simulate:
+      <<: *rm_base
+      N: 500
+      G-ped: 5
+      G-sim: 5
+      mating-model: wright_fisher
+    seed0: 4000
+    R: 100

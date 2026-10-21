@@ -1,0 +1,12 @@
+# pixi env
+.pixi/
+
+# Per-run pedigrees and JSON exchanged with Rscript
+.work/
+
+__pycache__/
+.ruff_cache/
+
+# ped-sim, built by tools/build_pedsim.sh (GPL-3.0; never committed)
+.pedsim/
+.rlib/

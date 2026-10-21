@@ -1,0 +1,117 @@
+"""Layer-2 gene-drop through a simACE pedigree with msprime (fixed pedigree).
+
+Drops L unlinked chromosomes through the recorded pedigree, and returns, per
+individual, a finite-locus genetic value G and, per requested pair, the
+realised IBD fraction. Recorded generation 0 are the founders, with distinct
+genomes and no recapitation, matching the recorded-pedigree kinship, which
+also treats them as unrelated (ADR 0001 §3).
+
+MZ co-twins are one genetic individual. Only the lower-id twin enters
+msprime, the co-twin's children are re-pointed to it, and the co-twin
+copies its genome. This is unlike scripts/gene_drop in simACE, which drops
+co-twins as separate offspring.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+import msprime
+import numpy as np
+
+if TYPE_CHECKING:
+    import polars as pl
+
+BP_PER_MORGAN = 100_000_000
+
+
+@dataclass(frozen=True)
+class Genome:
+    """The dropped genome: L unlinked chromosomes of one map length each."""
+
+    chromosomes: int
+    morgans: float
+    causal_per_chromosome: int
+
+
+def keepers(ped: pl.DataFrame) -> np.ndarray:
+    """Map each row to the individual msprime simulates (the lower-id MZ twin)."""
+    idx = np.arange(ped.height)
+    twin = ped["twin"].to_numpy()
+    co = (twin >= 0) & (twin < idx)
+    idx[co] = twin[co]
+    return idx
+
+
+def build_pedigree(ped: pl.DataFrame, keep: np.ndarray, sequence_length: float):
+    """Return msprime pedigree tables for the keeper rows, and row -> msprime individual."""
+    g_max = int(ped["generation"].max())
+    gen = ped["generation"].to_numpy()
+    mother = ped["mother"].to_numpy()
+    father = ped["father"].to_numpy()
+    pb = msprime.PedigreeBuilder()
+    ms_of = np.full(ped.height, -1, dtype=np.int64)
+    for i in range(ped.height):
+        if keep[i] != i:
+            continue
+        parents = None if mother[i] < 0 else [int(ms_of[keep[mother[i]]]), int(ms_of[keep[father[i]]])]
+        ms_of[i] = pb.add_individual(time=g_max - int(gen[i]), parents=parents, is_sample=True)
+    return pb.finalise(sequence_length=sequence_length), ms_of[keep]
+
+
+def roots_at(tree, nodes: np.ndarray) -> np.ndarray:
+    """Return the root (a founder node) above each node in one tree."""
+    parent = tree.parent_array
+    out = nodes.copy()
+    while True:
+        up = parent[out]
+        move = up >= 0
+        if not move.any():
+            return out
+        out[move] = up[move]
+
+
+def drop(ped: pl.DataFrame, pairs: np.ndarray, genome: Genome, A: float, seed: int) -> tuple[np.ndarray, np.ndarray]:
+    """Gene-drop once. Return G per row and the IBD fraction per pair (2-phi scale).
+
+    The IBD fraction of individuals i and j is the summed IBD span over their
+    four node pairs divided by twice the genome length, whose expectation is
+    2 * phi_ij.
+    """
+    rng = np.random.default_rng(seed)
+    keep = keepers(ped)
+    length = genome.morgans * BP_PER_MORGAN
+    tables, ms_of = build_pedigree(ped, keep, length)
+    n_causal = genome.chromosomes * genome.causal_per_chromosome
+    beta = rng.normal(size=n_causal)
+    scale = np.sqrt(A / (np.sum(beta**2) / 2)) if n_causal else 0.0  # Var(G) = A at allele frequency 1/2
+    dosage_value = np.zeros(ped.height)
+    shared = np.zeros(len(pairs))
+    locus = 0
+    for _ in range(genome.chromosomes):
+        ts = msprime.sim_ancestry(
+            initial_state=tables,
+            model="fixed_pedigree",
+            recombination_rate=1 / BP_PER_MORGAN,
+            random_seed=int(rng.integers(1, 2**31 - 1)),
+        )
+        nodes = np.array([ts.individual(int(k)).nodes for k in ms_of])  # rows x 2
+        ibd = ts.ibd_segments(store_pairs=True)
+        for p, (i, j) in enumerate(pairs):
+            for a in nodes[i]:
+                for b in nodes[j]:
+                    key = (min(a, b), max(a, b))
+                    if key in ibd:
+                        shared[p] += ibd[key].total_span
+        for x in np.sort(rng.uniform(0, length, size=genome.causal_per_chromosome)):
+            tree = ts.at(x)
+            roots = roots_at(tree, nodes.ravel()).reshape(nodes.shape)
+            founder_nodes = np.unique(roots)
+            allele = dict(
+                zip(founder_nodes.tolist(), rng.integers(0, 2, size=len(founder_nodes)).tolist(), strict=True)
+            )
+            dosage = np.vectorize(allele.__getitem__)(roots).sum(axis=1)
+            dosage_value += scale * beta[locus] * (dosage - 1)
+            locus += 1
+    return dosage_value, shared / (2 * length * genome.chromosomes)

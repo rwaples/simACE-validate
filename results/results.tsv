@@ -1,0 +1,376 @@
+case	layer	stat	n	center	effect	p_values	alpha_K	status	id
+rm_base	1	r_E1_MZ	50	0.5143	+0.06	KS 0.635, chi2 0.699	0.000108	PASS	
+rm_base	1	r_L1_MZ	50	0.53	+0.09	KS 0.443, chi2 0.35	0.000108	PASS	
+rm_base	1	r_A1_FS	50	0.45	-0.18	KS 0.295, chi2 0.851	0.000108	PASS	
+rm_base	1	r_E1_FS	50	0.5763	+0.28	KS 0.187, chi2 0.616	0.000108	PASS	
+rm_base	1	r_L1_FS	50	0.5251	+0.11	KS 0.524, chi2 0.35	0.000108	PASS	
+rm_base	1	r_A1_MHS	50	0.5499	+0.13	KS 0.277, chi2 0.122	0.000108	PASS	
+rm_base	1	r_E1_MHS	50	0.4501	-0.18	KS 0.204, chi2 0.494	0.000108	PASS	
+rm_base	1	r_L1_MHS	50	0.5476	+0.16	KS 0.32, chi2 0.0519	0.000108	PASS	
+rm_base	1	r_A1_PHS	50	0.498	-0.01	KS 0.867, chi2 0.699	0.000108	PASS	
+rm_base	1	r_C1_PHS	50	0.4843	-0.04	KS 0.256, chi2 0.35	0.000108	PASS	
+rm_base	1	r_E1_PHS	50	0.4453	-0.17	KS 0.199, chi2 0.699	0.000108	PASS	
+rm_base	1	r_L1_PHS	50	0.4492	-0.15	KS 0.0939, chi2 0.0401	0.000108	PASS	
+rm_base	1	r_A1_PO	50	0.446	-0.16	KS 0.229, chi2 0.494	0.000108	PASS	
+rm_base	1	r_C1_PO	50	0.4456	-0.20	KS 0.0767, chi2 0.384	0.000108	PASS	
+rm_base	1	r_E1_PO	50	0.4987	+0.07	KS 0.257, chi2 0.059	0.000108	PASS	
+rm_base	1	r_L1_PO	50	0.455	-0.19	KS 0.463, chi2 0.262	0.000108	PASS	
+rm_base	1	r_A1_1C	50	0.4864	-0.08	KS 0.656, chi2 0.059	0.000108	PASS	
+rm_base	1	r_C1_1C	50	0.4203	-0.24	KS 0.0831, chi2 0.29	0.000108	PASS	
+rm_base	1	r_E1_1C	50	0.5399	+0.20	KS 0.407, chi2 0.911	0.000108	PASS	
+rm_base	1	r_L1_1C	50	0.4635	-0.16	KS 0.752, chi2 0.883	0.000108	PASS	
+rm_base	1	var_A1_g1	50	0.439	-0.27	KS 0.0883, chi2 0.172	0.000108	PASS	
+rm_base	1	var_L1_g1	50	0.4639	-0.09	KS 0.358, chi2 0.29	0.000108	PASS	
+rm_base	1	var_A1_g2	50	0.4228	-0.26	KS 0.1, chi2 0.137	0.000108	PASS	
+rm_base	1	var_L1_g2	50	0.4761	-0.08	KS 0.463, chi2 0.658	0.000108	PASS	
+rm_base	1	var_A1_g3	50	0.4406	-0.23	KS 0.244, chi2 0.384	0.000108	PASS	
+rm_base	1	var_L1_g3	50	0.4694	-0.10	KS 0.41, chi2 0.74	0.000108	PASS	
+rm_base	1	r_E2_MZ	50	0.5204	+0.06	KS 0.592, chi2 0.494	0.000108	PASS	
+rm_base	1	r_L2_MZ	50	0.5153	+0.10	KS 0.607, chi2 0.00666	0.000108	PASS	
+rm_base	1	r_A2_FS	50	0.476	-0.07	KS 0.443, chi2 0.319	0.000108	PASS	
+rm_base	1	r_E2_FS	50	0.5023	-0.02	KS 0.805, chi2 0.456	0.000108	PASS	
+rm_base	1	r_L2_FS	50	0.5026	+0.00	KS 0.989, chi2 0.956	0.000108	PASS	
+rm_base	1	r_A2_MHS	50	0.483	-0.09	KS 0.959, chi2 0.972	0.000108	PASS	
+rm_base	1	r_E2_MHS	50	0.5227	+0.11	KS 0.615, chi2 0.575	0.000108	PASS	
+rm_base	1	r_L2_MHS	50	0.5659	+0.24	KS 0.382, chi2 0.817	0.000108	PASS	
+rm_base	1	r_A2_PHS	50	0.4539	-0.16	KS 0.516, chi2 0.817	0.000108	PASS	
+rm_base	1	r_C2_PHS	50	0.4636	-0.09	KS 0.736, chi2 0.74	0.000108	PASS	
+rm_base	1	r_E2_PHS	50	0.4761	-0.05	KS 0.722, chi2 0.319	0.000108	PASS	
+rm_base	1	r_L2_PHS	50	0.4635	-0.14	KS 0.59, chi2 0.658	0.000108	PASS	
+rm_base	1	r_A2_PO	50	0.4991	-0.04	KS 0.659, chi2 0.262	0.000108	PASS	
+rm_base	1	r_C2_PO	50	0.4959	-0.01	KS 0.661, chi2 0.534	0.000108	PASS	
+rm_base	1	r_E2_PO	50	0.6055	+0.34	KS 0.000205, chi2 0.0269	0.000108	PASS	
+rm_base	1	r_L2_PO	50	0.5358	+0.16	KS 0.654, chi2 0.29	0.000108	PASS	
+rm_base	1	r_A2_1C	50	0.4963	-0.01	KS 0.779, chi2 0.699	0.000108	PASS	
+rm_base	1	r_C2_1C	50	0.4924	+0.01	KS 0.602, chi2 0.0136	0.000108	PASS	
+rm_base	1	r_E2_1C	50	0.4724	-0.10	KS 0.766, chi2 0.851	0.000108	PASS	
+rm_base	1	r_L2_1C	50	0.4989	-0.02	KS 0.973, chi2 0.74	0.000108	PASS	
+rm_base	1	var_A2_g1	50	0.4497	-0.16	KS 0.197, chi2 0.237	0.000108	PASS	
+rm_base	1	var_L2_g1	50	0.4283	-0.23	KS 0.193, chi2 0.419	0.000108	PASS	
+rm_base	1	var_A2_g2	50	0.4684	-0.12	KS 0.839, chi2 0.534	0.000108	PASS	
+rm_base	1	var_L2_g2	50	0.5103	+0.02	KS 0.374, chi2 0.29	0.000108	PASS	
+rm_base	1	var_A2_g3	50	0.4442	-0.17	KS 0.319, chi2 0.494	0.000108	PASS	
+rm_base	1	var_L2_g3	50	0.5429	+0.10	KS 0.115, chi2 0.384	0.000108	PASS	
+rm_base	1	r_A12_g1	50	0.4694	-0.10	KS 0.478, chi2 0.456	0.000108	PASS	
+rm_base	1	r_C12_g1	50	0.4518	-0.14	KS 0.165, chi2 0.237	0.000108	PASS	
+rm_base	1	r_E12_g1	50	0.4848	-0.08	KS 0.905, chi2 0.237	0.000108	PASS	
+rm_base	1	r_L12_g1	50	0.4206	-0.25	KS 0.0153, chi2 0.154	0.000108	PASS	
+rm_base	1	r_A12_g2	50	0.5269	+0.09	KS 0.573, chi2 0.699	0.000108	PASS	
+rm_base	1	r_C12_g2	50	0.4838	-0.07	KS 0.966, chi2 0.851	0.000108	PASS	
+rm_base	1	r_E12_g2	50	0.5279	+0.12	KS 0.483, chi2 0.237	0.000108	PASS	
+rm_base	1	r_L12_g2	50	0.4945	-0.01	KS 0.995, chi2 0.575	0.000108	PASS	
+rm_base	1	r_A12_g3	50	0.5377	+0.10	KS 0.38, chi2 0.616	0.000108	PASS	
+rm_base	1	r_C12_g3	50	0.4472	-0.17	KS 0.104, chi2 0.658	0.000108	PASS	
+rm_base	1	r_E12_g3	50	0.6158	+0.35	KS 0.000106, chi2 0.0269	0.000108	FAIL	
+rm_base	1	r_L12_g3	50	0.518	+0.06	KS 0.936, chi2 0.192	0.000108	PASS	
+deep_constant	1	r_A1_FS	50	0.5492	+0.20	KS 0.324, chi2 0.419	0.000108	PASS	
+deep_constant	1	r_E1_FS	50	0.478	-0.10	KS 0.9, chi2 0.817	0.000108	PASS	
+deep_constant	1	r_L1_FS	50	0.5072	+0.09	KS 0.906, chi2 0.911	0.000108	PASS	
+deep_constant	1	r_A1_MHS	50	0.5093	+0.02	KS 0.608, chi2 0.172	0.000108	PASS	
+deep_constant	1	r_E1_MHS	50	0.4897	-0.07	KS 0.918, chi2 0.494	0.000108	PASS	
+deep_constant	1	r_L1_MHS	50	0.5883	+0.25	KS 0.00643, chi2 0.35	0.000108	PASS	
+deep_constant	1	r_A1_PHS	50	0.4665	-0.12	KS 0.367, chi2 0.456	0.000108	PASS	
+deep_constant	1	r_C1_PHS	50	0.5168	+0.03	KS 0.794, chi2 0.699	0.000108	PASS	
+deep_constant	1	r_E1_PHS	50	0.474	-0.08	KS 0.572, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_L1_PHS	50	0.4539	-0.19	KS 0.494, chi2 0.384	0.000108	PASS	
+deep_constant	1	r_A1_PO	50	0.5225	+0.13	KS 0.638, chi2 0.384	0.000108	PASS	
+deep_constant	1	r_C1_PO	50	0.4683	-0.09	KS 0.354, chi2 0.74	0.000108	PASS	
+deep_constant	1	r_E1_PO	50	0.4589	-0.16	KS 0.365, chi2 0.35	0.000108	PASS	
+deep_constant	1	r_L1_PO	50	0.514	+0.04	KS 0.942, chi2 0.983	0.000108	PASS	
+deep_constant	1	r_A1_1C	50	0.5209	+0.14	KS 0.344, chi2 0.213	0.000108	PASS	
+deep_constant	1	r_C1_1C	50	0.555	+0.19	KS 0.101, chi2 0.109	0.000108	PASS	
+deep_constant	1	r_E1_1C	50	0.4999	-0.03	KS 0.644, chi2 0.534	0.000108	PASS	
+deep_constant	1	r_L1_1C	50	0.5274	+0.17	KS 0.409, chi2 0.575	0.000108	PASS	
+deep_constant	1	var_A1_g1	50	0.5343	+0.07	KS 0.451, chi2 0.384	0.000108	PASS	
+deep_constant	1	var_L1_g1	50	0.5257	+0.14	KS 0.148, chi2 0.0007	0.000108	PASS	
+deep_constant	1	var_A1_g2	50	0.501	+0.09	KS 0.924, chi2 0.883	0.000108	PASS	
+deep_constant	1	var_L1_g2	50	0.4872	-0.02	KS 0.765, chi2 0.616	0.000108	PASS	
+deep_constant	1	var_A1_g3	50	0.5433	+0.20	KS 0.368, chi2 0.154	0.000108	PASS	
+deep_constant	1	var_L1_g3	50	0.59	+0.35	KS 0.00989, chi2 0.00769	0.000108	PASS	
+deep_constant	1	var_A1_g4	50	0.5014	-0.01	KS 0.926, chi2 0.991	0.000108	PASS	
+deep_constant	1	var_L1_g4	50	0.5636	+0.26	KS 0.187, chi2 0.0757	0.000108	PASS	
+deep_constant	1	var_A1_g5	50	0.5018	+0.07	KS 0.739, chi2 0.109	0.000108	PASS	
+deep_constant	1	var_L1_g5	50	0.5067	+0.04	KS 0.993, chi2 0.699	0.000108	PASS	
+deep_constant	1	var_A1_g6	50	0.5125	+0.06	KS 0.99, chi2 0.851	0.000108	PASS	
+deep_constant	1	var_L1_g6	50	0.5402	+0.14	KS 0.768, chi2 0.779	0.000108	PASS	
+deep_constant	1	var_A1_g7	50	0.5529	+0.24	KS 0.242, chi2 0.534	0.000108	PASS	
+deep_constant	1	var_L1_g7	50	0.5094	+0.12	KS 0.647, chi2 0.419	0.000108	PASS	
+deep_constant	1	var_A1_g8	50	0.5345	+0.14	KS 0.412, chi2 0.534	0.000108	PASS	
+deep_constant	1	var_L1_g8	50	0.4664	-0.11	KS 0.676, chi2 0.74	0.000108	PASS	
+deep_constant	1	var_A1_g9	50	0.5196	+0.05	KS 0.73, chi2 0.137	0.000108	PASS	
+deep_constant	1	var_L1_g9	50	0.4658	-0.10	KS 0.118, chi2 0.109	0.000108	PASS	
+deep_constant	1	var_A1_g10	50	0.5161	+0.05	KS 0.506, chi2 0.494	0.000108	PASS	
+deep_constant	1	var_L1_g10	50	0.4702	-0.15	KS 0.641, chi2 0.575	0.000108	PASS	
+deep_constant	1	var_A1_g11	50	0.4783	-0.08	KS 0.402, chi2 0.00237	0.000108	PASS	
+deep_constant	1	var_L1_g11	50	0.514	-0.00	KS 0.483, chi2 0.419	0.000108	PASS	
+deep_constant	1	r_A2_FS	50	0.5727	+0.26	KS 0.246, chi2 0.658	0.000108	PASS	
+deep_constant	1	r_E2_FS	50	0.5036	+0.05	KS 0.948, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_L2_FS	50	0.5589	+0.21	KS 0.172, chi2 0.456	0.000108	PASS	
+deep_constant	1	r_A2_MHS	50	0.5022	-0.01	KS 0.977, chi2 0.972	0.000108	PASS	
+deep_constant	1	r_E2_MHS	50	0.4389	-0.19	KS 0.145, chi2 0.575	0.000108	PASS	
+deep_constant	1	r_L2_MHS	50	0.5093	+0.05	KS 0.758, chi2 0.851	0.000108	PASS	
+deep_constant	1	r_A2_PHS	50	0.521	+0.08	KS 0.635, chi2 0.419	0.000108	PASS	
+deep_constant	1	r_C2_PHS	50	0.4865	-0.01	KS 0.7, chi2 0.74	0.000108	PASS	
+deep_constant	1	r_E2_PHS	50	0.4595	-0.13	KS 0.525, chi2 0.575	0.000108	PASS	
+deep_constant	1	r_L2_PHS	50	0.4858	-0.04	KS 0.798, chi2 0.616	0.000108	PASS	
+deep_constant	1	r_A2_PO	50	0.5382	+0.17	KS 0.438, chi2 0.74	0.000108	PASS	
+deep_constant	1	r_C2_PO	50	0.5848	+0.29	KS 0.056, chi2 0.0457	0.000108	PASS	
+deep_constant	1	r_E2_PO	50	0.5354	+0.13	KS 0.413, chi2 0.192	0.000108	PASS	
+deep_constant	1	r_L2_PO	50	0.5598	+0.23	KS 0.343, chi2 0.956	0.000108	PASS	
+deep_constant	1	r_A2_1C	50	0.5455	+0.15	KS 0.244, chi2 0.109	0.000108	PASS	
+deep_constant	1	r_C2_1C	50	0.48	-0.06	KS 0.533, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_E2_1C	50	0.5095	+0.04	KS 0.885, chi2 0.936	0.000108	PASS	
+deep_constant	1	r_L2_1C	50	0.5254	+0.10	KS 0.525, chi2 0.384	0.000108	PASS	
+deep_constant	1	var_A2_g1	50	0.5348	+0.09	KS 0.462, chi2 0.616	0.000108	PASS	
+deep_constant	1	var_L2_g1	50	0.5304	+0.07	KS 0.635, chi2 0.319	0.000108	PASS	
+deep_constant	1	var_A2_g2	50	0.5291	+0.12	KS 0.834, chi2 0.74	0.000108	PASS	
+deep_constant	1	var_L2_g2	50	0.5403	+0.15	KS 0.16, chi2 0.35	0.000108	PASS	
+deep_constant	1	var_A2_g3	50	0.5215	+0.01	KS 0.798, chi2 0.851	0.000108	PASS	
+deep_constant	1	var_L2_g3	50	0.5895	+0.27	KS 0.03, chi2 0.0966	0.000108	PASS	
+deep_constant	1	var_A2_g4	50	0.5206	+0.02	KS 0.541, chi2 0.851	0.000108	PASS	
+deep_constant	1	var_L2_g4	50	0.4922	-0.05	KS 0.932, chi2 0.419	0.000108	PASS	
+deep_constant	1	var_A2_g5	50	0.5753	+0.25	KS 0.141, chi2 0.384	0.000108	PASS	
+deep_constant	1	var_L2_g5	50	0.5573	+0.24	KS 0.385, chi2 0.262	0.000108	PASS	
+deep_constant	1	var_A2_g6	50	0.6075	+0.34	KS 0.00346, chi2 0.0136	0.000108	PASS	
+deep_constant	1	var_L2_g6	50	0.5696	+0.23	KS 0.155, chi2 0.456	0.000108	PASS	
+deep_constant	1	var_A2_g7	50	0.4857	-0.12	KS 0.823, chi2 0.319	0.000108	PASS	
+deep_constant	1	var_L2_g7	50	0.4523	-0.17	KS 0.291, chi2 0.384	0.000108	PASS	
+deep_constant	1	var_A2_g8	50	0.5296	+0.16	KS 0.566, chi2 0.29	0.000108	PASS	
+deep_constant	1	var_L2_g8	50	0.6042	+0.37	KS 0.0391, chi2 0.0669	0.000108	PASS	
+deep_constant	1	var_A2_g9	50	0.5368	+0.18	KS 0.618, chi2 0.817	0.000108	PASS	
+deep_constant	1	var_L2_g9	50	0.5547	+0.19	KS 0.325, chi2 0.456	0.000108	PASS	
+deep_constant	1	var_A2_g10	50	0.5543	+0.25	KS 0.132, chi2 0.172	0.000108	PASS	
+deep_constant	1	var_L2_g10	50	0.4609	-0.13	KS 0.733, chi2 0.575	0.000108	PASS	
+deep_constant	1	var_A2_g11	50	0.5295	+0.19	KS 0.151, chi2 0.0043	0.000108	PASS	
+deep_constant	1	var_L2_g11	50	0.5621	+0.20	KS 0.238, chi2 0.29	0.000108	PASS	
+deep_constant	1	r_A12_g1	50	0.4845	-0.06	KS 0.779, chi2 0.534	0.000108	PASS	
+deep_constant	1	r_C12_g1	50	0.4847	-0.03	KS 0.712, chi2 0.0457	0.000108	PASS	
+deep_constant	1	r_E12_g1	50	0.4459	-0.19	KS 0.327, chi2 0.29	0.000108	PASS	
+deep_constant	1	r_L12_g1	50	0.4368	-0.22	KS 0.114, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_A12_g2	50	0.4857	-0.05	KS 0.77, chi2 0.699	0.000108	PASS	
+deep_constant	1	r_C12_g2	50	0.4762	-0.06	KS 0.644, chi2 0.616	0.000108	PASS	
+deep_constant	1	r_E12_g2	50	0.4742	-0.10	KS 0.71, chi2 0.456	0.000108	PASS	
+deep_constant	1	r_L12_g2	50	0.4704	-0.10	KS 0.414, chi2 0.456	0.000108	PASS	
+deep_constant	1	r_A12_g3	50	0.5368	+0.12	KS 0.554, chi2 0.658	0.000108	PASS	
+deep_constant	1	r_C12_g3	50	0.5564	+0.17	KS 0.0705, chi2 0.384	0.000108	PASS	
+deep_constant	1	r_E12_g3	50	0.5029	+0.01	KS 0.671, chi2 0.494	0.000108	PASS	
+deep_constant	1	r_L12_g3	50	0.5612	+0.21	KS 0.124, chi2 0.74	0.000108	PASS	
+deep_constant	1	r_A12_g4	50	0.4627	-0.07	KS 0.347, chi2 0.494	0.000108	PASS	
+deep_constant	1	r_C12_g4	50	0.5121	+0.06	KS 0.621, chi2 0.35	0.000108	PASS	
+deep_constant	1	r_E12_g4	50	0.4778	-0.06	KS 0.334, chi2 0.0352	0.000108	PASS	
+deep_constant	1	r_L12_g4	50	0.4983	+0.01	KS 0.53, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_A12_g5	50	0.4695	-0.14	KS 0.478, chi2 0.419	0.000108	PASS	
+deep_constant	1	r_C12_g5	50	0.5001	-0.02	KS 0.816, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_E12_g5	50	0.4497	-0.16	KS 0.52, chi2 0.817	0.000108	PASS	
+deep_constant	1	r_L12_g5	50	0.4351	-0.18	KS 0.066, chi2 0.616	0.000108	PASS	
+deep_constant	1	r_A12_g6	50	0.4693	-0.09	KS 0.405, chi2 0.534	0.000108	PASS	
+deep_constant	1	r_C12_g6	50	0.5025	+0.02	KS 0.886, chi2 0.213	0.000108	PASS	
+deep_constant	1	r_E12_g6	50	0.5123	+0.03	KS 0.949, chi2 0.972	0.000108	PASS	
+deep_constant	1	r_L12_g6	50	0.5261	+0.10	KS 0.84, chi2 0.911	0.000108	PASS	
+deep_constant	1	r_A12_g7	50	0.4401	-0.18	KS 0.17, chi2 0.616	0.000108	PASS	
+deep_constant	1	r_C12_g7	50	0.5113	+0.04	KS 0.551, chi2 0.122	0.000108	PASS	
+deep_constant	1	r_E12_g7	50	0.4597	-0.18	KS 0.286, chi2 0.456	0.000108	PASS	
+deep_constant	1	r_L12_g7	50	0.3764	-0.50	KS 0.0115, chi2 0.0352	0.000108	PASS	
+deep_constant	1	r_A12_g8	50	0.5377	+0.12	KS 0.288, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_C12_g8	50	0.5315	+0.09	KS 0.37, chi2 0.29	0.000108	PASS	
+deep_constant	1	r_E12_g8	50	0.5599	+0.15	KS 0.00701, chi2 0.0156	0.000108	PASS	
+deep_constant	1	r_L12_g8	50	0.5771	+0.29	KS 0.103, chi2 0.0669	0.000108	PASS	
+deep_constant	1	r_A12_g9	50	0.4635	-0.09	KS 0.535, chi2 0.237	0.000108	PASS	
+deep_constant	1	r_C12_g9	50	0.4821	-0.01	KS 0.391, chi2 0.0401	0.000108	PASS	
+deep_constant	1	r_E12_g9	50	0.4366	-0.21	KS 0.1, chi2 0.74	0.000108	PASS	
+deep_constant	1	r_L12_g9	50	0.525	+0.08	KS 0.357, chi2 0.059	0.000108	PASS	
+deep_constant	1	r_A12_g10	50	0.4768	-0.04	KS 0.616, chi2 0.851	0.000108	PASS	
+deep_constant	1	r_C12_g10	50	0.4786	-0.08	KS 0.399, chi2 0.456	0.000108	PASS	
+deep_constant	1	r_E12_g10	50	0.5048	+0.03	KS 0.864, chi2 0.616	0.000108	PASS	
+deep_constant	1	r_L12_g10	50	0.474	-0.05	KS 0.806, chi2 0.779	0.000108	PASS	
+deep_constant	1	r_A12_g11	50	0.4912	+0.05	KS 0.892, chi2 0.658	0.000108	PASS	
+deep_constant	1	r_C12_g11	50	0.4835	-0.05	KS 0.541, chi2 0.0269	0.000108	PASS	
+deep_constant	1	r_E12_g11	50	0.4468	-0.16	KS 0.402, chi2 0.384	0.000108	PASS	
+deep_constant	1	r_L12_g11	50	0.4987	-0.04	KS 0.869, chi2 0.658	0.000108	PASS	
+deep_constant	1	r_E1_MZ	4	0.4844	-0.13	KS 0.907, chi2 0.74	0.000108	INFO	
+deep_constant	1	r_L1_MZ	4	0.256	-0.86	KS 0.14, chi2 0.276	0.000108	INFO	
+deep_constant	1	r_E2_MZ	4	0.5079	+0.01	KS 0.99, chi2 0.74	0.000108	INFO	
+deep_constant	1	r_L2_MZ	4	0.574	+0.22	KS 0.9, chi2 0.74	0.000108	INFO	
+deep_infinitesimal	1	r_A1_FS	50	0.5294	+0.14	KS 0.525, chi2 0.0856	0.000108	INFO	D1
+deep_infinitesimal	1	r_E1_FS	50	0.4864	-0.07	KS 0.99, chi2 0.74	0.000108	INFO	D1
+deep_infinitesimal	1	r_L1_FS	50	0.4982	+0.06	KS 0.728, chi2 0.972	0.000108	INFO	D1
+deep_infinitesimal	1	r_A1_MHS	50	0.5099	+0.02	KS 0.862, chi2 0.122	0.000108	INFO	D1
+deep_infinitesimal	1	r_E1_MHS	50	0.4889	-0.07	KS 0.941, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	r_L1_MHS	50	0.5871	+0.25	KS 0.0186, chi2 0.213	0.000108	INFO	D1
+deep_infinitesimal	1	r_A1_PHS	50	0.4618	-0.15	KS 0.399, chi2 0.817	0.000108	INFO	D1
+deep_infinitesimal	1	r_C1_PHS	50	0.5248	+0.06	KS 0.488, chi2 0.419	0.000108	INFO	D1
+deep_infinitesimal	1	r_E1_PHS	50	0.4802	-0.06	KS 0.436, chi2 0.35	0.000108	INFO	D1
+deep_infinitesimal	1	r_L1_PHS	50	0.4574	-0.19	KS 0.417, chi2 0.384	0.000108	INFO	D1
+deep_infinitesimal	1	r_A1_PO	50	0.5095	+0.06	KS 0.862, chi2 0.658	0.000108	INFO	D1
+deep_infinitesimal	1	r_C1_PO	50	0.467	-0.09	KS 0.554, chi2 0.616	0.000108	INFO	D1
+deep_infinitesimal	1	r_E1_PO	50	0.4536	-0.18	KS 0.402, chi2 0.137	0.000108	INFO	D1
+deep_infinitesimal	1	r_L1_PO	50	0.5327	+0.08	KS 0.806, chi2 0.851	0.000108	INFO	D1
+deep_infinitesimal	1	r_A1_1C	50	0.5134	+0.11	KS 0.803, chi2 0.172	0.000108	INFO	D1
+deep_infinitesimal	1	r_C1_1C	50	0.5539	+0.18	KS 0.0753, chi2 0.0401	0.000108	INFO	D1
+deep_infinitesimal	1	r_E1_1C	50	0.4923	-0.04	KS 0.396, chi2 0.059	0.000108	INFO	D1
+deep_infinitesimal	1	r_L1_1C	50	0.5208	+0.15	KS 0.247, chi2 0.534	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g1	50	0.54	+0.06	KS 0.236, chi2 0.972	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g1	50	0.5302	+0.16	KS 0.316, chi2 0.0118	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g2	50	0.4997	+0.08	KS 0.704, chi2 0.74	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g2	50	0.4929	-0.02	KS 0.91, chi2 0.972	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g3	50	0.5523	+0.22	KS 0.496, chi2 0.319	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g3	50	0.5852	+0.35	KS 0.0128, chi2 0.00888	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g4	50	0.5206	+0.06	KS 0.565, chi2 0.851	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g4	50	0.57	+0.29	KS 0.201, chi2 0.616	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g5	50	0.5273	+0.16	KS 0.383, chi2 0.0519	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g5	50	0.525	+0.10	KS 0.781, chi2 0.851	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g6	50	0.5466	+0.16	KS 0.455, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g6	50	0.5577	+0.21	KS 0.419, chi2 0.616	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g7	50	0.6048	+0.42	KS 0.0264, chi2 0.192	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g7	50	0.5346	+0.23	KS 0.321, chi2 0.384	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g8	50	0.5823	+0.31	KS 0.0655, chi2 0.494	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g8	50	0.5035	+0.01	KS 0.882, chi2 0.172	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g9	50	0.5733	+0.25	KS 0.191, chi2 0.35	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g9	50	0.4984	+0.01	KS 0.709, chi2 0.74	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g10	50	0.5672	+0.30	KS 0.0808, chi2 0.213	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g10	50	0.5067	-0.03	KS 0.722, chi2 0.384	0.000108	INFO	D1
+deep_infinitesimal	1	var_A1_g11	50	0.5421	+0.16	KS 0.072, chi2 0.154	0.000108	INFO	D1
+deep_infinitesimal	1	var_L1_g11	50	0.5453	+0.11	KS 0.214, chi2 0.059	0.000108	INFO	D1
+deep_infinitesimal	1	r_A2_FS	50	0.5627	+0.22	KS 0.229, chi2 0.534	0.000108	INFO	D1
+deep_infinitesimal	1	r_E2_FS	50	0.5124	+0.07	KS 0.98, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	r_L2_FS	50	0.5674	+0.24	KS 0.157, chi2 0.456	0.000108	INFO	D1
+deep_infinitesimal	1	r_A2_MHS	50	0.4988	-0.02	KS 0.992, chi2 0.817	0.000108	INFO	D1
+deep_infinitesimal	1	r_E2_MHS	50	0.4334	-0.20	KS 0.0859, chi2 0.575	0.000108	INFO	D1
+deep_infinitesimal	1	r_L2_MHS	50	0.5121	+0.05	KS 0.762, chi2 0.35	0.000108	INFO	D1
+deep_infinitesimal	1	r_A2_PHS	50	0.5235	+0.07	KS 0.827, chi2 0.911	0.000108	INFO	D1
+deep_infinitesimal	1	r_C2_PHS	50	0.4872	-0.02	KS 0.754, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	r_E2_PHS	50	0.4575	-0.14	KS 0.245, chi2 0.575	0.000108	INFO	D1
+deep_infinitesimal	1	r_L2_PHS	50	0.4973	-0.01	KS 0.999, chi2 0.616	0.000108	INFO	D1
+deep_infinitesimal	1	r_A2_PO	50	0.5398	+0.16	KS 0.399, chi2 0.192	0.000108	INFO	D1
+deep_infinitesimal	1	r_C2_PO	50	0.594	+0.30	KS 0.0224, chi2 0.137	0.000108	INFO	D1
+deep_infinitesimal	1	r_E2_PO	50	0.5362	+0.12	KS 0.291, chi2 0.319	0.000108	INFO	D1
+deep_infinitesimal	1	r_L2_PO	50	0.5875	+0.31	KS 0.0674, chi2 0.419	0.000108	INFO	D1
+deep_infinitesimal	1	r_A2_1C	50	0.5358	+0.12	KS 0.267, chi2 0.154	0.000108	INFO	D1
+deep_infinitesimal	1	r_C2_1C	50	0.4824	-0.04	KS 0.786, chi2 0.419	0.000108	INFO	D1
+deep_infinitesimal	1	r_E2_1C	50	0.5166	+0.08	KS 0.833, chi2 0.936	0.000108	INFO	D1
+deep_infinitesimal	1	r_L2_1C	50	0.5312	+0.13	KS 0.496, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g1	50	0.5323	+0.09	KS 0.293, chi2 0.137	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g1	50	0.5305	+0.07	KS 0.565, chi2 0.059	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g2	50	0.533	+0.13	KS 0.579, chi2 0.936	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g2	50	0.5474	+0.17	KS 0.184, chi2 0.699	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g3	50	0.525	+0.05	KS 0.673, chi2 0.699	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g3	50	0.5826	+0.29	KS 0.0651, chi2 0.384	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g4	50	0.5397	+0.09	KS 0.332, chi2 0.699	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g4	50	0.5006	-0.00	KS 0.986, chi2 0.983	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g5	50	0.5883	+0.33	KS 0.0401, chi2 0.0352	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g5	50	0.5759	+0.28	KS 0.0746, chi2 0.137	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g6	50	0.6395	+0.44	KS 0.00206, chi2 0.0308	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g6	50	0.5806	+0.30	KS 0.121, chi2 0.575	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g7	50	0.5287	+0.03	KS 0.252, chi2 0.419	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g7	50	0.4704	-0.12	KS 0.534, chi2 0.699	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g8	50	0.58	+0.35	KS 0.0702, chi2 0.213	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g8	50	0.6209	+0.47	KS 0.0105, chi2 0.0757	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g9	50	0.6025	+0.43	KS 0.0718, chi2 0.262	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g9	50	0.5785	+0.28	KS 0.0474, chi2 0.0457	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g10	50	0.6382	+0.52	KS 0.000931, chi2 0.0102	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g10	50	0.5048	+0.00	KS 0.995, chi2 0.956	0.000108	INFO	D1
+deep_infinitesimal	1	var_A2_g11	50	0.6149	+0.46	KS 0.0124, chi2 0.00666	0.000108	INFO	D1
+deep_infinitesimal	1	var_L2_g11	50	0.598	+0.35	KS 0.0547, chi2 0.29	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g1	50	0.4869	-0.05	KS 0.706, chi2 0.059	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g1	50	0.4889	+0.00	KS 0.391, chi2 0.00032	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g1	50	0.4428	-0.20	KS 0.407, chi2 0.122	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g1	50	0.4345	-0.21	KS 0.166, chi2 0.494	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g2	50	0.4854	-0.03	KS 0.87, chi2 0.883	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g2	50	0.4793	-0.04	KS 0.479, chi2 0.534	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g2	50	0.4737	-0.10	KS 0.854, chi2 0.658	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g2	50	0.4715	-0.10	KS 0.226, chi2 0.456	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g3	50	0.5411	+0.13	KS 0.3, chi2 0.0966	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g3	50	0.5538	+0.16	KS 0.0507, chi2 0.237	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g3	50	0.5039	-0.02	KS 0.685, chi2 0.658	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g3	50	0.5498	+0.19	KS 0.105, chi2 0.122	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g4	50	0.4733	-0.05	KS 0.485, chi2 0.419	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g4	50	0.5088	+0.09	KS 0.588, chi2 0.262	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g4	50	0.4796	-0.05	KS 0.449, chi2 0.0669	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g4	50	0.5062	+0.06	KS 0.531, chi2 0.74	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g5	50	0.4654	-0.14	KS 0.478, chi2 0.699	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g5	50	0.4883	-0.03	KS 0.975, chi2 0.851	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g5	50	0.4527	-0.14	KS 0.399, chi2 0.262	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g5	50	0.4388	-0.17	KS 0.168, chi2 0.29	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g6	50	0.4791	-0.07	KS 0.741, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g6	50	0.5038	+0.03	KS 0.976, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g6	50	0.5132	+0.04	KS 0.874, chi2 0.972	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g6	50	0.539	+0.13	KS 0.666, chi2 0.699	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g7	50	0.4521	-0.14	KS 0.151, chi2 0.616	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g7	50	0.5032	+0.02	KS 0.709, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g7	50	0.4597	-0.16	KS 0.135, chi2 0.262	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g7	50	0.3907	-0.45	KS 0.0181, chi2 0.213	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g8	50	0.5439	+0.12	KS 0.149, chi2 0.0757	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g8	50	0.5265	+0.07	KS 0.689, chi2 0.658	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g8	50	0.5692	+0.16	KS 0.017, chi2 0.0308	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g8	50	0.5901	+0.31	KS 0.0515, chi2 0.122	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g9	50	0.4638	-0.08	KS 0.662, chi2 0.779	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g9	50	0.4813	-0.02	KS 0.29, chi2 0.00276	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g9	50	0.4286	-0.23	KS 0.0944, chi2 0.319	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g9	50	0.5315	+0.11	KS 0.344, chi2 0.534	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g10	50	0.4821	-0.04	KS 0.861, chi2 0.983	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g10	50	0.4667	-0.11	KS 0.387, chi2 0.534	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g10	50	0.5127	+0.04	KS 0.847, chi2 0.494	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g10	50	0.4924	-0.02	KS 0.825, chi2 0.851	0.000108	INFO	D1
+deep_infinitesimal	1	r_A12_g11	50	0.4891	+0.03	KS 0.794, chi2 0.883	0.000108	INFO	D1
+deep_infinitesimal	1	r_C12_g11	50	0.4885	-0.03	KS 0.303, chi2 0.262	0.000108	INFO	D1
+deep_infinitesimal	1	r_E12_g11	50	0.4503	-0.15	KS 0.373, chi2 0.456	0.000108	INFO	D1
+deep_infinitesimal	1	r_L12_g11	50	0.5128	+0.01	KS 0.934, chi2 0.74	0.000108	INFO	D1
+deep_infinitesimal	1	r_E1_MZ	4	0.4487	-0.22	KS 0.882, chi2 0.74	0.000108	INFO	D1
+deep_infinitesimal	1	r_L1_MZ	4	0.2628	-0.96	KS 0.181, chi2 0.276	0.000108	INFO	D1
+deep_infinitesimal	1	r_E2_MZ	4	0.5288	+0.11	KS 0.99, chi2 0.74	0.000108	INFO	D1
+deep_infinitesimal	1	r_L2_MZ	4	0.6169	+0.37	KS 0.65, chi2 0.276	0.000108	INFO	D1
+genedrop_base	2	ibd_FS	30	4.872e-05	+0.37	t 0.715	0.000108	PASS	
+genedrop_base	2	ibd_MHS	30	-0.0001381	-0.90	t 0.377	0.000108	PASS	
+genedrop_base	2	ibd_PHS	30	6.503e-05	+0.44	t 0.662	0.000108	PASS	
+genedrop_base	2	ibd_PO	30	-2.982e-06	-0.31	t 0.759	0.000108	PASS	
+genedrop_base	2	ibd_1C	30	-3.922e-05	-0.36	t 0.72	0.000108	PASS	
+genedrop_base	2	innov_var_g1	30	-0.004383	-0.70	t 0.492	0.000108	PASS	
+genedrop_base	2	innov_var_g2	30	-0.003688	-0.57	t 0.575	0.000108	PASS	
+genedrop_base	2	innov_var_g3	30	-0.007611	-1.36	t 0.185	0.000108	PASS	
+genedrop_base	2	innov_r_FS	30	-0.003812	-0.85	t 0.402	0.000108	PASS	
+genedrop_base	2	innov_r_MHS	30	0.01245	+1.60	t 0.12	0.000108	PASS	
+genedrop_base	2	innov_r_PHS	30	0.01241	+1.77	t 0.0867	0.000108	PASS	
+genedrop_base	2	spread_innov_var_g1	30	0.9877	+nan		0.000108	INFO	
+genedrop_base	2	spread_innov_var_g2	30	1.215	+nan		0.000108	INFO	
+genedrop_base	2	spread_innov_var_g3	30	0.862	+nan		0.000108	INFO	
+genedrop_base	2	spread_innov_r_FS	30	0.9511	+nan		0.000108	INFO	
+genedrop_base	2	spread_innov_r_MHS	30	1.01	+nan		0.000108	INFO	
+genedrop_base	2	spread_innov_r_PHS	30	0.6919	+nan		0.000108	INFO	
+pedsim_ibd	2	pedsim_ibd_FS	2000	0.002547	+2.05	KS 0.185, t 0.0408	0.000108	PASS	
+pedsim_ibd	2	pedsim_ibd_HS	2000	-0.0006373	-0.73	KS 0.692, t 0.467	0.000108	PASS	
+pedsim_ibd	2	pedsim_ibd_1C	2000	0.0001205	+0.17	KS 0.436, t 0.861	0.000108	PASS	
+wf_structure	3	frac_female_g1	100	0.00428	+1.31	KS 0.368, t 0.192	0.000108	PASS	
+wf_structure	3	n_mothers_g1	100	0.24	+0.20	KS 0.815, t 0.839	0.000108	PASS	
+wf_structure	3	n_fathers_g1	100	0.97	+0.85	KS 0.583, t 0.394	0.000108	PASS	
+wf_structure	3	var_offspring_per_mother_g1	100	-0.0216	-0.72	KS 0.155, t 0.474	0.000108	PASS	
+wf_structure	3	var_offspring_per_father_g1	100	-0.01395	-0.43	KS 0.583, t 0.665	0.000108	PASS	
+wf_structure	3	n_FS_g1	100	0.18	+1.00	KS 0.815, t 0.319	0.000108	PASS	
+wf_structure	3	n_MHS_g1	100	-2.63	-0.56	KS 0.282, t 0.574	0.000108	PASS	
+wf_structure	3	n_PHS_g1	100	-2.35	-0.48	KS 0.702, t 0.628	0.000108	PASS	
+wf_structure	3	frac_female_g2	100	-0.00272	-0.90	KS 0.994, t 0.369	0.000108	PASS	
+wf_structure	3	n_mothers_g2	100	1.34	+1.24	KS 0.702, t 0.217	0.000108	PASS	
+wf_structure	3	n_fathers_g2	100	-0.89	-0.73	KS 0.155, t 0.465	0.000108	PASS	
+wf_structure	3	var_offspring_per_mother_g2	100	-0.02135	-0.79	KS 0.908, t 0.433	0.000108	PASS	
+wf_structure	3	var_offspring_per_father_g2	100	-0.0008505	-0.03	KS 0.282, t 0.978	0.000108	PASS	
+wf_structure	3	n_FS_g2	100	-0.29	-1.49	KS 0.908, t 0.137	0.000108	PASS	
+wf_structure	3	n_MHS_g2	100	-4.32	-1.00	KS 0.815, t 0.318	0.000108	PASS	
+wf_structure	3	n_PHS_g2	100	2.09	+0.43	KS 0.111, t 0.671	0.000108	PASS	
+wf_structure	3	n_sib_mated_g2	100	-0.27	-0.90	KS 0.908, t 0.371	0.000108	PASS	
+wf_structure	3	frac_female_g3	100	0.00086	+0.29	KS 0.994, t 0.773	0.000108	PASS	
+wf_structure	3	n_mothers_g3	100	-0.4	-0.39	KS 0.968, t 0.696	0.000108	PASS	
+wf_structure	3	n_fathers_g3	100	1.22	+1.15	KS 0.702, t 0.25	0.000108	PASS	
+wf_structure	3	var_offspring_per_mother_g3	100	0.01323	+0.46	KS 0.994, t 0.646	0.000108	PASS	
+wf_structure	3	var_offspring_per_father_g3	100	-0.02499	-0.90	KS 0.815, t 0.367	0.000108	PASS	
+wf_structure	3	n_FS_g3	100	-0.04	-0.22	KS 1, t 0.827	0.000108	PASS	
+wf_structure	3	n_MHS_g3	100	2.89	+0.64	KS 0.968, t 0.523	0.000108	PASS	
+wf_structure	3	n_PHS_g3	100	-4.41	-1.01	KS 0.211, t 0.312	0.000108	PASS	
+wf_structure	3	n_sib_mated_g3	100	-0.11	-0.43	KS 1, t 0.665	0.000108	PASS	
+wf_structure	3	frac_female_g4	100	0.00328	+1.06	KS 0.583, t 0.289	0.000108	PASS	
+wf_structure	3	n_mothers_g4	100	0.93	+0.86	KS 0.815, t 0.389	0.000108	PASS	
+wf_structure	3	n_fathers_g4	100	-0.76	-0.67	KS 0.368, t 0.503	0.000108	PASS	
+wf_structure	3	var_offspring_per_mother_g4	100	-0.01355	-0.47	KS 0.702, t 0.637	0.000108	PASS	
+wf_structure	3	var_offspring_per_father_g4	100	0.02089	+0.77	KS 0.47, t 0.444	0.000108	PASS	
+wf_structure	3	n_FS_g4	100	-0.59	-2.93	KS 0.155, t 0.0038	0.000108	PASS	
+wf_structure	3	n_MHS_g4	100	-1.53	-0.35	KS 0.908, t 0.725	0.000108	PASS	
+wf_structure	3	n_PHS_g4	100	3.76	+0.88	KS 0.47, t 0.377	0.000108	PASS	
+wf_structure	3	n_sib_mated_g4	100	0.26	+0.95	KS 0.583, t 0.342	0.000108	PASS	
