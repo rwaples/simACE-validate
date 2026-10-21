@@ -217,7 +217,7 @@ def simace_ref() -> str:
     return f"simace {dist.version}" + (f" ({ref})" if ref else "")
 
 
-def write_results(rows: list[dict], threshold: float, errors: list[str], selection: str) -> None:
+def write_results(rows: list[dict], threshold: float, errors: list[tuple[dict, str]], selection: str) -> None:
     """Write results.md and results.tsv: a full run to results/, a partial one (``selection``) to .work/results/."""
     out = PARTIAL_RESULTS if selection else RESULTS
     out.mkdir(parents=True, exist_ok=True)
@@ -253,7 +253,11 @@ def write_results(rows: list[dict], threshold: float, errors: list[str], selecti
         vals = [r["case"], r["layer"], r["stat"], c.n, f"{c.center:.4g}", f"{c.effect:+.2f}", pv]
         lines.append("\t".join(map(str, [*vals, f"{threshold:.3g}", r["status"], did])))
         md.append("| " + " | ".join(map(str, [*vals, r["status"], did])) + " |")
-    md += [f"| {e} | | | | | | | ERROR | |" for e in errors]
+    for case, message in errors:
+        lines.append(
+            "\t".join(map(str, [case["id"], case["layer"], message, "", "", "", "", f"{threshold:.3g}", "ERROR", ""]))
+        )
+        md.append(f"| {case['id']} | {case['layer']} | {message} | | | | | ERROR | |")
     (out / "results.tsv").write_text("\n".join(lines) + "\n")
     (out / "results.md").write_text("\n".join(md) + "\n")
     print(f"Totals: {total_line}; written to {out.relative_to(ROOT)}/")
@@ -287,16 +291,16 @@ def main() -> int:
     selection = "; ".join(parts)
 
     rows: list[dict] = []
-    errors: list[str] = []
+    errors: list[tuple[dict, str]] = []
     for case in cases:
         print(f"{case['id']}: layer {case['layer']}", flush=True)
         try:
             rows += run_case(case)
         except subprocess.CalledProcessError as exc:
-            errors.append(f"{case['id']}: {' '.join(map(str, exc.cmd[:2]))} exited {exc.returncode}")
+            errors.append((case, f"{' '.join(map(str, exc.cmd[:2]))} exited {exc.returncode}"))
             print(exc.stderr.decode(errors="replace")[-2000:], file=sys.stderr)
         except Exception as exc:  # one broken case is an ERROR row, not a lost run
-            errors.append(f"{case['id']}: {type(exc).__name__}: {exc}")
+            errors.append((case, f"{type(exc).__name__}: {exc}"))
             traceback.print_exc()
     threshold = assign_status(rows)
     write_results(rows, threshold, errors, selection)

@@ -148,9 +148,16 @@ oracle_draw <- function(ped, M) {
   V
 }
 
+# The statistics rebuild liability as A + C + E, so first check that simACE's
+# stored liability is that sum (float32 storage rounds each column).
 observed <- function(ped) {
   V <- list()
   for (k in c("A1", "C1", "E1", "A2", "C2", "E2")) V[[k]] <- matrix(as.double(ped[[k]]), ncol = 1)
+  for (t in 1:2) {
+    sum_t <- V[[paste0("A", t)]] + V[[paste0("C", t)]] + V[[paste0("E", t)]]
+    gap <- max(abs(as.double(ped[[paste0("liability", t)]]) - sum_t))
+    if (gap > 1e-5) stop(sprintf("simACE liability%d differs from A + C + E by up to %g", t, gap))
+  }
   V
 }
 
