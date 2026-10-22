@@ -19,6 +19,7 @@ import subprocess
 import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 from pathlib import Path
 
 import numpy as np
@@ -181,11 +182,11 @@ def pedsim_check(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], se
     genome = Genome(**case["genome"], causal_per_chromosome=0)
     copies = case["copies"]
     work = WORK / case["id"]
-    jobs = {
-        "pedsim": pool.submit(pedsim_ibd, PEDSIM, work, genome, copies, case_seed(case["id"], "pedsim")),
-        "msprime": pool.submit(msprime_ibd, genome, copies, case_seed(case["id"], "msprime")),
-    }
-    ped, ms = (jobs[k].result() for k in ("pedsim", "msprime"))
+    pedsim = pool.submit(pedsim_ibd, PEDSIM, work, genome, copies, case_seed(case["id"], "pedsim"))
+    try:  # at most JOBS chromosomes in flight
+        ms = msprime_ibd(genome, copies, case_seed(case["id"], "msprime"), partial(pool.map, buffersize=JOBS))
+    finally:  # a ped-sim failure is reported even when msprime also failed
+        ped = pedsim.result()
     return [row(case, f"pedsim_ibd_{name}", two_sample(ms[name], ped[name])) for name in ped]
 
 

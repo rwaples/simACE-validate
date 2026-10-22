@@ -14,6 +14,7 @@ co-twins as separate offspring.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -97,13 +98,26 @@ def pair_spans(ts, nodes: np.ndarray, pairs: np.ndarray) -> np.ndarray:
     return span
 
 
-def drop(ped: pl.DataFrame, pairs: np.ndarray, genome: Genome, A: float, seed: int) -> tuple[np.ndarray, np.ndarray]:
+Mapper = Callable[[Callable[[int], object], Iterable[int]], Iterator]
+
+
+def drop(
+    ped: pl.DataFrame, pairs: np.ndarray, genome: Genome, A: float, seed: int, map_chromosomes: Mapper = map
+) -> tuple[np.ndarray, np.ndarray]:
     """Gene-drop once. Return G per row and the IBD fraction per pair (2-phi scale).
 
     The IBD fraction of individuals i and j is the summed IBD span over their
     four node pairs divided by twice the genome length, whose expectation is
     2 * phi_ij.
+
+    ``map_chromosomes`` runs the per-chromosome msprime simulations. The
+    builtin map draws each chromosome's seed just before its simulation; a
+    thread pool's map (msprime releases the GIL) draws every seed first. The
+    two give the same values only without causal loci, whose draws otherwise
+    fall between the seeds, so a drop with causal loci must use the builtin map.
     """
+    if genome.causal_per_chromosome and map_chromosomes is not map:
+        raise ValueError("a drop with causal loci simulates its chromosomes in order (map_chromosomes=map)")
     rng = np.random.default_rng(seed)
     keep = keepers(ped)
     length = genome.morgans * BP_PER_MORGAN
@@ -114,13 +128,17 @@ def drop(ped: pl.DataFrame, pairs: np.ndarray, genome: Genome, A: float, seed: i
     dosage_value = np.zeros(ped.height)
     shared = np.zeros(len(pairs))
     locus = 0
-    for _ in range(genome.chromosomes):
-        ts = msprime.sim_ancestry(
+    seeds = (int(rng.integers(1, 2**31 - 1)) for _ in range(genome.chromosomes))
+
+    def simulate(chromosome_seed: int):
+        return msprime.sim_ancestry(
             initial_state=tables,
             model="fixed_pedigree",
             recombination_rate=1 / BP_PER_MORGAN,
-            random_seed=int(rng.integers(1, 2**31 - 1)),
+            random_seed=chromosome_seed,
         )
+
+    for ts in map_chromosomes(simulate, seeds):
         nodes = individual_nodes(ts)[ms_of]  # rows x 2
         span = pair_spans(ts, nodes, pairs)
         for a in range(2):  # the four node pairs in a fixed order, so the sums are reproducible
