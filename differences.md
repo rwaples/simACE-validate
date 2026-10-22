@@ -28,3 +28,31 @@ gap is understated.
 
 Open question for simACE: whether A/2 is the intended model or should
 scale with parental F. Tracked in status.md.
+
+## D2. The C-transmission residual: realised or analytic
+
+Under vertical C transmission (simACE ADR 0025), an offspring's C is
+`b_m C_mother + b_f C_father + u`, with one u per maternal household. simACE
+draws u with covariance `Σ − S`, where Σ is the configured C covariance and S
+is the realised covariance of the transmitted part over that generation's
+offspring. Each generation's C covariance is then Σ in expectation, whatever
+the parents' realised C variance was. The textbook law instead uses the
+analytic residual `Σ − B_m Σ B_m − B_f Σ B_f`. That is also Σ in expectation
+across generations, but it carries part of the previous generation's
+sampling error forward. ADR 0025 considers that rule and rejects it.
+
+Case `ctm_base` scores simACE against its own (realised) law, and
+`ctm_analytic` scores the same pedigrees against the analytic law. The
+gap would show as a dispersion mismatch in `var_C*` and `var_L*` (per-seed
+z spread away from 1), not as a mean shift. The 2026-10-21 run showed none
+at R = 50 and M = 199. For every `var_C*_g*` and `var_L*_g*` row in
+`ctm_analytic`:
+
+- mean z −0.20 to +0.12
+- SD of per-seed z 0.82 to 1.19 (ctm_base: 0.88 to 1.19)
+- smallest p-value 0.0328 (`var_C1_g2` KS), against ctm_base's
+  0.00922 for the same row
+
+So these diagnostics cannot tell the two laws apart with three recorded
+generations at N = 2000. ctm_base still checks simACE against the law it
+documents.

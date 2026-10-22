@@ -12,6 +12,7 @@
 #   seed0, R  simACE seeds
 #   M         oracle (or null) draws per pedigree; M+1 divisible by 10 keeps chi-square bins equal
 #   law       oracle segregation law: constant (simACE's d = 1/2) | infinitesimal
+#   c_law     oracle C-transmission residual: realised (default; simACE ADR 0025) | analytic
 #   expect    pass (default) | info (not scored; with id_diff, a known gap in differences.md)
 #   mutation  power study only: a deliberate oracle error (power.py MUTATIONS, by oracle)
 
@@ -66,6 +67,35 @@ cases:
     law: infinitesimal
     expect: info
     id_diff: D1
+
+  - id: ctm_base
+    layer: 1
+    oracle: liability
+    note: rm_base with vertical C transmission (ADR 0025), coefficients differing by trait and parent
+    simulate: &ctm
+      <<: *rm_base
+      Ctm-maternal1: 0.5
+      Ctm-paternal1: 0.3
+      Ctm-maternal2: 0.3
+      Ctm-paternal2: 0.5
+    seed0: 5000
+    R: 50
+    M: 199
+    law: constant
+    c_law: realised
+
+  - id: ctm_analytic
+    layer: 1
+    oracle: liability
+    note: the same pedigrees against the analytic residual U = Sigma - Bm Sigma Bm - Bf Sigma Bf; the gap is D2
+    simulate: *ctm
+    seed0: 5000
+    R: 50
+    M: 199
+    law: constant
+    c_law: analytic
+    expect: info
+    id_diff: D2
 
   - id: genedrop_base
     layer: 2

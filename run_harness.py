@@ -19,6 +19,7 @@ import subprocess
 import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
+from functools import partial
 from pathlib import Path
 
 import numpy as np
@@ -41,6 +42,13 @@ ALPHA = 0.05
 JOBS = 6
 MIN_SEEDS = 20  # as simace validate's min_reps
 SINGLE_THREAD = {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "NUMBA_NUM_THREADS": "1"}
+# The `simulate` flags the liability oracle's law accounts for. Any other flag
+# (assortative mating, per-generation C or E) would change simACE's law unseen.
+LIABILITY_FLAGS = {
+    *("N", "G-ped", "G-sim", "mating-model", "mating-lambda", "p-mztwin"),
+    *("A1", "C1", "E1", "A2", "C2", "E2", "rA", "rC", "rE"),
+    *(f"Ctm-{side}{t}" for side in ("maternal", "paternal") for t in (1, 2)),
+}
 
 
 def case_seed(case_id: str, salt: str) -> int:
@@ -48,23 +56,40 @@ def case_seed(case_id: str, salt: str) -> int:
     return int.from_bytes(hashlib.sha256(f"{case_id}:{salt}".encode()).digest()[:4], "big") >> 1
 
 
+SIMULATED: dict[tuple, Path] = {}  # one run's pedigrees by (seed, flags), shared across cases
+
+
 def simulate(case: dict, seed: int) -> Path:
-    """Run `simace simulate` for one seed and return the pedigree path."""
+    """Run `simace simulate` for one seed and return the pedigree path.
+
+    A pedigree depends only on its seed and flags, so every case of one run
+    with the same seed and flags (in any order) reuses the first one's
+    pedigree; the power study's mutations, which share seeds, do too.
+    """
+    flags = [f"--{k}={v}" for k, v in case["simulate"].items()]
+    key = (seed, *sorted(flags))
+    if key in SIMULATED:
+        return SIMULATED[key]
     out = WORK / case["id"] / f"seed{seed}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
-    flags = [f"--{k}={v}" for k, v in case["simulate"].items()]
     cmd = ["simace", "simulate", f"--seed={seed}", *flags, f"--output-pedigree={out}"]
     subprocess.run(cmd, check=True, capture_output=True, env=os.environ | SINGLE_THREAD)
+    SIMULATED[key] = out
     return out
 
 
 def run_oracle(case: dict, chunk: int, seeds: list[int], pedigrees: list[Path]) -> list[dict]:
     """Run the case's oracle over one chunk of pedigrees."""
     stem = WORK / case["id"] / f"oracle{chunk}"
+    sim = case["simulate"]
+    params = {k: sim[k] for k in ("A1", "C1", "E1", "A2", "C2", "E2", "rA", "rC", "rE")}
+    for side, b in (("maternal", "bm"), ("paternal", "bf")):
+        params[b] = [sim.get(f"Ctm-{side}{t}", 0) for t in (1, 2)]
     payload = {
-        "params": {k: case["simulate"][k] for k in ("A1", "C1", "E1", "A2", "C2", "E2", "rA", "rC", "rE")},
+        "params": params,
         "M": case["M"],
         "law": case["law"],
+        "c_law": case.get("c_law", "realised"),
         "mutation": case.get("mutation"),
         "oracle_seed": case_seed(case["id"], f"oracle{chunk}"),
         "seeds": seeds,
@@ -99,7 +124,9 @@ def run_liability(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], s
     """Layer 1: run the liability oracle and calibrate every statistic over the seeds."""
     chunks = [(i, seeds[i::JOBS], pedigrees[i::JOBS]) for i in range(min(JOBS, len(seeds)))]
     per_seed = [r for out in pool.map(lambda c: run_oracle(case, *c), chunks) for r in out]
-    rng = np.random.default_rng(case_seed(case["id"], "pit"))
+    clipped = sum(r["c_clipped"] for r in per_seed)
+    if clipped:
+        print(f"{case['id']}: the oracle clipped U to PSD in {clipped} draw-generations", flush=True)
     by_stat: dict[str, list[dict]] = {}
     for rep in sorted(per_seed, key=lambda r: r["seed"]):
         for r in rep["rows"]:
@@ -109,6 +136,8 @@ def run_liability(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], s
         n_less = np.array([r["n_less"] for r in reps])
         n_equal = np.array([r["n_equal"] for r in reps])
         z = np.array([z_score(r) for r in reps])
+        # One stream per statistic, so adding or removing a statistic re-jitters no other.
+        rng = np.random.default_rng(case_seed(case["id"], f"pit:{stat}"))
         rows.append(row(case, stat, calibrate(randomised_pit(n_less, n_equal, case["M"], rng), z)))
     return rows
 
@@ -154,11 +183,11 @@ def pedsim_check(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], se
     genome = Genome(**case["genome"], causal_per_chromosome=0)
     copies = case["copies"]
     work = WORK / case["id"]
-    jobs = {
-        "pedsim": pool.submit(pedsim_ibd, PEDSIM, work, genome, copies, case_seed(case["id"], "pedsim")),
-        "msprime": pool.submit(msprime_ibd, genome, copies, case_seed(case["id"], "msprime")),
-    }
-    ped, ms = (jobs[k].result() for k in ("pedsim", "msprime"))
+    pedsim = pool.submit(pedsim_ibd, PEDSIM, work, genome, copies, case_seed(case["id"], "pedsim"))
+    try:  # at most JOBS chromosomes in flight
+        ms = msprime_ibd(genome, copies, case_seed(case["id"], "msprime"), partial(pool.map, buffersize=JOBS))
+    finally:  # a ped-sim failure is reported even when msprime also failed
+        ped = pedsim.result()
     return [row(case, f"pedsim_ibd_{name}", two_sample(ms[name], ped[name])) for name in ped]
 
 
@@ -248,9 +277,14 @@ RUNNERS = {
 
 def run_case(case: dict) -> list[dict]:
     """Simulate the case's pedigrees and score them with its oracle."""
+    if case["oracle"] == "liability":
+        unknown = set(case["simulate"]) - LIABILITY_FLAGS
+        if unknown:
+            raise ValueError(f"{case['id']}: the liability oracle does not model {', '.join(sorted(unknown))}")
     seed0 = case.get("seed0", 0)
     seeds = list(range(seed0, seed0 + case.get("R", 0)))
     replaced = case.get("mutation") in REPLACES_SIMACE.get(case["oracle"], ())
+    (WORK / case["id"]).mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(JOBS) as pool:
         pedigrees = [] if replaced else list(pool.map(lambda s: simulate(case, s), seeds))
         return RUNNERS[case["oracle"]](case, pool, pedigrees, seeds)

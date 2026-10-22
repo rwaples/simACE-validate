@@ -23,6 +23,8 @@ from genedrop.drop import BP_PER_MORGAN, Genome, drop
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from genedrop.drop import Mapper
+
 # name: (ped-sim def body, the printed pair's two sample suffixes, msprime template)
 # A template row is (generation, mother, father) with ids local to one copy;
 # the pair is the template's last two rows.
@@ -71,8 +73,11 @@ def pedsim_ibd(binary: Path, work: Path, genome: Genome, copies: int, seed: int)
     return result
 
 
-def msprime_ibd(genome: Genome, copies: int, seed: int) -> dict[str, np.ndarray]:
-    """Drop the same structures through msprime and return each one's per-pair IBD fraction."""
+def msprime_ibd(genome: Genome, copies: int, seed: int, map_chromosomes: Mapper = map) -> dict[str, np.ndarray]:
+    """Drop the same structures through msprime and return each one's per-pair IBD fraction.
+
+    No causal loci, so ``map_chromosomes`` may be a thread pool's map with no change in values.
+    """
     rows, pairs, labels = [], [], []
     for name, (_, _, template) in STRUCTURES.items():
         for _ in range(copies):
@@ -83,6 +88,6 @@ def msprime_ibd(genome: Genome, copies: int, seed: int) -> dict[str, np.ndarray]
     gen, mother, father = (np.array(col, dtype=np.int32) for col in zip(*rows, strict=True))
     ped = pl.DataFrame({"generation": gen, "mother": mother, "father": father, "twin": np.full(len(gen), -1)})
     no_trait = Genome(genome.chromosomes, genome.morgans, causal_per_chromosome=0)
-    _, ibd = drop(ped, np.array(pairs), no_trait, A=1.0, seed=seed)
+    _, ibd = drop(ped, np.array(pairs), no_trait, A=1.0, seed=seed, map_chromosomes=map_chromosomes)
     labels_arr = np.array(labels)
     return {name: ibd[labels_arr == name] for name in STRUCTURES}

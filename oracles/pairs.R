@@ -16,6 +16,8 @@ args <- commandArgs(trailingOnly = TRUE)
 ped <- read_ped(args[1])
 classes <- classify(ped)
 classes$MZ <- NULL
+# Gene-drop scores parent-offspring IBD as one class.
+classes <- c(classes[c("FS", "MHS", "PHS")], list(PO = rbind(classes$MO, classes$FO)), classes["1C"])
 
 # MZ co-twins are one genetic individual: kinship2 sees only the lower-id
 # twin, with the co-twin's children re-pointed to it (as in genedrop/drop.py),
