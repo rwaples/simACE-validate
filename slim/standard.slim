@@ -1,0 +1,149 @@
+// Layer 3b: simACE's `standard` mating model (random mating, no assortment),
+// re-implemented in SLiM's nonWF model from simACE's documentation:
+// methods.md "Reproduction: mating and family structure" and "Monozygotic
+// twins", simulation-design.md "Mating and reproduction", ADR 0002.
+//
+//   slim -d N=500 -d G=6 -d LAMBDA=0.5 -d PMZ=0.02 -d SEED=1 -d "OUT='ped.tsv'" slim/standard.slim
+//
+// This is a second implementation of simACE's own rules, not an outside model.
+// It can catch simACE's code departing from its documented model. It cannot
+// catch a flaw in the model, and a misreading of the docs shared by both
+// would hide a bug.
+//
+// Each generation, from the N parents of the previous one:
+// 1. Every parent draws ZTP(LAMBDA) mating slots, by redrawing zeros.
+// 2. The sex with more slots keeps a uniform random subset of them, so both
+//    sexes have nSlots = min(total female, total male) slots.
+// 3. Female slots in order, male slots shuffled, paired by position. A couple
+//    that occurs twice has its father swapped with a random other mating.
+// 4. The N children go to the nSlots matings by Multinomial(N, 1/nSlots).
+// 5. Each mating with at least two children gets one MZ pair with
+//    probability PMZ: its first two children, with the same sex.
+// 6. Sex is Bernoulli(1/2) for founders and children.
+//
+// Settled from simACE's code (v0.2.0 simulate.py) because the docs leave them
+// open; reported in rwaples/simACE#78:
+// - Step 2 removes random slots, not random persons ("loses slots at random";
+//   balance_mating_slots keeps a uniform subset of the slots).
+// - Step 3: the docs swap "with a nearby partner"; pair_partners swaps the
+//   father with a uniformly random non-duplicate mating, for at most 5 passes.
+// - Step 6 for children: methods.md states Bernoulli(1/2) for founders only;
+//   ADR 0002 and reproduce() use it for every child.
+//
+// As in simACE, the founders are not recorded: the first offspring generation
+// is recorded generation 0, with unknown parents. Writes one row per recorded
+// individual: id, mother, father, sex (0 female, 1 male), twin (the co-twin's
+// id, or -1), generation.
+
+initialize() {
+	setSeed(SEED);
+	initializeSLiMModelType("nonWF");
+	initializeSLiMOptions(keepPedigrees=T);
+	initializeSex();
+	initializeMutationRate(0);
+	initializeMutationType("m1", 0.5, "f", 0.0);
+	initializeGenomicElementType("g1", m1, 1.0);
+	initializeGenomicElement(g1, 0, 0);
+	initializeRecombinationRate(0);
+}
+
+// Zero-truncated Poisson(LAMBDA) counts, by redrawing zeros.
+function (integer)ztp(integer$ n) {
+	x = rpois(n, LAMBDA);
+	zeros = which(x == 0);
+	while (size(zeros) > 0) {
+		x[zeros] = rpois(size(zeros), LAMBDA);
+		zeros = which(x == 0);
+	}
+	return x;
+}
+
+// Tick 1 adds two placeholders, since addEmpty() runs only in reproduction();
+// tick 2 replaces them with the N founders.
+1 early() {
+	sim.addSubpop("p1", 2);
+	writeFile(OUT, "id\tmother\tfather\tsex\ttwin\tgeneration");
+}
+
+reproduction() {
+	if (community.tick == 2) {
+		for (i in seqLen(N))
+			p1.addEmpty(sex=NULL);
+	} else {
+		females = p1.subsetIndividuals(sex="F", minAge=1);
+		males = p1.subsetIndividuals(sex="M", minAge=1);
+		fSlots = repEach(seqAlong(females), ztp(size(females)));
+		mSlots = repEach(seqAlong(males), ztp(size(males)));
+		nSlots = min(size(fSlots), size(mSlots));
+		// Step 2 keeps a uniform subset of the larger side; step 3 shuffles the males.
+		fSlots = sort(sample(fSlots, nSlots));
+		mSlots = sample(mSlots, nSlots);
+
+		// Step 3: up to 5 passes; the first occurrence of a couple is kept.
+		for (pass in 1:5) {
+			key = fSlots * size(males) + mSlots;
+			ord = order(key);
+			sorted = key[ord];
+			dupSorted = c(F, sorted[seqLen(nSlots - 1) + 1] == sorted[seqLen(nSlots - 1)]);
+			dup = rep(F, nSlots);
+			dup[ord] = dupSorted;
+			dups = which(dup);
+			others = which(!dup);
+			if (size(dups) == 0 | size(others) == 0)
+				break;
+			for (d in dups) {
+				s = sample(others, 1);
+				tmp = mSlots[d];
+				mSlots[d] = mSlots[s];
+				mSlots[s] = tmp;
+			}
+		}
+
+		// Step 4: tabulate N uniform mating choices (Eidos has no rmultinom).
+		nKids = tabulate(sample(0:(nSlots - 1), N, replace=T), nSlots - 1);
+		for (j in which(nKids > 0)) {
+			mo = females[fSlots[j]];
+			fa = males[mSlots[j]];
+			done = 0;
+			if (nKids[j] >= 2) {
+				if (runif(1) < PMZ) {
+					k1 = p1.addCrossed(mo, fa, sex=NULL);
+					k2 = p1.addCrossed(mo, fa, sex=k1.sex);
+					k1.tag = k2.pedigreeID;
+					k2.tag = k1.pedigreeID;
+					done = 2;
+				}
+			}
+			for (i in seqLen(nKids[j] - done)) {
+				k = p1.addCrossed(mo, fa, sex=NULL);
+				k.tag = -1;
+			}
+		}
+	}
+	self.active = 0;
+}
+
+early() {
+	inds = p1.individuals;
+	inds[inds.age > 0].fitnessScaling = 0.0;
+}
+
+late() {
+	kids = p1.subsetIndividuals(maxAge=0);
+	gen = community.tick - 3;
+	if (gen >= 0) {
+		parents = matrix(kids.pedigreeParentIDs, nrow=2);
+		mo = (gen == 0) ? rep(-1, size(kids)) else parents[0, ];
+		fa = (gen == 0) ? rep(-1, size(kids)) else parents[1, ];
+		sex = asInteger(kids.sex == "M");
+		lines = asString(kids.pedigreeID) + "\t" + asString(mo) + "\t" + asString(fa) + "\t" + asString(sex) + "\t" + asString(kids.tag) + "\t" + asString(gen);
+		writeFile(OUT, lines, append=T);
+	}
+	if (gen == G - 1)
+		sim.simulationFinished();
+}
+
+// Keeps the run open past tick 1; late() ends it at generation G - 1.
+100000 late() {
+	stop("did not reach generation G - 1");
+}

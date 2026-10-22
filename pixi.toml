@@ -47,5 +47,5 @@ simace = { git = "https://github.com/rwaples/simACE.git", tag = "v0.2.0" }
 build-nadiv = { cmd = "bash tools/build_nadiv.sh", description = "Install the pinned nadiv CRAN version into .rlib/" }
 build-pedsim = { cmd = "bash tools/build_pedsim.sh", description = "Build the pinned ped-sim tag into .pedsim/" }
 harness = { cmd = "python run_harness.py", depends-on = ["build-nadiv", "build-pedsim"], description = "Run every case and write results/" }
-power = { cmd = "python power.py", depends-on = ["build-nadiv"], description = "Rejection rates at stated oracle errors; writes results/power.md" }
+power = { cmd = "python power.py", depends-on = ["build-nadiv"], description = "Rejection rates at stated oracle errors; writes results/power.md (rm_base) or results/power_<case>.md" }
 lint = { cmd = "ruff check && ruff format --check", description = "Lint and format check" }

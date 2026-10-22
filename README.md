@@ -9,7 +9,9 @@ simulates against code simACE does not share:
 - [SLiM](https://messerlab.org/slim/)
 
 The latest results are in [`results/results.md`](results/results.md), and
-the harness's measured power is in [`results/power.md`](results/power.md).
+the harness's measured power is in [`results/power.md`](results/power.md)
+(rm_base), [`results/power_std_mating.md`](results/power_std_mating.md) and
+[`results/power_std_structure.md`](results/power_std_structure.md).
 Every known model gap is explained in [`differences.md`](differences.md),
 and where each non-PASS row stands is in [`status.md`](status.md).
 
@@ -28,7 +30,8 @@ family tag.
 pixi run harness                          # every case, to results/ (builds nadiv and ped-sim first)
 pixi run harness --only rm_base           # a subset; K and so alpha/K shrink; to .work/results/
 pixi run harness --replicate 1            # the same cases on independent seeds; to .work/results/
-pixi run power                            # rejection rates at stated errors
+pixi run power                            # rejection rates at stated errors (rm_base)
+pixi run power --case std_mating          # any case with mutations; to results/power_<case>.md
 pixi run lint
 ```
 
@@ -96,6 +99,64 @@ compared with a two-sample KS test and a Welch t-test:
 - FS, MHS and PHS pair counts
 - offspring of half- or full-sib matings
 
+**Layer 3b: simACE's `standard` mating** (`structure/mating.py`,
+`slim/standard.slim`). Two cases check the default mating model, both at
+λ = 0.5 and p_mz = 0.02.
+
+`std_mating` tests simACE's own pedigrees against the documented rules,
+with no second simulator. Each rule gets a statistic whose null conditions
+on as much as that rule allows:
+
+- sex ratio: Bin(N − MZ pairs, 1/2), exact
+- MZ pairs: Bin(couples with ≥ 2 children, p_mz), exact
+- children per couple and their split over a mother's couples, given the
+  couples: a multinomial conditioned on every couple having a child,
+  which does not depend on λ
+- couples, and mothers and fathers with ≥ 2 partners, given the parents'
+  sexes: ZTP(λ) slots, trimmed to the smaller sex's total, then the
+  occupied matings
+
+A generation's children are the next one's parents, so each statistic
+gets one randomised PIT per generation given the generations before it.
+These are independent U(0, 1), and their Stouffer combination is one
+exactly uniform PIT per pedigree, scored over the seeds like layer 1. The
+derivations are in `structure/mating.py`'s docstring. They assume no
+duplicate couple survives simACE's 5 swap passes:
+`tools/residual_duplicates.py` found none in 200000 generations at
+N = 2000 or at N = 500, a 95% bound of 1.5e-5 per generation.
+`tools/check_mating_nulls.py` checks the samplers against exact
+enumeration and the MZ invariants.
+
+Some rules are deterministic, not random:
+
+- MZ co-twins share parents and sex.
+- A couple has at most one MZ pair.
+
+A violation raises an error, so the case becomes an ERROR row.
+
+`std_structure` compares simACE's pedigrees with `slim/standard.slim`, the
+layer-3 statistics plus couples, multi-partner parents, MZ pairs and the
+sum of squared family sizes, one row per generation. The script is a
+**second implementation of simACE's own rules, written from simACE's
+documentation; it is not an outside model**. It can catch simACE's code
+departing from its documented model. It cannot catch a flaw in the model
+itself. A misreading of the docs shared by both implementations would
+hide a bug.
+
+Where the docs leave a point open, the script follows simACE's code and
+says so. Those points went to simACE as
+[rwaples/simACE#78](https://github.com/rwaples/simACE/issues/78):
+
+- the larger sex loses random slots, not random persons;
+- a duplicate couple has its father swapped with a uniformly random other
+  mating for at most 5 passes, where the docs say "a nearby partner";
+- children's sex is Bernoulli(1/2), stated in methods.md for founders
+  only.
+
+The same issue reports two id-order artifacts, which neither case tests:
+offspring are sorted by mother, and MZ co-twins always have consecutive
+ids.
+
 **Multiplicity.** Every p-value of every scored row in a run forms one
 Bonferroni family, α = 0.05/K. The `null` row of `results/power.md`
 measures the false-positive rate of `rm_base` scored as its own family; a
@@ -111,7 +172,5 @@ of the Mendelian residual.
 
 Not covered yet ([`status.md`](status.md)):
 
-- simACE's `standard` mating model in layer 3, which needs a
-  re-implementation, not an outside model
 - C transmission (simACE ADR 0025)
 - assortative mating, whose liability law is not 2φA

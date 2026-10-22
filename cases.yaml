@@ -10,10 +10,10 @@
 #   oracle    the oracle script (oracles/<name>.R)
 #   simulate  `simace simulate` flags, without --seed and --output-pedigree
 #   seed0, R  simACE seeds
-#   M         oracle draws per pedigree; M+1 divisible by 10 keeps chi-square bins equal
+#   M         oracle (or null) draws per pedigree; M+1 divisible by 10 keeps chi-square bins equal
 #   law       oracle segregation law: constant (simACE's d = 1/2) | infinitesimal
 #   expect    pass (default) | info (not scored; with id_diff, a known gap in differences.md)
-#   mutation  power study only: a deliberate oracle error (see oracles/liability.R)
+#   mutation  power study only: a deliberate oracle error (power.py MUTATIONS, by oracle)
 
 cases:
   - id: rm_base
@@ -101,4 +101,25 @@ cases:
       G-sim: 5
       mating-model: wright_fisher
     seed0: 4000
+    R: 100
+
+  - id: std_mating
+    layer: 3
+    oracle: mating_law
+    note: simACE standard mating against each documented rule's own exact or Monte Carlo null (structure/mating.py)
+    simulate: *rm_base
+    seed0: 5000
+    R: 100
+    M: 199
+
+  - id: std_structure
+    layer: 3
+    oracle: slim_standard
+    note: simACE standard against slim/standard.slim, a second implementation of simACE's documented rules, not an outside model
+    simulate:
+      <<: *rm_base
+      N: 500
+      G-ped: 5
+      G-sim: 5
+    seed0: 6000
     R: 100

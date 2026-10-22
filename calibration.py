@@ -12,6 +12,10 @@ bins.
 
 Layer 2 (one gene-drop per pedigree). Each seed gives one difference whose
 expectation is 0 under the null, and a one-sample t-test scores the seeds.
+
+Layer 3b (std_mating). A discrete statistic x with an exact null gets the
+randomised PIT F(x - 1) + V * P(x), also exactly U(0, 1); the per-generation
+PITs are combined per pedigree in structure/mating.py and scored like layer 1.
 """
 
 from __future__ import annotations
@@ -43,6 +47,13 @@ def randomised_pit(n_less: np.ndarray, n_equal: np.ndarray, M: int, rng: np.rand
     """Return the randomised PIT of each rank against M oracle draws."""
     v = rng.uniform(size=len(n_less))
     return (n_less + v * (n_equal + 1)) / (M + 1)
+
+
+def randomised_pit_discrete(
+    cdf_below: np.ndarray | float, pmf_at: np.ndarray | float, rng: np.random.Generator
+) -> np.ndarray:
+    """Return the randomised PIT F(x - 1) + V * P(x) of a discrete statistic x under its exact null."""
+    return cdf_below + rng.uniform(size=np.shape(pmf_at)) * pmf_at
 
 
 def calibrate(u: np.ndarray, z: np.ndarray) -> Score:

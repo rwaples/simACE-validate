@@ -29,6 +29,7 @@ from calibration import Score, calibrate, mean_zero, randomised_pit, two_sample
 from genedrop.drop import Genome
 from genedrop.layer2 import seed_stats
 from genedrop.pedsim import msprime_ibd, pedsim_ibd
+from structure.mating import REPLACES_SIMACE, SLIM_MUTATIONS, mating_law, mating_stats
 from structure.stats import run_slim, structure_stats
 
 ROOT = Path(__file__).resolve().parent
@@ -161,31 +162,97 @@ def pedsim_check(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], se
     return [row(case, f"pedsim_ibd_{name}", two_sample(ms[name], ped[name])) for name in ped]
 
 
-def run_structure(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:
-    """Layer 3: structure statistics of simACE pedigrees against SLiM pedigrees, one per seed each."""
+def slim_pedigree(
+    case: dict, script: str, label: str, seed: int, defines: dict[str, float] | None = None
+) -> pl.DataFrame:
+    """Run slim/<script> for one simACE seed at the case's N and G-ped; label keeps its SLiM seed apart."""
     sim = case["simulate"]
+    out = WORK / case["id"] / f"{label}{seed}.tsv"
+    return run_slim(
+        ROOT / "slim" / script, out, sim["N"], sim["G-ped"], case_seed(case["id"], f"{label}{seed}"), defines
+    )
+
+
+def standard_defines(case: dict, mutation: str | None = None) -> dict[str, float]:
+    """Return standard.slim's LAMBDA and PMZ: the case's, or a slim_standard mutation's."""
+    sim = case["simulate"]
+    base = {"LAMBDA": sim["mating-lambda"], "PMZ": sim["p-mztwin"]}
+    return base | (SLIM_MUTATIONS[mutation][1] if mutation else {})
+
+
+def run_structure(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:
+    """Layer 3: structure statistics of simACE pedigrees against SLiM pedigrees, one per seed each.
+
+    slim_wf compares wright_fisher pedigrees with slim/wf.slim. slim_standard
+    compares standard pedigrees with slim/standard.slim and adds the mating
+    statistics; its power mutations (structure/mating.py SLIM_MUTATIONS)
+    change SLiM's LAMBDA or PMZ, and `null` replaces simACE with a second
+    SLiM run.
+    """
+    mutation = case.get("mutation")
+    standard = case["oracle"] == "slim_standard"
+    if mutation and not standard:
+        raise ValueError(f"{case['id']}: {case['oracle']} has no power mutations")
+
+    def stats_of(ped: pl.DataFrame) -> dict[str, float]:
+        return structure_stats(ped) | mating_stats(ped) if standard else structure_stats(ped)
 
     def slim_one(seed: int) -> dict[str, float]:
-        out = WORK / case["id"] / f"slim{seed}.tsv"
-        return structure_stats(run_slim(ROOT / "slim" / "wf.slim", out, sim["N"], sim["G-ped"], seed))
+        if standard:
+            return stats_of(slim_pedigree(case, "standard.slim", "slim", seed, standard_defines(case, mutation)))
+        return stats_of(slim_pedigree(case, "wf.slim", "slim", seed))
 
-    ours = list(pool.map(lambda p: structure_stats(pl.read_parquet(p)), pedigrees))
-    theirs = list(pool.map(slim_one, [case_seed(case["id"], f"slim{s}") for s in seeds]))
+    if mutation == "null":
+        ours = list(
+            pool.map(lambda s: stats_of(slim_pedigree(case, "standard.slim", "null", s, standard_defines(case))), seeds)
+        )
+    else:
+        ours = list(pool.map(lambda p: stats_of(pl.read_parquet(p)), pedigrees))
+    theirs = list(pool.map(slim_one, seeds))
     return [
         row(case, stat, two_sample(np.array([o[stat] for o in ours]), np.array([t[stat] for t in theirs])))
         for stat in ours[0]
     ]
 
 
-RUNNERS = {"liability": run_liability, "genedrop": run_genedrop, "pedsim": pedsim_check, "slim_wf": run_structure}
+def run_mating_law(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:
+    """Layer 3b: score each standard pedigree against the mating rules' own nulls (structure/mating.py)."""
+    sim = case["simulate"]
+    mutation = case.get("mutation")
+
+    def one(i: int) -> dict[str, tuple[float, float]]:
+        if mutation == "null_slim":  # power only: a generator of the documented law in place of simACE
+            ped = slim_pedigree(case, "standard.slim", "slim", seeds[i], standard_defines(case))
+        else:
+            ped = pl.read_parquet(pedigrees[i])
+        rng = np.random.default_rng(case_seed(case["id"], f"law{seeds[i]}"))
+        return mating_law(ped, sim["mating-lambda"], sim["p-mztwin"], case["M"], rng, mutation)
+
+    per_seed = list(pool.map(one, range(len(seeds))))
+    rows = []
+    for stat in dict.fromkeys(k for s in per_seed for k in s):
+        u, z = np.array([s[stat] for s in per_seed if stat in s]).T
+        rows.append(row(case, stat, calibrate(u, z)))
+    return rows
+
+
+RUNNERS = {
+    "liability": run_liability,
+    "genedrop": run_genedrop,
+    "pedsim": pedsim_check,
+    "slim_wf": run_structure,
+    "slim_standard": run_structure,
+    "mating_law": run_mating_law,
+}
 
 
 def run_case(case: dict) -> list[dict]:
     """Simulate the case's pedigrees and score them with its oracle."""
     seed0 = case.get("seed0", 0)
     seeds = list(range(seed0, seed0 + case.get("R", 0)))
+    replaced = case.get("mutation") in REPLACES_SIMACE.get(case["oracle"], ())
     with ThreadPoolExecutor(JOBS) as pool:
-        pedigrees = list(pool.map(lambda s: simulate(case, s), seeds))
+        pedigrees = [] if replaced else list(pool.map(lambda s: simulate(case, s), seeds))
         return RUNNERS[case["oracle"]](case, pool, pedigrees, seeds)
 
 

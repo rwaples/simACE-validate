@@ -55,9 +55,12 @@ def structure_stats(ped: pl.DataFrame) -> dict[str, float]:
     return out
 
 
-def run_slim(slim_script: Path, out: Path, N: int, G: int, seed: int) -> pl.DataFrame:
-    """Run slim/wf.slim and return its pedigree with rows in id order and 0-based links."""
-    cmd = ["slim", "-d", f"N={N}", "-d", f"G={G}", "-d", f"SEED={seed}", "-d", f"OUT='{out}'", str(slim_script)]
+def run_slim(
+    slim_script: Path, out: Path, N: int, G: int, seed: int, defines: dict[str, float] | None = None
+) -> pl.DataFrame:
+    """Run a slim/ script and return its pedigree with rows in id order and 0-based links (and twins, if written)."""
+    extra = [arg for k, v in (defines or {}).items() for arg in ("-d", f"{k}={v}")]
+    cmd = ["slim", "-d", f"N={N}", "-d", f"G={G}", "-d", f"SEED={seed}", *extra, "-d", f"OUT='{out}'", str(slim_script)]
     subprocess.run(cmd, check=True, capture_output=True)
     raw = pl.read_csv(out, separator="\t").sort("generation", "id")
     index = {pid: i for i, pid in enumerate(raw["id"].to_list())}
@@ -65,11 +68,5 @@ def run_slim(slim_script: Path, out: Path, N: int, G: int, seed: int) -> pl.Data
     def remap(col: str) -> np.ndarray:
         return np.array([index.get(p, -1) for p in raw[col].to_list()], dtype=np.int64)
 
-    return pl.DataFrame(
-        {
-            "generation": raw["generation"],
-            "sex": raw["sex"],
-            "mother": remap("mother"),
-            "father": remap("father"),
-        }
-    )
+    links = ("mother", "father", "twin") if "twin" in raw.columns else ("mother", "father")
+    return pl.DataFrame({"generation": raw["generation"], "sex": raw["sex"]} | {col: remap(col) for col in links})
