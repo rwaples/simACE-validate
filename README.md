@@ -45,21 +45,29 @@ Each case simulates R pedigrees with `simace simulate` (seeds fixed in
 [`cases.yaml`](cases.yaml)) and scores them in one of three layers.
 
 **Layer 1: the liability law on simACE's own pedigree** (`oracles/liability.R`).
-The case covers random mating with no C transmission. For each pedigree,
-the oracle draws M = 199 realisations of A, C and E on the same pedigree,
-conditional on recorded generation 0 (whose hidden parents simACE erases):
+The cases cover random mating, with and without vertical C transmission
+(simACE ADR 0025). For each pedigree, the oracle draws M = 199 realisations
+of A, C and E on the same pedigree, conditional on recorded generation 0
+(whose hidden parents simACE erases):
 
 - A is the midparent plus Mendelian sampling, with MZ co-twins sharing it.
-- C is one draw per maternal household.
+- C is b_m times the mother's C plus b_f times the father's, plus one draw
+  per maternal household. That draw's covariance is the configured C minus
+  the realised covariance of the transmitted part. Each generation's C
+  variance is therefore the configured one in expectation, whatever the
+  parents' was. With b_m = b_f = 0, C is the household draw alone.
 - E is independent.
 
 Every statistic is computed by one R function on simACE's values and on
 each draw:
 
-- correlations of A, C, E and liability for MZ, FS, MHS, PHS, PO and 1C
-  pairs
-- Var(A) and Var(liability) per generation
+- correlations of A, C, E and liability for MZ, FS, MHS, PHS,
+  mother–offspring (MO), father–offspring (FO) and 1C pairs
+- Var(A), Var(C) and Var(liability) per generation
 - the cross-trait correlations
+
+The `ctm_analytic` case scores the C-transmission pedigrees against the
+analytic residual covariance instead ([D2](differences.md)).
 
 The randomised rank of simACE's value among the draws is uniform when
 simACE samples from the stated law. A KS test and a chi-square test score
@@ -113,5 +121,4 @@ Not covered yet ([`status.md`](status.md)):
 
 - simACE's `standard` mating model in layer 3, which needs a
   re-implementation, not an outside model
-- C transmission (simACE ADR 0025)
 - assortative mating, whose liability law is not 2φA

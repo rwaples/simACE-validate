@@ -8,12 +8,22 @@
 # code. Writes, per pedigree and statistic, simACE's value and how many draws
 # fall below and equal to it. Shares no code with simACE or pedigree-graph.
 #
-# The law, for generations g >= 1 (no C transmission, no assortment):
+# The law, for generations g >= 1 (random mating):
 #   A_i = (A_mother + A_father) / 2 + w_i,  w_i ~ N(0, d_i * A), corr rA across traits
-#   C_i = c_h for household h (the mother), c_h ~ N(0, C), corr rC
+#   C_i = bm * C_mother + bf * C_father + u_h for household h (the mother),
+#         (u_h1, u_h2) ~ N(0, U), per trait bm, bf (simACE ADR 0025)
 #   E_i ~ N(0, E), corr rE
 # MZ co-twins share w and the household, not E. d_i = 1/2 ("constant") or
-# 1/2 - (F_mother + F_father) / 4 ("infinitesimal").
+# 1/2 - (F_mother + F_father) / 4 ("infinitesimal"). Sigma is the configured C
+# covariance (C1, C2, rC). U is, per generation:
+#   "realised"  Sigma - the covariance of T = bm * C_mother + bf * C_father over
+#               the generation's offspring rows (ADR 0025 section 3)
+#   "analytic"  Sigma - diag(bm) Sigma diag(bm) - diag(bf) Sigma diag(bf)
+# A negative eigenvalue of U is clipped to 0, as ADR 0025 does for sampling
+# noise; the clips are counted. simACE instead stops a replicate whose excess
+# is beyond its tolerance; the oracle has no such branch. Generation 1 is
+# transmitted from recorded generation 0, stored as float32, where simACE used
+# the unrounded values. With bm = bf = 0, C is one draw per household.
 
 here <- dirname(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)))
 # nadiv is installed into .rlib/ by tools/build_nadiv.sh.
@@ -30,8 +40,13 @@ inp <- read_json(args[1], simplifyVector = TRUE)
 p <- inp$params
 M <- inp$M
 mutation <- if (is.null(inp$mutation)) "none" else inp$mutation
-stopifnot(mutation %in% c("none", "null", "seg_045", "rA_plus_01", "c_by_father"))
+stopifnot(mutation %in% c("none", "null", "seg_045", "rA_plus_01", "c_by_father", "bm_plus_01"))
 stopifnot(inp$law %in% c("constant", "infinitesimal"))
+c_law <- if (is.null(inp$c_law)) "realised" else inp$c_law
+stopifnot(c_law %in% c("realised", "analytic"))
+bm <- if (is.null(p$bm)) c(0, 0) else as.numeric(p$bm)
+bf <- if (is.null(p$bf)) c(0, 0) else as.numeric(p$bf)
+if (mutation == "bm_plus_01") bm <- bm + 0.1
 
 # ---- statistics (columnwise over an n x M matrix) ---------------------------
 
@@ -47,13 +62,24 @@ pair_r <- function(X, pr, symmetric) {
   if (symmetric) col_cor(rbind(a, b), rbind(b, a)) else col_cor(a, b)
 }
 
-col_var <- function(X) {
+col_cov <- function(X, Y) {
   X <- sweep(X, 2, colMeans(X))
-  colSums(X * X) / (nrow(X) - 1)
+  Y <- sweep(Y, 2, colMeans(Y))
+  colSums(X * Y) / (nrow(X) - 1)
 }
 
-# Pair correlations that are 1 by construction are not statistics.
-degenerate <- list(MZ = c("A", "C"), FS = "C", MHS = "C")
+col_var <- function(X) col_cov(X, X)
+
+# Pair correlations that are 1 by construction are not statistics. Maternal
+# half-sibs share all of C only while the father transmits none of it.
+degenerate <- function(cl, t) {
+  switch(cl,
+    MZ = c("A", "C"),
+    FS = "C",
+    MHS = if (bf[t] == 0) "C" else character(0),
+    character(0)
+  )
+}
 
 statistics <- function(V, ped, classes) {
   out <- list()
@@ -64,13 +90,14 @@ statistics <- function(V, ped, classes) {
       pr <- classes[[cl]]
       if (nrow(pr) < 10) next
       for (k in names(comps)) {
-        if (k %in% degenerate[[cl]]) next
-        out[[sprintf("r_%s%d_%s", k, t, cl)]] <- pair_r(comps[[k]], pr, symmetric = cl != "PO")
+        if (k %in% degenerate(cl, t)) next
+        out[[sprintf("r_%s%d_%s", k, t, cl)]] <- pair_r(comps[[k]], pr, symmetric = !(cl %in% c("MO", "FO")))
       }
     }
     for (g in sort(unique(ped$generation[ped$generation >= 1]))) {
       rows <- which(ped$generation == g)
       out[[sprintf("var_A%d_g%d", t, g)]] <- col_var(comps$A[rows, , drop = FALSE])
+      out[[sprintf("var_C%d_g%d", t, g)]] <- col_var(comps$C[rows, , drop = FALSE])
       out[[sprintf("var_L%d_g%d", t, g)]] <- col_var(comps$L[rows, , drop = FALSE])
     }
   }
@@ -109,6 +136,39 @@ corr_normals <- function(n, M, r) {
   list(z1, z2)
 }
 
+# U for one generation, one value per draw column: the configured C covariance
+# minus the covariance of the transmitted parts T1, T2 (rows x M).
+residual_c <- function(T1, T2) {
+  S <- if (c_law == "realised") {
+    list(col_var(T1), col_var(T2), col_cov(T1, T2))
+  } else {
+    lapply(list(
+      (bm[1]^2 + bf[1]^2) * p$C1, (bm[2]^2 + bf[2]^2) * p$C2,
+      (bm[1] * bm[2] + bf[1] * bf[2]) * p$rC * sqrt(p$C1 * p$C2)
+    ), rep, ncol(T1))
+  }
+  list(u11 = p$C1 - S[[1]], u22 = p$C2 - S[[2]], u12 = p$rC * sqrt(p$C1 * p$C2) - S[[3]])
+}
+
+# One N(0, U) draw per household and column, with U's negative eigenvalues
+# clipped to 0. Returns the two h x M matrices and the number of columns clipped.
+household_c <- function(U, h) {
+  mid <- (U$u11 + U$u22) / 2
+  rad <- sqrt(((U$u11 - U$u22) / 2)^2 + U$u12^2)
+  theta <- atan2(2 * U$u12, U$u11 - U$u22) / 2
+  s1 <- sqrt(pmax(mid + rad, 0))
+  s2 <- sqrt(pmax(mid - rad, 0))
+  M <- length(mid)
+  z1 <- matrix(rnorm(h * M), h, M)
+  z2 <- matrix(rnorm(h * M), h, M)
+  col <- function(v) rep(v, each = h)
+  list(
+    z1 * col(s1 * cos(theta)) - z2 * col(s2 * sin(theta)),
+    z1 * col(s1 * sin(theta)) + z2 * col(s2 * cos(theta)),
+    clipped = sum(mid - rad < 0)
+  )
+}
+
 oracle_draw <- function(ped, M) {
   n <- nrow(ped)
   sdA <- sqrt(c(p$A1, p$A2))
@@ -124,6 +184,8 @@ oracle_draw <- function(ped, M) {
     V[[k]] <- X
   }
   hh_parent <- if (mutation == "c_by_father") ped$fa else ped$mo
+  transmits <- any(bm > 0 | bf > 0)
+  clipped <- 0
   for (g in sort(unique(ped$generation[!g0]))) {
     rows <- which(ped$generation == g)
     m <- length(rows)
@@ -138,13 +200,24 @@ oracle_draw <- function(ped, M) {
       V[[paste0("A", t)]] <- A
     }
     hh <- match(hh_parent[rows], unique(hh_parent[rows]))
-    cz <- corr_normals(max(hh), M, p$rC)
-    ez <- corr_normals(m, M, p$rE)
-    for (t in 1:2) {
-      V[[paste0("C", t)]][rows, ] <- sdC[t] * cz[[t]][hh, , drop = FALSE]
-      V[[paste0("E", t)]][rows, ] <- sdE[t] * ez[[t]]
+    if (transmits) {
+      tr <- lapply(1:2, function(t) {
+        Ct <- V[[paste0("C", t)]]
+        bm[t] * Ct[ped$mo[rows], , drop = FALSE] + bf[t] * Ct[ped$fa[rows], , drop = FALSE]
+      })
+      u <- household_c(residual_c(tr[[1]], tr[[2]]), max(hh))
+      clipped <- clipped + u$clipped
+      for (t in 1:2) V[[paste0("C", t)]][rows, ] <- tr[[t]] + u[[t]][hh, , drop = FALSE]
+    } else {
+      # The same law with U = Sigma. Kept as its own branch so cases without
+      # transmission draw the same random numbers as before transmission existed.
+      cz <- corr_normals(max(hh), M, p$rC)
+      for (t in 1:2) V[[paste0("C", t)]][rows, ] <- sdC[t] * cz[[t]][hh, , drop = FALSE]
     }
+    ez <- corr_normals(m, M, p$rE)
+    for (t in 1:2) V[[paste0("E", t)]][rows, ] <- sdE[t] * ez[[t]]
   }
+  attr(V, "c_clipped") <- clipped
   V
 }
 
@@ -170,8 +243,10 @@ for (s in seq_along(inp$pedigrees)) {
   classes <- classify(ped)
   # "null" replaces simACE by one more oracle draw: the power study's false-positive check.
   obs_values <- if (mutation == "null") oracle_draw(ped, 1) else observed(ped)
+  obs_clipped <- if (is.null(attr(obs_values, "c_clipped"))) 0 else attr(obs_values, "c_clipped")
   obs <- statistics(obs_values, ped, classes)
-  orc <- statistics(oracle_draw(ped, M), ped, classes)
+  draws <- oracle_draw(ped, M)
+  orc <- statistics(draws, ped, classes)
   rows <- lapply(names(obs), function(k) {
     x <- obs[[k]]
     y <- orc[[k]]
@@ -183,6 +258,7 @@ for (s in seq_along(inp$pedigrees)) {
   result[[s]] <- list(
     seed = inp$seeds[[s]],
     n_pairs = lapply(classes, nrow),
+    c_clipped = attr(draws, "c_clipped") + obs_clipped,
     rows = rows
   )
 }

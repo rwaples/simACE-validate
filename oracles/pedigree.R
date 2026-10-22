@@ -23,8 +23,8 @@ within_pairs <- function(groups) {
 pair_key <- function(pr, n) (pr[, 1] - 1) * n + pr[, 2]
 
 # Relationship classes from the parent links: MZ, FS, MHS, PHS (both members
-# in generation >= 1), PO (parent, child), 1C (children of two full sibs,
-# one parent each). Rows are 1-based; sib pairs are sorted (lo, hi).
+# in generation >= 1), MO (mother, child), FO (father, child), 1C (children of
+# two full sibs, one parent each). Rows are 1-based; sib pairs are sorted (lo, hi).
 classify <- function(ped) {
   n <- nrow(ped)
   nf <- which(ped$generation >= 1)
@@ -38,7 +38,8 @@ classify <- function(ped) {
   fs <- full[!is_mz, , drop = FALSE]
   mhs <- by_mother[!(km %in% kf), , drop = FALSE]
   phs <- by_father[!(kf %in% km), , drop = FALSE]
-  po <- rbind(cbind(ped$mo[nf], nf), cbind(ped$fa[nf], nf))
+  mo <- cbind(ped$mo[nf], nf)
+  fo <- cbind(ped$fa[nf], nf)
 
   # 1C: for each FS pair (a, b), children(a) x children(b).
   child_list <- vector("list", n)
@@ -60,7 +61,7 @@ classify <- function(ped) {
     c1 <- c1[!(pair_key(c1, n) %in% sib_keys) & c1[, 1] != c1[, 2], , drop = FALSE]
     c1 <- unique(c1)
   }
-  list(MZ = mz, FS = fs, MHS = mhs, PHS = phs, PO = po, `1C` = c1)
+  list(MZ = mz, FS = fs, MHS = mhs, PHS = phs, MO = mo, FO = fo, `1C` = c1)
 }
 
 # MZ co-twins are one genetic individual: each row's keeper is itself, or the

@@ -36,7 +36,9 @@ simACE does not share, and a verdict whose false-positive rate is known.
    the selection named in its results.md, so `results/` always holds a full
    run.
 5. **Statistics fixed by construction are not rows.** Examples are MZ A
-   correlation and the C correlation within a household.
+   correlation and the C correlation of full sibs. The maternal half-sib C
+   correlation is fixed only while the father transmits no C (simACE ADR
+   0025); with b_f > 0 it is a row.
 6. **Power is measured, not assumed.** `power.py` runs the harness with
    stated oracle errors (mutations). Its `null` mutation measures the
    family-wise false-positive rate. R and M are chosen from that table.
