@@ -74,13 +74,13 @@ statistics <- function(V, ped, classes) {
       out[[sprintf("var_L%d_g%d", t, g)]] <- col_var(comps$L[rows, , drop = FALSE])
     }
   }
+  L1 <- V$A1 + V$C1 + V$E1
+  L2 <- V$A2 + V$C2 + V$E2
   for (g in sort(unique(ped$generation[ped$generation >= 1]))) {
     rows <- which(ped$generation == g)
     for (k in c("A", "C", "E")) {
       out[[sprintf("r_%s12_g%d", k, g)]] <- col_cor(V[[paste0(k, 1)]][rows, , drop = FALSE], V[[paste0(k, 2)]][rows, , drop = FALSE])
     }
-    L1 <- V$A1 + V$C1 + V$E1
-    L2 <- V$A2 + V$C2 + V$E2
     out[[sprintf("r_L12_g%d", g)]] <- col_cor(L1[rows, , drop = FALSE], L2[rows, , drop = FALSE])
   }
   out
