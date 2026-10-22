@@ -47,13 +47,25 @@ def case_seed(case_id: str, salt: str) -> int:
     return int.from_bytes(hashlib.sha256(f"{case_id}:{salt}".encode()).digest()[:4], "big") >> 1
 
 
+SIMULATED: dict[tuple, Path] = {}  # one run's pedigrees by (seed, flags), shared across cases
+
+
 def simulate(case: dict, seed: int) -> Path:
-    """Run `simace simulate` for one seed and return the pedigree path."""
+    """Run `simace simulate` for one seed and return the pedigree path.
+
+    A pedigree depends only on its seed and flags, so every case of one run
+    with the same seed and flags (in any order) reuses the first one's
+    pedigree; the power study's mutations, which share seeds, do too.
+    """
+    flags = [f"--{k}={v}" for k, v in case["simulate"].items()]
+    key = (seed, *sorted(flags))
+    if key in SIMULATED:
+        return SIMULATED[key]
     out = WORK / case["id"] / f"seed{seed}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
-    flags = [f"--{k}={v}" for k, v in case["simulate"].items()]
     cmd = ["simace", "simulate", f"--seed={seed}", *flags, f"--output-pedigree={out}"]
     subprocess.run(cmd, check=True, capture_output=True, env=os.environ | SINGLE_THREAD)
+    SIMULATED[key] = out
     return out
 
 
@@ -184,6 +196,7 @@ def run_case(case: dict) -> list[dict]:
     """Simulate the case's pedigrees and score them with its oracle."""
     seed0 = case.get("seed0", 0)
     seeds = list(range(seed0, seed0 + case.get("R", 0)))
+    (WORK / case["id"]).mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(JOBS) as pool:
         pedigrees = list(pool.map(lambda s: simulate(case, s), seeds))
         return RUNNERS[case["oracle"]](case, pool, pedigrees, seeds)
