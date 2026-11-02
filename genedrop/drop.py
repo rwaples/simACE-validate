@@ -90,7 +90,8 @@ def pair_spans(ts, nodes: np.ndarray, pairs: np.ndarray) -> np.ndarray:
         raise ValueError("a pair is one genetic individual (an MZ pair); its IBD is not a pair statistic")
     lo, hi = np.broadcast_arrays(np.minimum(a, b), np.maximum(a, b))
     code = lo.astype(np.int64) * ts.num_nodes + hi
-    ibd = ts.ibd_segments(store_pairs=True)
+    # Only the pair members' nodes: over every sample, IBD is stored for O(nodes^2) pairs.
+    ibd = ts.ibd_segments(within=np.unique(np.concatenate([a.ravel(), b.ravel()])), store_pairs=True)
     keys = ibd.pairs.astype(np.int64)
     found = np.isin(code, keys[:, 0] * ts.num_nodes + keys[:, 1])
     span = np.zeros(code.shape)
