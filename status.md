@@ -13,7 +13,7 @@ Status vocabulary:
 
 | Id | Rows | Result status | Status | Next step | Updated |
 |---|---|---|---|---|---|
-| F1 | rm_base `r_E12_g3` | PASS since the C-transmission run (KS p 1.11e-4 at alpha/K 7.03e-5; mean z +0.35). Was FAIL (KS p 1.06e-4 at alpha/K 1.08e-4) | Accepted | A false positive at the pinned seeds, confirmed by an independent Codex review (below). It now passes only because K grew and the PIT jitter changed (below), not because anything was fixed | 2026-10-21 |
+| F1 | rm_base `r_E12_g3` | PASS in the run of 2026-10-22 (KS p 1.11e-04 at alpha/K 5.99e-05; mean z +0.35). Was FAIL (KS p 1.06e-4 at alpha/K 1.08e-4) | Accepted | A false positive at the pinned seeds, confirmed by an independent Codex review (below). It now passes only because K grew and the PIT jitter changed (below), not because anything was fixed | 2026-10-22 |
 | D1 | deep_infinitesimal, every row | INFO (`var_A*_g*` mean z +0.03 to +0.52, largest at g ≥ 7) | Info | Ask simACE whether A/2 should scale with parental F (differences.md D1) | 2026-10-21 |
 | G1 | layer 3b, simACE `standard` mating: std_mating (7 rows), std_structure (55 rows) | PASS (smallest p: std_mating 0.178, std_structure 0.017) | Closed | Checked two ways (README, layer 3b). std_structure is a second implementation of simACE's documented rules, so it cannot catch a flaw in the model itself. Doc gaps settled from simACE's code are reported in rwaples/simACE#78. The power of both cases is in results/power_std_mating.md and power_std_structure.md | 2026-10-22 |
 | D2 | ctm_analytic, every row | INFO (`var_C*_g*`, `var_L*_g*`: mean z −0.20 to +0.12, SD of z 0.82 to 1.19) | Info | none: no gap detectable between the realised and analytic C residual at R = 50 (differences.md D2) | 2026-10-21 |
