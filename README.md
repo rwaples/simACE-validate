@@ -32,7 +32,7 @@ pixi run harness                          # every case, to results/ (builds nadi
 pixi run harness --only rm_base           # a subset; K and so alpha/K shrink; to .work/results/
 pixi run harness --replicate 1            # the same cases on independent seeds; to .work/results/
 pixi run power                            # rejection rates at stated errors (rm_base, ctm_base)
-pixi run power --case std_mating          # any case whose oracle has mutations; to results/power.md
+pixi run power --case std_mating          # any case whose oracle has mutations; to .work/results/power.md
 pixi run lint
 ```
 

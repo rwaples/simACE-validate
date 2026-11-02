@@ -13,7 +13,9 @@ oracle against its own draws: its rejection rate is the family-wise
 false-positive rate of one case scored as its own Bonferroni family
 (alpha/K over that case's p-values only), which Bonferroni holds at or below
 0.05. A full harness run uses a larger K, so its per-case rate is lower.
-Writes results/power.md.
+Writes results/power.md when the table is every mutation of the default
+cases at the default reps (one run, or a merge of all its parts); any other
+selection is partial and goes to .work/results/power.md.
 """
 
 from __future__ import annotations
@@ -24,9 +26,13 @@ from pathlib import Path
 
 from scipy import stats
 
-from run_harness import RESULTS, assign_status, case_seed, load_cases, run_case
+from run_harness import PARTIAL_RESULTS, RESULTS, assign_status, case_seed, load_cases, run_case
 from structure.mating import MUTATIONS as MATING_MUTATIONS
 from structure.mating import SLIM_MUTATIONS
+
+# results/power.md holds every mutation of these cases at these reps; any other table is partial.
+DEFAULT_CASES = "rm_base,ctm_base"
+DEFAULT_REPS = 10
 
 # Mutations by oracle; a case's oracle picks its table.
 MUTATIONS = {
@@ -84,8 +90,19 @@ def effect(part: dict) -> str:
     return MUTATIONS[part["oracle"]][part["mutation"]]
 
 
+def is_full(parts: list[dict]) -> bool:
+    """Return whether parts are the committed table's: every mutation of the default cases at the default reps."""
+    oracles = {p["case"]: p["oracle"] for p in parts}
+    want = sorted((c, m) for c in DEFAULT_CASES.split(",") if c in oracles for m in MUTATIONS[oracles[c]])
+    return (
+        set(oracles) == set(DEFAULT_CASES.split(","))
+        and sorted((p["case"], p["mutation"]) for p in parts) == want
+        and all(p["reps"] == DEFAULT_REPS for p in parts)
+    )
+
+
 def write_table(parts: list[dict], command: str) -> None:
-    """Write results/power.md from one summary per (case, mutation)."""
+    """Write power.md from one summary per (case, mutation): to results/ if is_full, else to .work/results/."""
     md = [
         "# Power",
         "",
@@ -104,9 +121,11 @@ def write_table(parts: list[dict], command: str) -> None:
             f"| {p['case']} | {p['mutation']} | {effect(p)} | {k}/{n} | {interval(k, n)} "
             f"| {sum(p['n_failed']) / n:.1f} | {top} |"
         )
-    RESULTS.mkdir(exist_ok=True)
-    Path(RESULTS / "power.md").write_text("\n".join(md) + "\n")
+    out = RESULTS if is_full(parts) else PARTIAL_RESULTS
+    out.mkdir(parents=True, exist_ok=True)
+    Path(out / "power.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
+    print(f"wrote {out / 'power.md'}")
 
 
 def merge(parts_dir: Path) -> None:
@@ -127,9 +146,9 @@ def merge(parts_dir: Path) -> None:
 def main() -> None:
     """Run the selected mutations on the selected cases, or merge part files into power.md."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--case", default="rm_base,ctm_base", help="comma-separated case ids")
+    parser.add_argument("--case", default=DEFAULT_CASES, help="comma-separated case ids")
     parser.add_argument("--mutation", help="comma-separated mutations (default: every mutation of each case's oracle)")
-    parser.add_argument("--reps", type=int, default=10)
+    parser.add_argument("--reps", type=int, default=DEFAULT_REPS)
     parser.add_argument("--parts", type=Path, help="write one JSON part per (case, mutation) here, not power.md")
     parser.add_argument("--merge", type=Path, help="write power.md from the part files in this directory")
     args = parser.parse_args()
