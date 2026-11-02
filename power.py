@@ -22,10 +22,9 @@ import argparse
 import json
 from pathlib import Path
 
-import yaml
 from scipy import stats
 
-from run_harness import RESULTS, ROOT, assign_status, case_seed, run_case
+from run_harness import RESULTS, assign_status, case_seed, load_cases, run_case
 from structure.mating import MUTATIONS as MATING_MUTATIONS
 from structure.mating import SLIM_MUTATIONS
 
@@ -81,8 +80,8 @@ def run_mutation(case: dict, name: str, reps: int) -> dict:
 
 
 def effect(part: dict) -> str:
-    """Return a part's mutation description; parts written before the oracle key are liability parts."""
-    return MUTATIONS[part.get("oracle", "liability")][part["mutation"]]
+    """Return a part's mutation description."""
+    return MUTATIONS[part["oracle"]][part["mutation"]]
 
 
 def write_table(parts: list[dict], command: str) -> None:
@@ -112,10 +111,16 @@ def write_table(parts: list[dict], command: str) -> None:
 
 def merge(parts_dir: Path) -> None:
     """Assemble results/power.md from the part files of separate --parts runs."""
-    parts = [json.loads(f.read_text()) for f in sorted(parts_dir.glob("*.json"))]
-    if not parts:
+    files = sorted(parts_dir.glob("*.json"))
+    if not files:
         raise SystemExit(f"no part files in {parts_dir}")
-    parts.sort(key=lambda p: (p["case"], list(MUTATIONS[p.get("oracle", "liability")]).index(p["mutation"])))
+    parts = []
+    for f in files:
+        part = json.loads(f.read_text())
+        if part.get("oracle") not in MUTATIONS or part.get("mutation") not in MUTATIONS[part["oracle"]]:
+            raise SystemExit(f"{f}: unknown oracle or mutation {part.get('oracle')}/{part.get('mutation')}; rerun it")
+        parts.append(part)
+    parts.sort(key=lambda p: (p["case"], list(MUTATIONS[p["oracle"]]).index(p["mutation"])))
     write_table(parts, f"power.py --merge {parts_dir.name}, from {len(parts)} part runs")
 
 
@@ -131,14 +136,13 @@ def main() -> None:
     if args.merge:
         merge(args.merge)
         return
-    all_cases = {c["id"]: c for c in yaml.safe_load((ROOT / "cases.yaml").read_text())["cases"]}
-    cases = [all_cases[i] for i in args.case.split(",")]
+    cases = load_cases(parser, args.case)
     info = [c["id"] for c in cases if c.get("expect", "pass") == "info"]
     if info:
         parser.error(f"INFO cases are never scored, so they have no power: {', '.join(info)}")
     none = [f"{c['id']} ({c['oracle']})" for c in cases if c["oracle"] not in MUTATIONS]
     if none:
-        with_some = sorted(i for i, c in all_cases.items() if c.get("oracle") in MUTATIONS)
+        with_some = sorted(c["id"] for c in load_cases(parser) if c.get("oracle") in MUTATIONS)
         parser.error(f"no mutations for {', '.join(none)}; cases with some: {', '.join(with_some)}")
     for case in cases:
         unknown = set(args.mutation.split(",") if args.mutation else ()) - set(MUTATIONS[case["oracle"]])
