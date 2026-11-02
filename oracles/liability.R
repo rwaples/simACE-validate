@@ -152,6 +152,9 @@ residual_c <- function(T1, T2) {
 
 # One N(0, U) draw per household and column, with U's negative eigenvalues
 # clipped to 0. Returns the two h x M matrices and the number of columns clipped.
+# U's entries are differences of terms of order C, so a column counts as clipped
+# only when its eigenvalue is below -sqrt(eps) * max(C1, C2): roundoff in an
+# exactly singular U (bm^2 + bf^2 = 1) is not a clip.
 household_c <- function(U, h) {
   mid <- (U$u11 + U$u22) / 2
   rad <- sqrt(((U$u11 - U$u22) / 2)^2 + U$u12^2)
@@ -165,7 +168,7 @@ household_c <- function(U, h) {
   list(
     z1 * col(s1 * cos(theta)) - z2 * col(s2 * sin(theta)),
     z1 * col(s1 * sin(theta)) + z2 * col(s2 * cos(theta)),
-    clipped = sum(mid - rad < 0)
+    clipped = sum(mid - rad < -sqrt(.Machine$double.eps) * max(p$C1, p$C2))
   )
 }
 
