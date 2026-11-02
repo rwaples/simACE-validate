@@ -122,7 +122,10 @@ def graft_ancestry(
     t0 = time.perf_counter()
     # Founder nodes in ts_drop are population 0; matched ts_anc samples are p2.
     # check_shared_equality=False accepts the population mismatch.
-    tables_drop.union(tables_anc, node_mapping, check_shared_equality=False)
+    # all_mutations=True: union copies only mutations on new nodes by default,
+    # which would drop every mutation on a founder node's own branch, though
+    # the founder's descendants inherit it.
+    tables_drop.union(tables_anc, node_mapping, check_shared_equality=False, all_mutations=True)
     log.info(
         "    graft.union: %.2fs (drop nodes=%d edges=%d, anc nodes=%d edges=%d sites=%d)",
         time.perf_counter() - t0,
