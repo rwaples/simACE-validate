@@ -13,7 +13,9 @@ oracle against its own draws: its rejection rate is the family-wise
 false-positive rate of one case scored as its own Bonferroni family
 (alpha/K over that case's p-values only), which Bonferroni holds at or below
 0.05. A full harness run uses a larger K, so its per-case rate is lower.
-Writes results/power.md.
+Writes results/power.md when the table is every mutation of the default
+cases at the default reps (one run, or a merge of all its parts); any other
+selection is partial and goes to .work/results/power.md.
 """
 
 from __future__ import annotations
@@ -22,12 +24,15 @@ import argparse
 import json
 from pathlib import Path
 
-import yaml
 from scipy import stats
 
-from run_harness import RESULTS, ROOT, assign_status, case_seed, run_case
+from run_harness import PARTIAL_RESULTS, RESULTS, assign_status, case_seed, load_cases, run_case
 from structure.mating import MUTATIONS as MATING_MUTATIONS
 from structure.mating import SLIM_MUTATIONS
+
+# results/power.md holds every mutation of these cases at these reps; any other table is partial.
+DEFAULT_CASES = "rm_base,ctm_base"
+DEFAULT_REPS = 10
 
 # Mutations by oracle; a case's oracle picks its table.
 MUTATIONS = {
@@ -81,12 +86,23 @@ def run_mutation(case: dict, name: str, reps: int) -> dict:
 
 
 def effect(part: dict) -> str:
-    """Return a part's mutation description; parts written before the oracle key are liability parts."""
-    return MUTATIONS[part.get("oracle", "liability")][part["mutation"]]
+    """Return a part's mutation description."""
+    return MUTATIONS[part["oracle"]][part["mutation"]]
+
+
+def is_full(parts: list[dict]) -> bool:
+    """Return whether parts are the committed table's: every mutation of the default cases at the default reps."""
+    oracles = {p["case"]: p["oracle"] for p in parts}
+    want = sorted((c, m) for c in DEFAULT_CASES.split(",") if c in oracles for m in MUTATIONS[oracles[c]])
+    return (
+        set(oracles) == set(DEFAULT_CASES.split(","))
+        and sorted((p["case"], p["mutation"]) for p in parts) == want
+        and all(p["reps"] == DEFAULT_REPS for p in parts)
+    )
 
 
 def write_table(parts: list[dict], command: str) -> None:
-    """Write results/power.md from one summary per (case, mutation)."""
+    """Write power.md from one summary per (case, mutation): to results/ if is_full, else to .work/results/."""
     md = [
         "# Power",
         "",
@@ -105,40 +121,47 @@ def write_table(parts: list[dict], command: str) -> None:
             f"| {p['case']} | {p['mutation']} | {effect(p)} | {k}/{n} | {interval(k, n)} "
             f"| {sum(p['n_failed']) / n:.1f} | {top} |"
         )
-    RESULTS.mkdir(exist_ok=True)
-    Path(RESULTS / "power.md").write_text("\n".join(md) + "\n")
+    out = RESULTS if is_full(parts) else PARTIAL_RESULTS
+    out.mkdir(parents=True, exist_ok=True)
+    Path(out / "power.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
+    print(f"wrote {out / 'power.md'}")
 
 
 def merge(parts_dir: Path) -> None:
     """Assemble results/power.md from the part files of separate --parts runs."""
-    parts = [json.loads(f.read_text()) for f in sorted(parts_dir.glob("*.json"))]
-    if not parts:
+    files = sorted(parts_dir.glob("*.json"))
+    if not files:
         raise SystemExit(f"no part files in {parts_dir}")
-    parts.sort(key=lambda p: (p["case"], list(MUTATIONS[p.get("oracle", "liability")]).index(p["mutation"])))
+    parts = []
+    for f in files:
+        part = json.loads(f.read_text())
+        if part.get("oracle") not in MUTATIONS or part.get("mutation") not in MUTATIONS[part["oracle"]]:
+            raise SystemExit(f"{f}: unknown oracle or mutation {part.get('oracle')}/{part.get('mutation')}; rerun it")
+        parts.append(part)
+    parts.sort(key=lambda p: (p["case"], list(MUTATIONS[p["oracle"]]).index(p["mutation"])))
     write_table(parts, f"power.py --merge {parts_dir.name}, from {len(parts)} part runs")
 
 
 def main() -> None:
     """Run the selected mutations on the selected cases, or merge part files into power.md."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--case", default="rm_base,ctm_base", help="comma-separated case ids")
+    parser.add_argument("--case", default=DEFAULT_CASES, help="comma-separated case ids")
     parser.add_argument("--mutation", help="comma-separated mutations (default: every mutation of each case's oracle)")
-    parser.add_argument("--reps", type=int, default=10)
+    parser.add_argument("--reps", type=int, default=DEFAULT_REPS)
     parser.add_argument("--parts", type=Path, help="write one JSON part per (case, mutation) here, not power.md")
     parser.add_argument("--merge", type=Path, help="write power.md from the part files in this directory")
     args = parser.parse_args()
     if args.merge:
         merge(args.merge)
         return
-    all_cases = {c["id"]: c for c in yaml.safe_load((ROOT / "cases.yaml").read_text())["cases"]}
-    cases = [all_cases[i] for i in args.case.split(",")]
+    cases = load_cases(parser, args.case)
     info = [c["id"] for c in cases if c.get("expect", "pass") == "info"]
     if info:
         parser.error(f"INFO cases are never scored, so they have no power: {', '.join(info)}")
     none = [f"{c['id']} ({c['oracle']})" for c in cases if c["oracle"] not in MUTATIONS]
     if none:
-        with_some = sorted(i for i, c in all_cases.items() if c.get("oracle") in MUTATIONS)
+        with_some = sorted(c["id"] for c in load_cases(parser) if c.get("oracle") in MUTATIONS)
         parser.error(f"no mutations for {', '.join(none)}; cases with some: {', '.join(with_some)}")
     for case in cases:
         unknown = set(args.mutation.split(",") if args.mutation else ()) - set(MUTATIONS[case["oracle"]])

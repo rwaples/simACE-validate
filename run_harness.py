@@ -186,8 +186,11 @@ def pedsim_check(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], se
     pedsim = pool.submit(pedsim_ibd, PEDSIM, work, genome, copies, case_seed(case["id"], "pedsim"))
     try:  # at most JOBS chromosomes in flight
         ms = msprime_ibd(genome, copies, case_seed(case["id"], "msprime"), partial(pool.map, buffersize=JOBS))
-    finally:  # a ped-sim failure is reported even when msprime also failed
-        ped = pedsim.result()
+    except Exception as ms_exc:
+        if (ped_exc := pedsim.exception()) is None:
+            raise
+        raise ExceptionGroup("msprime and ped-sim both failed", [ms_exc, ped_exc]) from None
+    ped = pedsim.result()
     return [row(case, f"pedsim_ibd_{name}", two_sample(ms[name], ped[name])) for name in ped]
 
 
@@ -364,6 +367,38 @@ def write_results(rows: list[dict], threshold: float, errors: list[tuple[dict, s
     print(f"Totals: {total_line}; written to {out.relative_to(ROOT)}/")
 
 
+def load_cases(parser: argparse.ArgumentParser, ids: str | None = None) -> list[dict]:
+    """Return cases.yaml's cases, or those of the comma-separated ids; an unknown id is a usage error."""
+    cases = yaml.safe_load((ROOT / "cases.yaml").read_text())["cases"]
+    if ids is None:
+        return cases
+    wanted = set(ids.split(","))
+    unknown = wanted - {c["id"] for c in cases}
+    if unknown:
+        parser.error(f"unknown case ids: {', '.join(sorted(unknown))}; cases: {', '.join(c['id'] for c in cases)}")
+    return [c for c in cases if c["id"] in wanted]
+
+
+def failure(exc: BaseException) -> str:
+    """Return the ERROR row's message for exc; a group names each of its failures."""
+    if isinstance(exc, BaseExceptionGroup):
+        return "; ".join(failure(e) for e in exc.exceptions)
+    if isinstance(exc, subprocess.CalledProcessError):
+        return f"{' '.join(map(str, exc.cmd[:2]))} exited {exc.returncode}"
+    return f"{type(exc).__name__}: {exc}"
+
+
+def print_failure(exc: BaseException) -> None:
+    """Print a failed command's stderr tail, or else the traceback, for exc and each failure in a group."""
+    if isinstance(exc, BaseExceptionGroup):
+        for e in exc.exceptions:
+            print_failure(e)
+    elif isinstance(exc, subprocess.CalledProcessError):
+        print(exc.stderr.decode(errors="replace")[-2000:], file=sys.stderr)
+    else:
+        traceback.print_exception(exc)
+
+
 def main() -> int:
     """Run the selected cases."""
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -372,13 +407,7 @@ def main() -> int:
         "--replicate", type=int, default=0, help="shift every seed (simACE and oracle) to an independent replicate run"
     )
     args = parser.parse_args()
-    cases = yaml.safe_load((ROOT / "cases.yaml").read_text())["cases"]
-    if args.only:
-        wanted = set(args.only.split(","))
-        unknown = wanted - {c["id"] for c in cases}
-        if unknown:
-            parser.error(f"unknown case ids: {', '.join(sorted(unknown))}")
-        cases = [c for c in cases if c["id"] in wanted]
+    cases = load_cases(parser, args.only)
     if args.replicate:
         # The new id also moves every seed derived by case_seed (oracle, gene-drop, ped-sim, SLiM).
         shift = 100_000 * args.replicate
@@ -397,12 +426,9 @@ def main() -> int:
         print(f"{case['id']}: layer {case['layer']}", flush=True)
         try:
             rows += run_case(case)
-        except subprocess.CalledProcessError as exc:
-            errors.append((case, f"{' '.join(map(str, exc.cmd[:2]))} exited {exc.returncode}"))
-            print(exc.stderr.decode(errors="replace")[-2000:], file=sys.stderr)
         except Exception as exc:  # one broken case is an ERROR row, not a lost run
-            errors.append((case, f"{type(exc).__name__}: {exc}"))
-            traceback.print_exc()
+            errors.append((case, failure(exc)))
+            print_failure(exc)
     threshold = assign_status(rows)
     write_results(rows, threshold, errors, selection)
     return 1 if errors or any(r["status"] == "FAIL" for r in rows) else 0
