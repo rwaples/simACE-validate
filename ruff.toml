@@ -13,6 +13,9 @@ ignore = [
     "C408",   # unnecessary dict() call — dict() often reads better for keyword-style mappings
 ]
 
+[lint.per-file-ignores]
+"tskit_pipeline/tests/**" = ["D"]  # test docstrings, as in simACE
+
 [lint.flake8-type-checking]
 strict = true
 

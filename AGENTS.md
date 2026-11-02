@@ -4,6 +4,10 @@ Checks what simACE simulates against code simACE does not share: an R
 liability oracle, msprime gene-drop, ped-sim and SLiM. Terms are in
 GLOSSARY.md, decisions in docs/adr/.
 
+tskit_pipeline/ is simACE's former tskit/tstrait gene-drop pipeline, not an
+oracle: it shares simACE's pedigree and feeds A1 back. Keep its code out of
+the oracles; `pixi run test-pipeline` tests it.
+
 - Everything runs through pixi: `pixi run harness`, `pixi run power`,
   `pixi run lint`. `pixi.lock` changes only on purpose.
 - Checks are calibrations, not tolerances (ADR 0001). Never raise α,

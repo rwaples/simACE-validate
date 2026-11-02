@@ -171,6 +171,18 @@ Bonferroni family, α = 0.05/K. The `null` row of `results/power.md`
 measures the false-positive rate of `rm_base` scored as its own family; a
 full run's K is larger, so its threshold is stricter.
 
+## The tskit gene-drop pipeline
+
+[`tskit_pipeline/`](tskit_pipeline/README.md) is simACE's former
+`scripts/gene_drop/`: it drops SimHumanity founder haplotypes through a
+simACE pedigree with msprime, assigns causal effects with tstrait, and
+replaces A1 with the rescaled genetic value. It is not an oracle, since it
+feeds its pedigree back to simACE, and `pixi run harness` does not run it.
+
+```bash
+pixi run test-pipeline                    # its unit tests
+```
+
 ## Scope
 
 [`simace validate`](https://github.com/rwaples/simACE) already tests

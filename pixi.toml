@@ -1,5 +1,6 @@
 # simACE-validate: checks what simACE simulates against code it does not
-# share (an R liability oracle, msprime gene-drop, ped-sim, SLiM).
+# share (an R liability oracle, msprime gene-drop, ped-sim, SLiM), and
+# hosts simACE's former tskit/tstrait gene-drop pipeline (tskit_pipeline/).
 #
 # simACE is pinned to the v0.2.0 family tag. To check a local checkout
 # instead (do NOT commit):
@@ -32,6 +33,10 @@ r-matrix = "*"  # nadiv (tools/build_nadiv.sh) depends on it
 # gene-drop
 msprime = "1.4.*"
 tskit = "1.0.*"
+# tskit_pipeline/ (simACE's former scripts/gene_drop) and its tests
+tstrait = "0.2.*"
+pandas = "3.0.*"
+pytest = "9.1.*"
 # ped-sim and nadiv (built from source by tools/build_*.sh) and SLiM
 cxx-compiler = "*"
 make = "*"
@@ -48,4 +53,5 @@ build-nadiv = { cmd = "bash tools/build_nadiv.sh", description = "Install the pi
 build-pedsim = { cmd = "bash tools/build_pedsim.sh", description = "Build the pinned ped-sim tag into .pedsim/" }
 harness = { cmd = "python run_harness.py", depends-on = ["build-nadiv", "build-pedsim"], description = "Run every case and write results/" }
 power = { cmd = "python power.py", depends-on = ["build-nadiv"], description = "Rejection rates at stated oracle errors; writes results/power.md" }
+test-pipeline = { cmd = "pytest tskit_pipeline/tests -q", description = "Tests of the tskit/tstrait gene-drop pipeline" }
 lint = { cmd = "ruff check && ruff format --check", description = "Lint and format check" }
