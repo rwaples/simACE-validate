@@ -31,8 +31,25 @@ A grouping of Cases by what they test:
 1. the liability law on a fixed pedigree
 2. gene-drop through a fixed pedigree
 3. pedigree structure
+4. simACE's downstream stages on a gene-drop A (simACE-ts)
 
 It is a reporting group, not a Bonferroni family (ADR 0001).
+
+**Realised truth**:
+The expectation of a Statistic given the values the Oracle supplied on the
+very rows simACE used, with the rest drawn from simACE's stated law. In
+simACE-ts, a liability correlation's expectation is computed from the
+realised gene-drop A and the configured C and E, not from 2φ.
+_Avoid_: nominal truth (for this)
+
+**Part**:
+One seed's result for a Case that runs off the laptop: its Statistics and
+the provenance they were computed with. The harness scores a Case's Parts
+as it scores Statistics it computed itself.
+
+**Pilot seed**:
+A seed run only to measure a Case's cost before its R is fixed. Its seeds
+come from a separate range and are never scored.
 
 **Mutation**:
 A deliberate error in an Oracle's law, used only by the power study.

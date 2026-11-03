@@ -1,6 +1,6 @@
 # ADR 0001: Checks are conditional calibrations, scored in one Bonferroni family
 
-**Status:** accepted
+**Status:** accepted; §2, §4 and §6 amended for layer 4 by ADR 0002
 **Date:** 2026-10-21
 
 ## Context
