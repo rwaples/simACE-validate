@@ -1,10 +1,11 @@
 # Relationship-class pairs and their 2 * phi, for the gene-drop layer.
 #
-#   Rscript oracles/pairs.R <pedigree.parquet> <pairs.parquet>
+#   Rscript oracles/pairs.R <pedigree.parquet> <pairs.parquet> <F.parquet>
 #
 # Writes one row per pair (0-based rows i, j), its class, and 2 * phi from
 # kinship2 (which returns phi), with recorded generation 0 unrelated. MZ
 # co-twins are one genetic individual for gene-drop, so MZ pairs are left out.
+# Also writes each pedigree row's inbreeding coefficient F = 2 * phi_ii - 1.
 
 suppressPackageStartupMessages({
   library(arrow)
@@ -38,3 +39,4 @@ out <- do.call(rbind, lapply(names(classes), function(cl) {
   data.frame(i = pr[, 1] - 1L, j = pr[, 2] - 1L, class = cl, phi2 = 2 * K[pr])
 }))
 write_parquet(out, args[2])
+write_parquet(data.frame(F = 2 * diag(K) - 1), args[3])

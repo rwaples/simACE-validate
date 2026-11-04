@@ -145,16 +145,18 @@ def run_liability(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], s
 def genedrop_seed(case: dict, seed: int, pedigree: Path) -> dict[str, float]:
     """Layer 2, one seed: classify pairs and their kinship in R, then gene-drop."""
     pairs_path = pedigree.with_suffix(".pairs.parquet")
+    f_path = pedigree.with_suffix(".F.parquet")
     subprocess.run(
-        ["Rscript", str(ROOT / "oracles" / "pairs.R"), str(pedigree), str(pairs_path)],
+        ["Rscript", str(ROOT / "oracles" / "pairs.R"), str(pedigree), str(pairs_path), str(f_path)],
         check=True,
         capture_output=True,
         env=os.environ | SINGLE_THREAD,
     )
     genome = Genome(**case["genome"])
     A = case["simulate"]["A1"]
+    F = pl.read_parquet(f_path)["F"].to_numpy()
     return seed_stats(
-        pl.read_parquet(pedigree), pl.read_parquet(pairs_path), genome, A, case_seed(case["id"], str(seed))
+        pl.read_parquet(pedigree), pl.read_parquet(pairs_path), F, genome, A, case_seed(case["id"], str(seed))
     )
 
 
@@ -164,17 +166,19 @@ def present(per_seed: list[dict], stat: str) -> list:
 
 
 def run_genedrop(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:
-    """Layer 2: one gene-drop per pedigree; t-test each difference over the seeds that have it."""
+    """Layer 2: one gene-drop per pedigree; t-test each difference over the seeds that have it (d1_ rows INFO)."""
     per_seed = list(pool.map(lambda sp: genedrop_seed(case, *sp), zip(seeds, pedigrees, strict=True)))
     rows = []
     for stat in dict.fromkeys(k for s in per_seed for k in s):
         values = np.array(present(per_seed, stat))
+        if not len(values):  # e.g. d1_ rows of generations with no inbred parents
+            continue
         if stat.startswith("spread_"):
             sim, gd = values.T
             ratio = float(np.std(sim, ddof=1) / np.std(gd, ddof=1))
             rows.append(row(case, stat, Score(n=len(sim), center=ratio, effect=np.nan, p_values={}), info=True))
         else:
-            rows.append(row(case, stat, mean_zero(values)))
+            rows.append(row(case, stat, mean_zero(values), info=stat.startswith("d1_")))
     return rows
 
 
@@ -352,7 +356,7 @@ def write_results(rows: list[dict], threshold: float, errors: list[tuple[dict, s
     ]
     for r in rows:
         c, case = r["score"], r["case_def"]
-        did = case.get("id_diff", "")
+        did = case.get("id_diff", "") or ("D1" if r["stat"].removeprefix("spread_").startswith("d1_") else "")
         pv = ", ".join(f"{k} {v:.3g}" for k, v in c.p_values.items())
         vals = [r["case"], r["layer"], r["stat"], c.n, f"{c.center:.4g}", f"{c.effect:+.2f}", pv]
         lines.append("\t".join(map(str, [*vals, f"{threshold:.3g}", r["status"], did])))

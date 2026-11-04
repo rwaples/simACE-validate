@@ -26,8 +26,15 @@ The F used is the recorded pedigree's. Recorded generation 0 hides one
 generation of sibships (ADR 0001 §3), so that F is a lower bound, and the
 gap is understated.
 
-Open question for simACE: whether A/2 is the intended model or should
-scale with parental F. Tracked in status.md.
+Layer 2 gives independent evidence. Case `genedrop_base` reports the
+innovation variance of children of inbred recorded parents, simACE minus
+gene-drop, as INFO rows `d1_innov_var_g*`; its scored `innov_var_g*` rows
+use only children of non-inbred parents (rwaples/simACE#77).
+
+simACE answered the open question in ADR 0033 (rwaples/simACE#76): A/2
+stays the default (`pedigree.inbreeding.mode: "off"`), and the `approx`
+and `exact` modes scale the residual by √(1 − F̄). Scoring exact mode
+waits for the simace release that ships it. Tracked in status.md.
 
 ## D2. The C-transmission residual: realised or analytic
 

@@ -90,7 +90,10 @@ checks two things:
   the pedigree they claim.
 - The Mendelian-sampling term of simACE's A matches that of a finite-locus
   genetic value from the dropped genomes, in variance per generation and
-  sib correlations, in mean only.
+  sib correlations, in mean only. The variance rows score only children
+  whose recorded parents both have F = 0, where the two laws agree;
+  children of inbred parents are INFO rows `d1_innov_var_g*`
+  ([D1](differences.md)).
 
 The `pedsim_ibd` case checks the engine itself: msprime against ped-sim
 IBD fractions on 2000 copies each of FS, HS and 1C families.
