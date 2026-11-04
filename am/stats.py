@@ -83,6 +83,78 @@ def generation_stats(
     }
 
 
+def cross_trait_stats(
+    v: list[tuple[np.ndarray, np.ndarray]],
+    pv: list[tuple[np.ndarray, np.ndarray]],
+    mother: np.ndarray,
+    father: np.ndarray,
+) -> dict[str, float]:
+    """Cross-trait statistics of one offspring generation, for two-trait AM.
+
+    v, pv: [(A, L) of trait 1, (A, L) of trait 2] for the offspring and for
+        their parents' generation; mother, father index into pv's rows.
+    Mate correlations are over distinct couples, mother's trait first: r_mate_L12
+    pairs the mother's L1 with the father's L2. r_w_* is the within-person
+    cross-trait correlation in the offspring generation.
+    """
+    mother = np.asarray(mother, np.int64)
+    father = np.asarray(father, np.int64)
+    (a1, y1), (a2, y2) = ([np.asarray(x, np.float64) for x in t] for t in v)
+    (pa1, py1), (pa2, py2) = ([np.asarray(x, np.float64) for x in t] for t in pv)
+    key = mother * (len(py1) + 1) + father
+    _, first = np.unique(key, return_index=True)
+    cm, cf = mother[first], father[first]
+    return {
+        "r_w_A": _corr(a1, a2),
+        "r_w_L": _corr(y1, y2),
+        "r_w_L_parents": _corr(py1, py2),
+        "r_mate_L12": _corr(py1[cm], py2[cf]),
+        "r_mate_L21": _corr(py2[cm], py1[cf]),
+        "r_mate_A12": _corr(pa1[cm], pa2[cf]),
+        "r_mate_A21": _corr(pa2[cm], pa1[cf]),
+    }
+
+
+def bulmer2(a0: float, e: float, r: float, g: int) -> list[dict[str, float]]:
+    """Two-trait Bulmer recursion: both traits A = a0, E = e, independent, every mate correlation r.
+
+    Infinitesimal model, no inbreeding, C = 0. Per generation, with Sigma_A the
+    2x2 A covariance and Sigma_y = Sigma_A + e*I, mates' liabilities have
+    cross-covariance R_y = D R D (D the liability SDs, R = r * ones), and
+    mates' A cross-covariance is C = Sigma_A Sigma_y^-1 R_y Sigma_y^-1 Sigma_A.
+    Offspring: Sigma_A' = Sigma_A / 2 + (C + C') / 4 + (a0 / 2) I.
+    Element t holds the moments after t matings, plus the mate moments of the
+    parents of generation t (t >= 1).
+    """
+    sa = np.eye(2) * a0
+    out = [{"var_A": a0, "var_A_t2": a0, "r_w_A": 0.0, "r_w_L": 0.0}]
+    for _ in range(g):
+        sy = sa + e * np.eye(2)
+        d = np.sqrt(np.diag(sy))
+        ry = np.outer(d, d) * r
+        k = sa @ np.linalg.solve(sy, np.eye(2))
+        c = k @ ry @ k.T
+        sda = np.sqrt(np.diag(sa))
+        mate = {
+            "r_mate_A": c[0, 0] / sa[0, 0],
+            "r_mate_A12": c[0, 1] / (sda[0] * sda[1]),
+            "r_w_L_parents": sy[0, 1] / (d[0] * d[1]),
+        }
+        sa = sa / 2 + (c + c.T) / 4 + np.eye(2) * a0 / 2
+        sy = sa + e * np.eye(2)
+        out.append(
+            {
+                "var_A": sa[0, 0],
+                "var_A_t2": sa[1, 1],
+                "var_L": sy[0, 0],
+                "r_w_A": sa[0, 1] / np.sqrt(sa[0, 0] * sa[1, 1]),
+                "r_w_L": sy[0, 1] / np.sqrt(sy[0, 0] * sy[1, 1]),
+                **mate,
+            }
+        )
+    return out
+
+
 def bulmer(v0: float, s: float, r: float, g: int) -> list[float]:
     """Var(A) after each of g rounds of mating on liability with mate correlation r.
 

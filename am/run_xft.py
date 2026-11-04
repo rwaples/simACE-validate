@@ -9,7 +9,11 @@ relative SD sqrt(2/M)). Mating is LinearAssortativeMatingRegime on y with
 correlation r (r = 0 is random pairing by the same code path), one mate per
 individual and two offspring per couple, so N is constant.
 
-Usage: run_xft.py SEED N M G R
+With TRAITS = 2, two independent traits (independent effects and noise) each
+have h2 = 0.5, and the regime mates on both phenotypes, which pairs on their
+standardised sum: every mate correlation (y1-y1, y2-y2, y1-y2, y2-y1) is r.
+
+Usage: run_xft.py SEED N M G R [TRAITS]
 Generation g in the output is the offspring of g rounds of mating (g = 0 are
 the founders).
 """
@@ -28,10 +32,12 @@ import xftsim as xft  # noqa: E402
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numba as nb  # noqa: E402
-from stats import generation_stats  # noqa: E402
+from stats import cross_trait_stats, generation_stats  # noqa: E402
 
 seed, n, m, g = (int(a) for a in sys.argv[1:5])
 r = float(sys.argv[5])
+traits = int(sys.argv[6]) if len(sys.argv) > 6 else 1
+names = ["y"] if traits == 1 else ["y1", "y2"]
 h2 = 0.5
 np.random.seed(seed)
 
@@ -58,23 +64,23 @@ xft.config.print_durations_threshold = np.inf
 t0 = time.perf_counter()
 haps = xft.founders.founder_haplotypes_uniform_AFs(n=n, m=m)
 vind = haps.xft.get_variant_indexer()
-beta = np.random.normal(size=(m, 1))
-beta *= np.sqrt(h2 / np.mean(beta**2))
-cind = xft.index.ComponentIndex.from_product(["y"], ["additiveGenetic"])
+beta = np.random.normal(size=(m, traits))
+beta *= np.sqrt(h2 / np.mean(beta**2, axis=0))
+cind = xft.index.ComponentIndex.from_product(names, ["additiveGenetic"])
 effects = xft.effect.AdditiveEffects(
     beta=beta, variant_indexer=vind, component_indexer=cind, scaled=True, standardized=True
 )
-iind, _ = xft.arch.SumTransformation.construct_cindexes(["y"])
+iind, _ = xft.arch.SumTransformation.construct_cindexes(names)
 arch = xft.arch.Architecture(
     components=[
         xft.arch.AdditiveGeneticComponent(effects),
-        xft.arch.AdditiveNoiseComponent([1 - h2], phenotype_name=["y"]),
+        xft.arch.AdditiveNoiseComponent([1 - h2] * traits, phenotype_name=names),
         xft.arch.SumAllTransformation(iind),
     ]
 )
 rmap = xft.reproduce.RecombinationMap.constant_map_from_haplotypes(haps, p=0.5)
 mating = xft.mate.LinearAssortativeMatingRegime(
-    component_index=xft.index.ComponentIndex.from_product(["y"], ["phenotype"]),
+    component_index=xft.index.ComponentIndex.from_product(names, ["phenotype"]),
     r=r,
     mates_per_female=1,
     offspring_per_pair=2,
@@ -91,26 +97,42 @@ sim.run(g + 1)  # generations 0..g
 
 
 def frame(gen):
-    """Iids, A and y of generation gen, in xftsim's sample order."""
+    """Iids, then A and y of each trait, of generation gen, in xftsim's sample order."""
     ph = sim.phenotype_store[gen]
-    comp = list(ph.component_name.values)
-    a = np.asarray(ph.data[:, comp.index("additiveGenetic")])
-    y = np.asarray(ph.data[:, comp.index("phenotype")])
-    return np.asarray(ph.iid.values), a, y
+    cname = list(ph.component_name.values)
+    pname = list(ph.phenotype_name.values)
+
+    def col(p, c):
+        return np.asarray(ph.data[:, next(i for i in range(len(cname)) if cname[i] == c and pname[i] == p)])
+
+    return np.asarray(ph.iid.values), [(col(p, "additiveGenetic"), col(p, "phenotype")) for p in names]
+
+
+def suffixed(d, t):
+    """Trait 1 keys unchanged; trait 2 keys get `_t2`."""
+    return d if t == 0 else {f"{k}_t{t + 1}": v for k, v in d.items()}
 
 
 rows = []
-iid0, a0, y0 = frame(0)
-rows.append({"generation": 0, "var_A": float(np.var(a0, ddof=1)), "var_L": float(np.var(y0, ddof=1))})
+_, v0 = frame(0)
+row0 = {"generation": 0}
+for t, (a0, y0) in enumerate(v0):
+    row0.update(suffixed({"var_A": float(np.var(a0, ddof=1)), "var_L": float(np.var(y0, ddof=1))}, t))
+rows.append(row0)
 for gen in range(1, g + 1):
-    piid, pa, py = frame(gen - 1)
-    iid, a, y = frame(gen)
+    piid, pv = frame(gen - 1)
+    iid, v = frame(gen)
     rep = sim.mating_store[gen - 1].get_reproduction_frame()
     pos = {k: i for i, k in enumerate(piid)}
     by_iid = rep.set_index("iid")
     mother = np.array([pos[k] for k in by_iid.loc[iid, "maternal_iid"]])
     father = np.array([pos[k] for k in by_iid.loc[iid, "paternal_iid"]])
-    rows.append({"generation": gen, **generation_stats(a, y, mother, father, pa, py)})
+    row = {"generation": gen}
+    for t in range(traits):
+        row.update(suffixed(generation_stats(v[t][0], v[t][1], mother, father, pv[t][0], pv[t][1]), t))
+    if traits == 2:
+        row.update(cross_trait_stats(v, pv, mother, father))
+    rows.append(row)
 
 print(
     json.dumps(
@@ -122,6 +144,7 @@ print(
             "m": m,
             "g": g,
             "r": r,
+            "traits": traits,
             "h2": h2,
             "wall_s": round(time.perf_counter() - t0, 2),
             "maxrss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),

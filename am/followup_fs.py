@@ -27,7 +27,8 @@ for seed in range(first, first + n_seeds):
     p = work / f"fs_{seed}.parquet"
     cmd = ["simace", "simulate", "-q", "--seed", str(seed), "--N", str(N), "--G-ped", str(G), "--G-sim", str(G)]
     cmd += ["--mating-lambda", "0.5", "--p-mztwin", "0", "--A1", "0.5", "--C1", "0", "--E1", "0.5"]
-    cmd += ["--A2", "0.5", "--C2", "0", "--E2", "0.5", "--assort1", "0", "--output-pedigree", str(p)]
+    cmd += ["--A2", "0.5", "--C2", "0", "--E2", "0.5", "--rA", "0", "--rC", "0", "--rE", "0"]
+    cmd += ["--assort1", "0", "--output-pedigree", str(p)]
     subprocess.run(cmd, check=True)
     ped = pl.read_parquet(p)
     p.unlink()

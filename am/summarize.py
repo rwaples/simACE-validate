@@ -21,7 +21,7 @@ import numpy as np
 from scipy import stats as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from stats import bulmer
+from stats import bulmer, bulmer2
 
 S = 0.5  # C + E of the pilot trait
 V0 = 0.5
@@ -54,13 +54,15 @@ def load(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
-def table(recs: list[dict]) -> dict:
-    """Map (r, m, generation, stat) to the array of that statistic over seeds."""
+def table(recs: list[dict], traits: int = 1, stats: list[str] = STATS) -> dict:
+    """Map (r, m, generation, stat) to the array of that statistic over seeds, for one trait mode."""
     out = defaultdict(list)
     for rec in recs:
+        if rec.get("traits", 1) != traits:
+            continue
         for row in rec["rows"]:
             for k, v in row.items():
-                if k in STATS:
+                if k in stats:
                     out[(rec["r"], rec.get("m"), row["generation"], k)].append(v)
     return {k: np.array(v) for k, v in out.items()}
 
@@ -261,11 +263,59 @@ def main() -> None:
         recs = load(d / f)
         by = defaultdict(list)
         for rec in recs:
-            by[rec.get("m")].append(rec)
-        for m, rr in sorted(by.items(), key=lambda kv: kv[0] or 0):
+            by[(rec.get("traits", 1), rec.get("m") or 0)].append(rec)
+        for (t, m), rr in sorted(by.items()):
             w = np.median([x["wall_s"] for x in rr])
             rss = max((x.get("maxrss_mb", float("nan")) for x in rr), default=float("nan"))
-            print(f"- {name} M={m}: {len(rr)} runs, median wall {w:.1f} s, max RSS {rss:.0f} MB")
+            print(f"- {name} traits={t} M={m or '-'}: {len(rr)} runs, median wall {w:.1f} s, max RSS {rss:.0f} MB")
+    print()
+    two_trait(d)
+
+
+STATS2 = [
+    "var_A", "var_A_t2", "var_L", "r_w_A", "r_w_L", "r_w_L_parents",
+    "r_mate_L", "r_mate_L_t2", "r_mate_L12", "r_mate_L21",
+    "r_mate_A", "r_mate_A12", "r_FS_A", "r_FS_L", "r_PO_A", "r_PO_L",
+]  # fmt: skip
+
+
+def two_trait(d: Path) -> None:
+    """Two-trait AM: every mate correlation r; simACE vs xftsim and the two-trait Bulmer recursion."""
+    sa = table(load(d / "simace.jsonl"), traits=2, stats=STATS2)
+    xf = table(load(d / "xft.jsonl"), traits=2, stats=STATS2)
+    if not sa:
+        return
+    rs = sorted({k[0] for k in sa})
+    gens = sorted({k[2] for k in sa})
+    rows = []
+    for r in rs:
+        pred = bulmer2(V0, S, r, max(gens))
+        print(f"## Two-trait AM, every mate correlation r = {r}\n")
+        print("| stat | g | predicted | simACE mean (SE) | xftsim mean (SE) | sim−xft | Welch p | z sim | z xft |")
+        print("|---|---|---|---|---|---|---|---|---|")
+        for s_ in STATS2:
+            for g in gens:
+                a, b = sa.get((r, None, g, s_)), xf.get((r, 1000, g, s_))
+                if a is None or b is None or len(a) < 2:
+                    continue
+                p = pred[g].get(s_, r if s_.startswith("r_mate_L") else None)
+                se_a, se_b = a.std(ddof=1) / np.sqrt(len(a)), b.std(ddof=1) / np.sqrt(len(b))
+                tp = st.ttest_ind(a, b, equal_var=False).pvalue
+                rows.append((tp, r, s_, g, mdd(a.std(ddof=1), b.std(ddof=1), 100, ALPHA_K)))
+                zs = "" if p is None else f"{(a.mean() - p) / se_a:+.2f}"
+                zx = "" if p is None else f"{(b.mean() - p) / se_b:+.2f}"
+                ps = "" if p is None else f"{p:.4f}"
+                print(
+                    f"| {s_} | {g} | {ps} | {a.mean():.4f} ({se_a:.4f}) | {b.mean():.4f} ({se_b:.4f}) "
+                    f"| {a.mean() - b.mean():+.4f} | {tp:.3g} | {zs} | {zx} |"
+                )
+        print()
+    best = min(rows)
+    print(
+        f"Two-trait rows: {len(rows)}; Bonferroni at 0.05: {0.05 / len(rows):.2e}. "
+        f"Smallest Welch p: {best[0]:.3g} ({best[2]}, r = {best[1]}, g = {best[3]}). "
+        f"MDD at R = 100: {min(x[4] for x in rows):.4f} to {max(x[4] for x in rows):.4f}.\n"
+    )
 
 
 if __name__ == "__main__":
