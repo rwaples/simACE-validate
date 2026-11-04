@@ -48,10 +48,32 @@ slim = "5.2.*"
 [pypi-dependencies]
 simace = { git = "https://github.com/rwaples/simACE.git", tag = "v0.2.0" }
 
+# xftsim (rwaples/simACE-validate#4): an independent forward simulator, used
+# for assortative mating (G2b). It needs Python 3.9, numba 0.56.4 and
+# numpy < 1.24, which conflict with simace's env, so it gets its own
+# environment without the default feature. GPLv3: installed and called,
+# never vendored. Pinned to commit 8a4cdf0 (v0.3.1).
+[feature.xftsim.dependencies]
+python = "3.9.*"
+numba = "==0.56.4"
+numpy = "1.23.*"
+scipy = "1.13.*"
+networkx = "3.2.*"
+xarray = "*"
+pandas = "2.*"
+ruff = "0.17.*"
+
+[feature.xftsim.pypi-dependencies]
+xftsim = { git = "https://github.com/rborder/xftsim.git", rev = "8a4cdf07848b9a78d24f6d0f746d7231d2bdd7c2" }
+
+[environments]
+xftsim = { features = ["xftsim"], no-default-feature = true }
+
 [tasks]
 build-nadiv = { cmd = "bash tools/build_nadiv.sh", description = "Install the pinned nadiv CRAN version into .rlib/" }
 build-pedsim = { cmd = "bash tools/build_pedsim.sh", description = "Build the pinned ped-sim tag into .pedsim/" }
 harness = { cmd = "python run_harness.py", depends-on = ["build-nadiv", "build-pedsim"], description = "Run every case and write results/" }
 power = { cmd = "python power.py", depends-on = ["build-nadiv"], description = "Rejection rates at stated oracle errors; writes results/power.md" }
 test-pipeline = { cmd = "pytest tskit_pipeline/tests -q", description = "Tests of the tskit/tstrait gene-drop pipeline" }
-lint = { cmd = "ruff check && ruff format --check", description = "Lint and format check" }
+am-pilot = { cmd = "bash am/pilot.sh .work/am_pilot 6 && python am/summarize.py .work/am_pilot", description = "simACE vs xftsim AM pilot, pilot seeds only (issue #4, ADR 0003); needs `pixi install -e xftsim`" }
+lint = { cmd ="ruff check && ruff format --check", description = "Lint and format check" }
