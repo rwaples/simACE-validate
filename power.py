@@ -26,6 +26,7 @@ from pathlib import Path
 
 from scipy import stats
 
+from am.manifest import XFT_MUTATIONS, case_spec
 from run_harness import PARTIAL_RESULTS, RESULTS, assign_status, case_seed, load_cases, run_case
 from structure.mating import MUTATIONS as MATING_MUTATIONS
 from structure.mating import SLIM_MUTATIONS
@@ -45,7 +46,24 @@ MUTATIONS = {
     },
     "mating_law": MATING_MUTATIONS,
     "slim_standard": {name: effect for name, (effect, _) in SLIM_MUTATIONS.items()},
+    # Layer 5 (ADR 0003, decision 8): the reference side is mutated; build each mutated
+    # reference first with `pixi run -e xftsim xft-reference --case <id> --mutation <names>`.
+    "xftsim": {
+        "null": "simACE on fresh seeds against the reference (false-positive rate given that sample)",
+        "null_xft": "a second, independent xftsim sample in simACE's place (xftsim against xftsim)",
+        "r_090": "xftsim reference at mate correlation 0.9 r",
+        "r_0": "xftsim reference at random mating",
+        "mate_A": "xftsim reference mating on the additive genetic value instead of the phenotype",
+        "mate_y1": "two traits: xftsim reference mating on trait 1 alone",
+    },
 }
+
+
+def applicable(case: dict, name: str) -> bool:
+    """Whether a mutation means anything for the case (a layer-5 mutation of r = 0 does not)."""
+    if case["oracle"] == "xftsim" and name in XFT_MUTATIONS:
+        return XFT_MUTATIONS[name][1](case_spec(case))
+    return True
 
 
 def interval(k: int, n: int) -> str:
@@ -171,6 +189,7 @@ def main() -> None:
     parts = []
     for case in cases:
         names = args.mutation.split(",") if args.mutation else list(MUTATIONS[case["oracle"]])
+        names = [n for n in names if applicable(case, n)]
         for name in names:
             part = run_mutation(case, name, args.reps)
             if args.parts:

@@ -63,3 +63,41 @@ at R = 50 and M = 199. For every `var_C*_g*` and `var_L*_g*` row in
 So these diagnostics cannot tell the two laws apart with three recorded
 generations at N = 2000. ctm_base still checks simACE against the law it
 documents.
+
+## D4. The xftsim matched configuration (layer 5)
+
+Layer 5 (ADR 0003) compares simACE with xftsim at a configuration where
+the two population laws agree to first order. They agree only approximately:
+
+- **C as a household draw only.** xftsim has no household component.
+  `am/run_xft.py` builds one: the mother's private noise draw, passed to
+  her children by a vertical component (ADR 0003, Context). It is checked
+  for one trait (`amc_r05`, C 0.2, r 0.5).
+  - xftsim's built-in regimes make no half-sibs, so the maternal/paternal
+    half-sib split of C is not compared.
+  - Two-trait AM with C, and C transmission (rwaples/simACE-validate#5),
+    are not checked.
+- **Finite loci.** xftsim has M = 1000 unlinked loci, while simACE is
+  infinitesimal. Case `am_finite_m` (INFO) compares xftsim at M = 250 with
+  M = 4000, at r = 0.5 and 0.8. Its rows give the mean Var(A) gap and Welch
+  t by generation. In the pilot, the M = 1000 gap from the Bulmer recursion
+  was bounded at 0.005 to 0.009 in Var(A) by 95% CI (ADR 0003, decision 5).
+- **Family structure.** simACE's `standard` mating (λ 0.5) gives variable
+  sibship sizes and half-sibs. xftsim's configuration has one mate each and
+  two children per couple. Only population moments are compared, never
+  pedigrees. The spreads over seeds differ by design, so rows are scored by
+  a Welch t on the mean, not a distribution test.
+- **The pairing law.** Both simulators pair mates by a Gaussian copula of
+  correlation r on liability ranks, which is the same law only for Gaussian
+  liability and in the large-N limit. Neither side's realised correlation
+  is exactly r:
+  - xftsim's targets R = r(n−1)/n with one component;
+  - simACE v0.2.0's single-trait copula falls slightly short (simACE #74);
+  - simACE's two-trait path pins all four correlations by Metropolis.
+- **Two-trait AM** is checked only for the law xftsim's linear regime
+  produces: every mate correlation (same-trait and cross-trait) equal to
+  r. simACE's derived cross term (`_cross_am_matrix`) and unequal cross
+  terms are unchecked.
+- **Labels.** xftsim pairs a random split of the population, so its
+  "mother" and "father" are labels. The mother–offspring and
+  father–offspring rows are INFO.

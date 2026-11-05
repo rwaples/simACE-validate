@@ -10,7 +10,10 @@ mating_lambda 0.5, G_sim = G_ped = g.
   assort1 = assort2 = r and assort_matrix [[r, r], [r, r]], the law of
   xftsim mating on the sum of two standardised traits (run_xft.py).
 
-Usage: run_simace.py SEED N G R OUTDIR [TRAITS]
+C > 0 (one trait only) sets trait 1's household C to C and its E to 0.5 - C,
+matching run_xft.py's household C.
+
+Usage: python -m am.run_simace SEED N G R OUTDIR [TRAITS [C]]
 The output's generation g is the offspring of g rounds of mating, as in
 run_xft.py: simACE's recorded generation k follows k + 1 matings
 (ADR 0001 §3), so it is reported as g = k + 1. Founders (g = 0) are not
@@ -23,16 +26,15 @@ import sys
 import time
 from pathlib import Path
 
-import numpy as np
 import polars as pl
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from stats import cross_trait_stats, generation_stats
+from am.simace_stats import pedigree_rows
 
 seed, n, g = (int(a) for a in sys.argv[1:4])
 r = float(sys.argv[4])
 traits = int(sys.argv[6]) if len(sys.argv) > 6 else 1
-out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r}_t{traits}.parquet"
+c = float(sys.argv[7]) if len(sys.argv) > 7 else 0.0
+out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r}_t{traits}_c{c}.parquet"
 out.parent.mkdir(parents=True, exist_ok=True)
 
 am = ["--assort1", str(r)]
@@ -60,9 +62,9 @@ subprocess.run(
         "--A1",
         "0.5",
         "--C1",
-        "0",
+        str(c),
         "--E1",
-        "0.5",
+        str(0.5 - c),
         "--A2",
         "0.5",
         "--C2",
@@ -82,42 +84,9 @@ subprocess.run(
     ],
     check=True,
 )
-ped = pl.read_parquet(out).sort("id")
+ped = pl.read_parquet(out)
 version = subprocess.run(["simace", "--version"], capture_output=True, text=True, check=True).stdout.strip()
-
-
-def values(frame: pl.DataFrame) -> list[tuple[np.ndarray, np.ndarray]]:
-    """(A, liability) of each scored trait."""
-    return [(frame[f"A{t}"].to_numpy(), frame[f"liability{t}"].to_numpy()) for t in range(1, traits + 1)]
-
-
-def suffixed(d: dict, t: int) -> dict:
-    """Trait 1 keys unchanged; trait 2 keys get `_t2`, as in run_xft.py."""
-    return d if t == 0 else {f"{k}_t{t + 1}": v for k, v in d.items()}
-
-
-rows = []
-prev = None
-for k in range(g):
-    cur = ped.filter(pl.col("generation") == k)
-    v = values(cur)
-    row = {"generation": k + 1}
-    if prev is None:
-        for t, (a, y) in enumerate(v):
-            row.update(suffixed({"var_A": float(np.var(a, ddof=1)), "var_L": float(np.var(y, ddof=1))}, t))
-    else:
-        pid = prev["id"].to_numpy()
-        pos = np.searchsorted(pid, cur["mother"].to_numpy())
-        fos = np.searchsorted(pid, cur["father"].to_numpy())
-        assert (pid[pos] == cur["mother"].to_numpy()).all()
-        assert (pid[fos] == cur["father"].to_numpy()).all()
-        pv = values(prev)
-        for t in range(traits):
-            row.update(suffixed(generation_stats(v[t][0], v[t][1], pos, fos, pv[t][0], pv[t][1]), t))
-        if traits == 2:
-            row.update(cross_trait_stats(v, pv, pos, fos))
-    rows.append(row)
-    prev = cur
+rows = pedigree_rows(ped, traits)
 out.unlink()
 
 print(
@@ -130,6 +99,7 @@ print(
             "g": g,
             "r": r,
             "traits": traits,
+            "C": c,
             "h2": 0.5,
             "wall_s": round(time.perf_counter() - t0, 2),
             "rows": rows,

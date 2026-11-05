@@ -1,6 +1,6 @@
 """Summarize the issue #4 pilot: simACE vs xftsim under random and assortative mating.
 
-Usage: summarize.py PILOT_DIR   (reads simace.jsonl and xft.jsonl, prints Markdown)
+Usage: python -m am.summarize PILOT_DIR   (reads simace.jsonl and xft.jsonl, prints Markdown)
 
 Every number in the design note comes from this output. For each statistic,
 generation and r it prints:
@@ -20,8 +20,7 @@ from pathlib import Path
 import numpy as np
 from scipy import stats as st
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from stats import bulmer, bulmer2
+from am.stats import bulmer2, predict1
 
 S = 0.5  # C + E of the pilot trait
 V0 = 0.5
@@ -31,22 +30,7 @@ ALPHA_K = 0.05 / 1000  # a harness-sized Bonferroni threshold (status.md: K = 83
 
 def predict(r: float, g: int) -> dict[str, float]:
     """Bulmer-recursion expectation of every statistic after g matings at mate correlation r."""
-    v = bulmer(V0, S, r, g)
-    vt, vp = v[g], v[g - 1]
-    lt, lp = vt + S, vp + S
-    mid = vp / 2 * (1 + r * vp / lp)  # Var(midparent A) = Cov(A) of full sibs
-    return {
-        "var_A": vt,
-        "var_L": lt,
-        "r_mate_L": r,
-        "r_mate_A": r * vp / lp,
-        "r_FS_A": mid / vt,
-        "r_FS_L": mid / lt,
-        "r_PO_A": mid / np.sqrt(vp * vt),
-        "r_PO_L": vp * (1 + r) / 2 / np.sqrt(lp * lt),
-        "r_MO_L": vp * (1 + r) / 2 / np.sqrt(lp * lt),
-        "r_FO_L": vp * (1 + r) / 2 / np.sqrt(lp * lt),
-    }
+    return predict1(V0, S, r, g)
 
 
 def load(path: Path) -> list[dict]:
@@ -54,11 +38,11 @@ def load(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
-def table(recs: list[dict], traits: int = 1, stats: list[str] = STATS) -> dict:
-    """Map (r, m, generation, stat) to the array of that statistic over seeds, for one trait mode."""
+def table(recs: list[dict], traits: int = 1, stats: list[str] = STATS, c: float = 0.0) -> dict:
+    """Map (r, m, generation, stat) to the array of that statistic over seeds, for one trait mode and C."""
     out = defaultdict(list)
     for rec in recs:
-        if rec.get("traits", 1) != traits:
+        if rec.get("traits", 1) != traits or float(rec.get("C", 0)) != c:
             continue
         for row in rec["rows"]:
             for k, v in row.items():
@@ -270,6 +254,7 @@ def main() -> None:
             print(f"- {name} traits={t} M={m or '-'}: {len(rr)} runs, median wall {w:.1f} s, max RSS {rss:.0f} MB")
     print()
     two_trait(d)
+    household_c(d)
 
 
 STATS2 = [
@@ -315,6 +300,38 @@ def two_trait(d: Path) -> None:
         f"Two-trait rows: {len(rows)}; Bonferroni at 0.05: {0.05 / len(rows):.2e}. "
         f"Smallest Welch p: {best[0]:.3g} ({best[2]}, r = {best[1]}, g = {best[3]}). "
         f"MDD at R = 100: {min(x[4] for x in rows):.4f} to {max(x[4] for x in rows):.4f}.\n"
+    )
+
+
+def household_c(d: Path, c: float = 0.2) -> None:
+    """Single trait with household C (xftsim-bench's construction): simACE vs xftsim and predict1 with c."""
+    sa = table(load(d / "simace.jsonl"), c=c)
+    xf = table(load(d / "xft.jsonl"), c=c)
+    if not sa:
+        return
+    rows = []
+    for r in sorted({k[0] for k in sa}):
+        print(f"## Household C = {c}, single trait, r = {r}\n")
+        print("| stat | g | predicted | simACE mean (SE) | xftsim mean (SE) | sim−xft | Welch p | z sim | z xft |")
+        print("|---|---|---|---|---|---|---|---|---|")
+        for s_ in STATS:
+            for g in sorted({k[2] for k in sa}):
+                a, b = sa.get((r, None, g, s_)), xf.get((r, 1000, g, s_))
+                if a is None or b is None or len(a) < 2:
+                    continue
+                p = predict1(V0, S, r, g, c=c)[s_]
+                se_a, se_b = a.std(ddof=1) / np.sqrt(len(a)), b.std(ddof=1) / np.sqrt(len(b))
+                tp = st.ttest_ind(a, b, equal_var=False).pvalue
+                rows.append((tp, r, s_, g))
+                print(
+                    f"| {s_} | {g} | {p:.4f} | {a.mean():.4f} ({se_a:.4f}) | {b.mean():.4f} ({se_b:.4f}) "
+                    f"| {a.mean() - b.mean():+.4f} | {tp:.3g} | {(a.mean() - p) / se_a:+.2f} | {(b.mean() - p) / se_b:+.2f} |"
+                )
+        print()
+    best = min(rows)
+    print(
+        f"Household-C rows: {len(rows)}; Bonferroni at 0.05: {0.05 / len(rows):.2e}. "
+        f"Smallest Welch p: {best[0]:.3g} ({best[2]}, r = {best[1]}, g = {best[3]}).\n"
     )
 
 

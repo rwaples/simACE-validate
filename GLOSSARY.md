@@ -32,8 +32,7 @@ A grouping of Cases by what they test:
 2. gene-drop through a fixed pedigree
 3. pedigree structure
 4. simACE's downstream stages on a gene-drop A (simACE-ts)
-5. population moments under assortative mating, against xftsim (ADR 0003,
-   proposed)
+5. population moments under assortative mating, against xftsim (ADR 0003)
 
 It is a reporting group, not a Bonferroni family (ADR 0001).
 
@@ -58,8 +57,7 @@ across a matched configuration, never pedigrees (ADR 0003).
 **Reference sample**:
 The committed per-seed Statistics of an outside simulator at a Matched
 configuration. It is made once per pin and configuration, and simACE's
-seeds are scored against it as a two-sample comparison (ADR 0003,
-proposed).
+seeds are scored against it as a two-sample comparison (ADR 0003).
 _Avoid_: ground truth
 
 **Pilot seed**:

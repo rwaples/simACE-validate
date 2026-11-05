@@ -168,3 +168,29 @@ def bulmer(v0: float, s: float, r: float, g: int) -> list[float]:
         v = v / 2 * (1 + r * v / (v + s)) + v0 / 2
         out.append(v)
     return out
+
+
+def predict1(v0: float, s: float, r: float, g: int, c: float = 0.0) -> dict[str, float]:
+    """Single-trait Bulmer expectation of every statistic after g >= 1 matings at mate correlation r.
+
+    v0 is the founders' Var(A), s the non-additive liability variance (C + E),
+    and c the household C that full sibs share (household = mother; a child's
+    C is independent of its parents' liabilities, so it adds to no other row).
+    """
+    v = bulmer(v0, s, r, g)
+    vt, vp = v[g], v[g - 1]
+    lt, lp = vt + s, vp + s
+    mid = vp / 2 * (1 + r * vp / lp)  # Var(midparent A) = Cov(A) of full sibs
+    po_l = vp * (1 + r) / 2 / np.sqrt(lp * lt)
+    return {
+        "var_A": vt,
+        "var_L": lt,
+        "r_mate_L": r,
+        "r_mate_A": r * vp / lp,
+        "r_FS_A": mid / vt,
+        "r_FS_L": (mid + c) / lt,
+        "r_PO_A": mid / np.sqrt(vp * vt),
+        "r_PO_L": po_l,
+        "r_MO_L": po_l,
+        "r_FO_L": po_l,
+    }

@@ -13,13 +13,23 @@ With TRAITS = 2, two independent traits (independent effects and noise) each
 have h2 = 0.5, and the regime mates on both phenotypes, which pairs on their
 standardised sum: every mate correlation (y1-y1, y2-y2, y1-y2, y2-y1) is r.
 
-Usage: run_xft.py SEED N M G R [TRAITS]
+MATE picks what the regime mates on (power mutations, ADR 0003 decision 8):
+phenotype (default), additive (the additive genetic component instead of the
+phenotype), or y1 (two traits, but mating on trait 1 alone).
+
+C > 0 (one trait only) adds a simACE-style household C, built by the
+xftsim-bench session: a private noise trait hh (variance 1, never summed into
+y) and a LinearVerticalComponent that passes the mother's hh, normalised and
+scaled by sqrt(C), into the child's y. Children of one mother share that
+draw, and it is independent of the parents' own y, as simACE's household C
+is (household = mother). E is then 1 - h2 - C.
+
+Usage: python -m am.run_xft SEED N M G R [TRAITS [MATE [C]]]
 Generation g in the output is the offspring of g rounds of mating (g = 0 are
 the founders).
 """
 
 import json
-import os
 import resource
 import sys
 import time
@@ -27,17 +37,27 @@ import warnings
 
 warnings.filterwarnings("ignore")  # pandas 2.x FutureWarnings from xftsim/index.py
 
+import numba as nb  # noqa: E402
 import numpy as np  # noqa: E402
 import xftsim as xft  # noqa: E402
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import numba as nb  # noqa: E402
-from stats import cross_trait_stats, generation_stats  # noqa: E402
+from am.stats import cross_trait_stats, generation_stats  # noqa: E402
 
 seed, n, m, g = (int(a) for a in sys.argv[1:5])
 r = float(sys.argv[5])
 traits = int(sys.argv[6]) if len(sys.argv) > 6 else 1
 names = ["y"] if traits == 1 else ["y1", "y2"]
+mate = sys.argv[7] if len(sys.argv) > 7 else "phenotype"
+mate_index = {
+    "phenotype": (names, "phenotype"),
+    "additive": (names, "additiveGenetic"),
+    "y1": (["y1"], "phenotype"),
+}[mate]
+if mate == "y1" and traits != 2:
+    raise SystemExit("MATE y1 needs TRAITS 2")
+c = float(sys.argv[8]) if len(sys.argv) > 8 else 0.0
+if c and traits != 1:
+    raise SystemExit("C > 0 needs TRAITS 1")
 h2 = 0.5
 np.random.seed(seed)
 
@@ -70,17 +90,39 @@ cind = xft.index.ComponentIndex.from_product(names, ["additiveGenetic"])
 effects = xft.effect.AdditiveEffects(
     beta=beta, variant_indexer=vind, component_indexer=cind, scaled=True, standardized=True
 )
-iind, _ = xft.arch.SumTransformation.construct_cindexes(names)
-arch = xft.arch.Architecture(
-    components=[
-        xft.arch.AdditiveGeneticComponent(effects),
-        xft.arch.AdditiveNoiseComponent([1 - h2] * traits, phenotype_name=names),
-        xft.arch.SumAllTransformation(iind),
-    ]
-)
+if c == 0:
+    iind, _ = xft.arch.SumTransformation.construct_cindexes(names)
+    arch = xft.arch.Architecture(
+        components=[
+            xft.arch.AdditiveGeneticComponent(effects),
+            xft.arch.AdditiveNoiseComponent([1 - h2] * traits, phenotype_name=names),
+            xft.arch.SumAllTransformation(iind),
+        ]
+    )
+else:
+    v_in = xft.index.ComponentIndex.from_product(["hh"], ["phenotype"], [0])  # vorigin 0: the mother
+    v_in.comp_type = "output"
+    arch = xft.arch.Architecture(
+        components=[
+            xft.arch.AdditiveGeneticComponent(effects),
+            xft.arch.AdditiveNoiseComponent([1 - h2 - c, 1.0], phenotype_name=["y", "hh"]),
+            xft.arch.LinearVerticalComponent(
+                input_cindex=v_in,
+                output_cindex=xft.index.ComponentIndex.from_product(["y"], ["vertical"], [-1]),
+                founder_variances=[1.0],
+                coefficient_matrix=np.array([[np.sqrt(c)]]),
+                normalize=True,
+            ),
+            xft.arch.SumAllTransformation(
+                xft.index.ComponentIndex(
+                    ["y", "y", "y", "hh"], ["additiveGenetic", "additiveNoise", "vertical", "additiveNoise"]
+                )
+            ),
+        ]
+    )
 rmap = xft.reproduce.RecombinationMap.constant_map_from_haplotypes(haps, p=0.5)
 mating = xft.mate.LinearAssortativeMatingRegime(
-    component_index=xft.index.ComponentIndex.from_product(names, ["phenotype"]),
+    component_index=xft.index.ComponentIndex.from_product(mate_index[0], [mate_index[1]]),
     r=r,
     mates_per_female=1,
     offspring_per_pair=2,
@@ -145,6 +187,8 @@ print(
             "g": g,
             "r": r,
             "traits": traits,
+            "mate": mate,
+            "C": c,
             "h2": h2,
             "wall_s": round(time.perf_counter() - t0, 2),
             "maxrss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),

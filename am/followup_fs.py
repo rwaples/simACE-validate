@@ -5,7 +5,7 @@ of 0.2418 (z -4.04 against 0.25). This reruns simACE alone at the same
 configuration on fresh pilot seeds and reports, by g, the full-sib
 correlation of L, A and E, with z against 0.25, 0.5 and 0.
 
-Usage: followup_fs.py FIRST_SEED N_SEEDS WORKDIR
+Usage: python -m am.followup_fs FIRST_SEED N_SEEDS WORKDIR
 """
 
 import subprocess
@@ -15,8 +15,7 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from stats import _sib_pairs, _sym_corr
+from am.stats import _sib_pairs, _sym_corr
 
 first, n_seeds = int(sys.argv[1]), int(sys.argv[2])
 work = Path(sys.argv[3])

@@ -6,7 +6,7 @@
 #
 # Case keys:
 #   id        unique name
-#   layer     1 (liability oracle), 2 (gene-drop), 3 (structure)
+#   layer     1 (liability oracle), 2 (gene-drop), 3 (structure), 5 (assortative mating against xftsim)
 #   oracle    the oracle script (oracles/<name>.R)
 #   simulate  `simace simulate` flags, without --seed and --output-pedigree
 #   seed0, R  simACE seeds
@@ -15,6 +15,9 @@
 #   c_law     oracle C-transmission residual: realised (default; simACE ADR 0025) | analytic
 #   expect    pass (default) | info (not scored; with id_diff, a known gap in differences.md)
 #   mutation  power study only: a deliberate oracle error (power.py MUTATIONS, by oracle)
+#   xftsim    layer 5: the matched xftsim spec (N, M, G, r, traits, seed0, R); its reference
+#             sample is am/reference/<id>.jsonl, made by `pixi run -e xftsim xft-reference`
+#   references  layer 5 finite-M sentinel: labelled xftsim specs compared with each other
 
 cases:
   - id: rm_base
@@ -153,3 +156,104 @@ cases:
       G-sim: 5
     seed0: 6000
     R: 100
+
+  # Layer 5 (ADR 0003): simACE's population moments under assortative mating against
+  # independent xftsim runs at a matched configuration, by a Welch t per row. Both traits
+  # A 0.5, C 0, E 0.5, independent (simACE's CLI defaults rA 0.5 and rC 0.3 are overridden);
+  # no twins. Every case has its own simACE and xftsim seed ranges (ADR 0003, decision 6).
+  - id: am_r0
+    layer: 5
+    oracle: xftsim
+    note: random mating (check 3 of simACE-validate#4), through xftsim's assortative regime at r = 0
+    simulate: &am
+      N: 10000
+      G-ped: 6
+      G-sim: 6
+      mating-model: standard
+      mating-lambda: 0.5
+      p-mztwin: 0
+      A1: 0.5
+      C1: 0
+      E1: 0.5
+      A2: 0.5
+      C2: 0
+      E2: 0.5
+      rA: 0
+      rC: 0
+      rE: 0
+      assort1: 0
+    seed0: 7000
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0, traits: 1, seed0: 17000, R: 100}
+
+  - id: am_r05
+    layer: 5
+    oracle: xftsim
+    note: single-trait assortment on trait 1 at mate correlation 0.5
+    simulate:
+      <<: *am
+      assort1: 0.5
+    seed0: 7200
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0.5, traits: 1, seed0: 17200, R: 100}
+
+  - id: am_r08
+    layer: 5
+    oracle: xftsim
+    note: single-trait assortment at 0.8; simACE v0.2.0's realised mate correlation falls short (simACE #74)
+    simulate:
+      <<: *am
+      assort1: 0.8
+    seed0: 7400
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0.8, traits: 1, seed0: 17400, R: 100}
+
+  - id: am2_r02
+    layer: 5
+    oracle: xftsim
+    note: two-trait assortment, every mate correlation (both traits, both cross terms) 0.2
+    simulate:
+      <<: *am
+      assort1: 0.2
+      assort2: 0.2
+      assort-matrix: "[[0.2, 0.2], [0.2, 0.2]]"
+    seed0: 7600
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0.2, traits: 2, seed0: 17600, R: 100}
+
+  - id: am2_r04
+    layer: 5
+    oracle: xftsim
+    note: two-trait assortment, every mate correlation 0.4 (feasible below 0.5 with independent traits)
+    simulate:
+      <<: *am
+      assort1: 0.4
+      assort2: 0.4
+      assort-matrix: "[[0.4, 0.4], [0.4, 0.4]]"
+    seed0: 7800
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0.4, traits: 2, seed0: 17800, R: 100}
+
+  - id: amc_r05
+    layer: 5
+    oracle: xftsim
+    note: single-trait assortment at 0.5 with household C 0.2 (by mother); xftsim builds C from the mother's private draw
+    simulate:
+      <<: *am
+      C1: 0.2
+      E1: 0.3
+      assort1: 0.5
+    seed0: 8000
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0.5, traits: 1, C: 0.2, seed0: 18800, R: 100}
+
+  - id: am_finite_m
+    layer: 5
+    oracle: xftsim_finite_m
+    note: xftsim Var(A) at M 250 against M 4000, both r; bounds the finite-locus gap (ADR 0003, decision 5)
+    expect: info
+    references:
+      - {label: m250_r05, xftsim: {N: 10000, M: 250, G: 6, r: 0.5, seed0: 18000, R: 100}}
+      - {label: m4000_r05, xftsim: {N: 10000, M: 4000, G: 6, r: 0.5, seed0: 18200, R: 100}}
+      - {label: m250_r08, xftsim: {N: 10000, M: 250, G: 6, r: 0.8, seed0: 18400, R: 100}}
+      - {label: m4000_r08, xftsim: {N: 10000, M: 4000, G: 6, r: 0.8, seed0: 18600, R: 100}}

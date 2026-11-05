@@ -5,7 +5,7 @@ pilot ran every r with the same seed, so cells with the same seed may share
 random numbers. Prints, per simulator and statistic, the correlation over
 seeds of the per-seed value at r = 0 with r = 0.5 and r = 0.8, at each g.
 
-Usage: cross_cell.py PILOT_DIR
+Usage: python -m am.cross_cell PILOT_DIR
 """
 
 import json

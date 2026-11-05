@@ -66,6 +66,9 @@ ruff = "0.17.*"
 [feature.xftsim.pypi-dependencies]
 xftsim = { git = "https://github.com/rborder/xftsim.git", rev = "8a4cdf07848b9a78d24f6d0f746d7231d2bdd7c2" }
 
+[feature.xftsim.tasks]
+xft-reference = { cmd = "python -m am.reference", description = "Build layer 5's committed xftsim reference samples (ADR 0003); skips current ones" }
+
 [environments]
 xftsim = { features = ["xftsim"], no-default-feature = true }
 
@@ -75,5 +78,5 @@ build-pedsim = { cmd = "bash tools/build_pedsim.sh", description = "Build the pi
 harness = { cmd = "python run_harness.py", depends-on = ["build-nadiv", "build-pedsim"], description = "Run every case and write results/" }
 power = { cmd = "python power.py", depends-on = ["build-nadiv"], description = "Rejection rates at stated oracle errors; writes results/power.md" }
 test-pipeline = { cmd = "pytest tskit_pipeline/tests -q", description = "Tests of the tskit/tstrait gene-drop pipeline" }
-am-pilot = { cmd = "bash am/pilot.sh .work/am_pilot 6 && python am/summarize.py .work/am_pilot", description = "simACE vs xftsim AM pilot, pilot seeds only (issue #4, ADR 0003); needs `pixi install -e xftsim`" }
+am-pilot = { cmd = "bash am/pilot.sh .work/am_pilot 6 && python -m am.summarize .work/am_pilot", description = "simACE vs xftsim AM pilot, pilot seeds only (issue #4, ADR 0003); needs `pixi install -e xftsim`" }
 lint = { cmd ="ruff check && ruff format --check", description = "Lint and format check" }

@@ -88,3 +88,14 @@ def two_sample(a: np.ndarray, b: np.ndarray) -> Score:
         effect=float(t.statistic),
         p_values={"KS": float(stats.ks_2samp(a, b).pvalue), "t": float(t.pvalue)},
     )
+
+
+def welch(a: np.ndarray, b: np.ndarray) -> Score:
+    """Score simACE's per-seed values a against a reference sample's b by a Welch t alone (layer 5, ADR 0003).
+
+    The two simulators' spreads differ by design, so a distribution test (KS) would reject with no bug.
+    """
+    t = stats.ttest_ind(a, b, equal_var=False)
+    return Score(
+        n=len(a), center=float(a.mean() - b.mean()), effect=float(t.statistic), p_values={"t": float(t.pvalue)}
+    )

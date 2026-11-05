@@ -26,7 +26,10 @@ import numpy as np
 import polars as pl
 import yaml
 
-from calibration import Score, calibrate, mean_zero, randomised_pit, two_sample
+from am.manifest import case_spec, derived, flatten, manifest, read_reference, schema
+from am.simace_stats import pedigree_rows
+from am.stats import bulmer2, predict1
+from calibration import Score, calibrate, mean_zero, randomised_pit, two_sample, welch
 from genedrop.drop import Genome
 from genedrop.layer2 import seed_stats
 from genedrop.pedsim import msprime_ibd, pedsim_ibd
@@ -272,6 +275,84 @@ def run_mating_law(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], 
     return rows
 
 
+def check_matched(case: dict) -> None:
+    """Refuse a layer-5 case whose simACE flags do not match its xftsim spec (ADR 0003, decision 2)."""
+    sim, x = case["simulate"], case_spec(case)
+    r, traits = x["r"], x["traits"]
+    c = x["C"]
+    want = {"N": x["N"], "G-ped": x["G"], "G-sim": x["G"], "p-mztwin": 0, "A1": 0.5, "C1": c, "E1": 0.5 - c}
+    want |= {"A2": 0.5, "C2": 0, "E2": 0.5, "rA": 0, "rC": 0, "rE": 0, "assort1": r}
+    if traits == 2:
+        want |= {"assort2": r, "assort-matrix": json.dumps([[r, r], [r, r]])}
+    bad = [f"{k}={sim.get(k)!r} (want {v!r})" for k, v in want.items() if sim.get(k) != v]
+    if traits == 1 and sim.get("assort2", 0) != 0:
+        bad.append("assort2 must be 0 for a single-trait case")
+    if bad:
+        raise ValueError(f"{case['id']}: simulate does not match the xftsim spec: {'; '.join(bad)}")
+
+
+def bulmer_prediction(case: dict, stat: str) -> float | None:
+    """The infinitesimal Bulmer expectation of a scored row, or None (INFO column of ADR 0003, decision 1)."""
+    x = case_spec(case)
+    name, g = stat.rsplit("_g", 1)
+    g = int(g)
+    if x["traits"] == 1:
+        return predict1(0.5, 0.5, x["r"], g, c=x["C"]).get(name)
+    if name.startswith("r_mate_L"):
+        return x["r"]
+    pred = bulmer2(0.5, 0.5, x["r"], g)[g]
+    return pred.get({"r_mate_A21": "r_mate_A12", "r_mate_A_t2": "r_mate_A", "var_L_t2": "var_L"}.get(name, name))
+
+
+def run_xftsim(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:
+    """Layer 5: simACE's per-generation moments against the committed xftsim reference, a Welch t per row.
+
+    Power mutations (power.py) swap the reference for a mutated one; `null` reruns
+    simACE on fresh seeds; `null_xft` puts a second xftsim sample in simACE's place.
+    """
+    check_matched(case)
+    base_id = case["id"].split("~")[0]
+    base = case | {"id": base_id}
+    mutation = case.get("mutation")
+    ref_name, spec = (base_id, case_spec(case)) if mutation in (None, "null", "null_xft") else derived(base, mutation)
+    theirs = read_reference(ref_name, manifest(ref_name, spec))
+    if mutation == "null_xft":
+        ours_name, ours_spec = derived(base, "null_xft", int(case["id"].rsplit("~", 1)[1]))
+        ours = read_reference(ours_name, manifest(ours_name, ours_spec))
+    else:
+        traits = spec["traits"]
+        ours = list(pool.map(lambda p: flatten(pedigree_rows(pl.read_parquet(p), traits)), pedigrees))
+    scored, info = schema(case_spec(case)["traits"], case_spec(case)["G"])
+    rows = []
+    for stat in scored + info:
+        a = np.array([o[stat] for o in ours])
+        b = np.array([t[stat] for t in theirs])
+        rows.append(row(case, stat, welch(a, b), info=stat in info))
+    for stat in scored:
+        pred = bulmer_prediction(case, stat)
+        if pred is not None and mutation is None:
+            a = np.array([o[stat] for o in ours])
+            rows.append(row(case, f"bulmer:{stat}", mean_zero(a - pred), info=True))
+    return rows
+
+
+def run_xftsim_finite_m(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:
+    """Layer 5 sentinel (INFO): xftsim Var(A) at the smallest M against the largest, at each r (ADR 0003, decision 5)."""
+    refs = {ref["label"]: ref["xftsim"] for ref in case["references"]}
+    by_r: dict[float, dict[int, str]] = {}
+    for label, x in refs.items():
+        by_r.setdefault(x["r"], {})[x["M"]] = label
+    rows = []
+    for _r, labels in sorted(by_r.items()):
+        lo, hi = labels[min(labels)], labels[max(labels)]
+        a, b = (read_reference(f"{case['id']}~{lab}", manifest(f"{case['id']}~{lab}", refs[lab])) for lab in (lo, hi))
+        for g in range(1, refs[lo]["G"] + 1):
+            stat = f"var_A_g{g}"
+            score = welch(np.array([x[stat] for x in a]), np.array([x[stat] for x in b]))
+            rows.append(row(case, f"{lo}-{hi}:{stat}", score, info=True))
+    return rows
+
+
 RUNNERS = {
     "liability": run_liability,
     "genedrop": run_genedrop,
@@ -279,7 +360,10 @@ RUNNERS = {
     "slim_wf": run_structure,
     "slim_standard": run_structure,
     "mating_law": run_mating_law,
+    "xftsim": run_xftsim,
+    "xftsim_finite_m": run_xftsim_finite_m,
 }
+REPLACES = REPLACES_SIMACE | {"xftsim": ("null_xft",)}  # mutations whose simACE side is not simulated
 
 
 def run_case(case: dict) -> list[dict]:
@@ -290,7 +374,7 @@ def run_case(case: dict) -> list[dict]:
             raise ValueError(f"{case['id']}: the liability oracle does not model {', '.join(sorted(unknown))}")
     seed0 = case.get("seed0", 0)
     seeds = list(range(seed0, seed0 + case.get("R", 0)))
-    replaced = case.get("mutation") in REPLACES_SIMACE.get(case["oracle"], ())
+    replaced = case.get("mutation") in REPLACES.get(case["oracle"], ())
     (WORK / case["id"]).mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(JOBS) as pool:
         pedigrees = [] if replaced else list(pool.map(lambda s: simulate(case, s), seeds))

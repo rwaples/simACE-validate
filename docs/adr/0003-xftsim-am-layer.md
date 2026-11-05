@@ -1,10 +1,10 @@
 # ADR 0003: Assortative mating is scored as a two-sample comparison against xftsim
 
-**Status:** proposed (draft for rwaples/simACE-validate#4).
-- Decisions 1 to 7 are locked for the pilot.
+**Status:** accepted 2026-11-05 (rwaples/simACE-validate#4).
 - The user chose option (b) for the simace pin (decision 8) and added
   two-trait AM at two levels (decision 2).
-- Building the harness wiring (decision 8) awaits a go-ahead.
+- Decision 8 is built: `am/manifest.py`, `am/reference.py`,
+  `run_harness.py` (`run_xftsim`), `power.py` and cases.yaml.
 
 **Date:** 2026-11-04
 
@@ -68,8 +68,14 @@ liability, noise included.
 - **Two traits:** a 4-variate Gaussian is fixed by its covariance, so simACE
   with `assort1 = assort2 = r` and `assort_matrix [[r, r], [r, r]]`
   matches xftsim on both phenotypes at r.
-- **C:** xftsim's phenotype is A + E with no C, so the matched
-  configuration sets C = 0.
+- **C:** xftsim has no household component, but one can be built
+  (construction by the xftsim-bench session, 2026-11-05). Each person gets a
+  private noise trait hh (variance 1), never summed into y. A
+  `LinearVerticalComponent` reads the mother's hh (input vorigin 0,
+  `xftsim/index.py:873`), normalised and scaled by √C, into the child's y.
+  Children of one mother then share one draw, independent of the parents'
+  own y. That is simACE's household C with household = mother. `am/run_xft.py`
+  builds it for one trait when C > 0, and leaves the C = 0 path unchanged.
 
 The match is approximate, not exact, in several ways:
 
@@ -107,7 +113,8 @@ within the measured MDDs, not equality.
      pedigree that was itself selected on liability. Rejected as
      intractable.
 2. **Matched configurations.** Two traits, each with A = 0.5, C = 0 and
-   E = 0.5. The traits are independent: `rA = rC = rE = 0`, passed
+   E = 0.5, except where a case sets trait 1's household C (then
+   E = 0.5 − C). The traits are independent: `rA = rC = rE = 0`, passed
    explicitly, because simACE's CLI defaults are `rA` 0.5 and `rC` 0.3
    (`simulate.py:1669-1671`). Mating is on the full liability. There are no
    MZ twins, N = 10⁴ per generation, and there are 6 rounds of mating from
@@ -115,6 +122,10 @@ within the measured MDDs, not equality.
    - **Single trait, r ∈ {0, 0.5, 0.8}.** simACE `assort1 = r`; trait 2 is
      a passenger. xftsim mates on y alone. r = 0 is check 3 of the issue,
      the random-mating baseline, run through the same xftsim code path.
+   - **Household C, single trait, C = 0.2, r = 0.5** (`amc_r05`). simACE
+     `C1 = 0.2`, `E1 = 0.3`; xftsim builds C as in Context. Under AM, both
+     sides mate on the liability with C included, and the full-sib
+     liability covariance gains C.
    - **Two traits, r ∈ {0.2, 0.4}, every mate correlation r.** simACE uses
      `assort1 = assort2 = r` and `assort_matrix [[r, r], [r, r]]`. xftsim
      mates on y1 and y2. With independent traits, R_mf = r·11ᵀ is feasible
@@ -139,13 +150,22 @@ within the measured MDDs, not equality.
    - **Not compared:**
      - MO and FO separately. xftsim's `sex_aware=False` makes "maternal" a
        random label, so those rows are INFO.
-     - Half-sibs. The xftsim configuration makes none.
+     - Half-sibs. xftsim's built-in regimes cannot make them:
+       `MatingRegime.enumerate_assignment` expands the female and male lists
+       with the same per-female counts in the same order, so a female's
+       second mating repeats the same male, and the duplicate couple is
+       merged (`exhaustive=False` raises `NotImplementedError`;
+       `xftsim/mate.py` and `utils.exhaustive_enumerate` at `8a4cdf0`).
+       So the maternal/paternal half-sib split of household C cannot be
+       checked against xftsim without writing our own regime.
      - Generation 0 of simACE, which is not recorded.
 
    Alternatives considered:
-   - *Map C onto an xftsim vertical or horizontal component.* That would
-     add a second law to match, and C transmission is already Closed
-     (G2a). Deferred to a later INFO check (check 2 of the issue).
+   - *C = 0 throughout* (the first draft). Lifted once the household-C
+     construction was found; the pilot matches with C = 0.2 (below).
+   - *C transmission (b_m, b_f > 0).* Moved to its own issue,
+     rwaples/simACE-validate#5, which chains the parents' c through a
+     vertical component. Not built here (Open items).
    - *Match family structure* by setting xftsim's mates per female to a
      ZTP. The population moments do not depend on it to first order.
      Rejected: only moments are compared, never pedigrees.
@@ -277,10 +297,8 @@ within the measured MDDs, not equality.
    at N 2000 gave r(A1, A2) = 0.614 at g = 3, against 0.188 under the
    matched law.
 
-   **Proposed R = 100 per side.** One xftsim reference set over the 5 cases
-   is 500 runs. At the pilots' 16.5 to 36.5 s per run, that is about 2.3 to
-   5.1 hours of job time, or about 23 to 51 minutes at 6 jobs in parallel.
-   These are UNVERIFIED extrapolations.
+   **R = 100 per side.** The references are 600 runs for the 6 scored cases
+   and 400 for the sentinel's 4 sets.
 
 ## Pilot results (40 seeds per side and cell; `am/pilot/summary.md`)
 
@@ -335,6 +353,28 @@ on such chance. That is the false-positive rate the power nulls (decision
 - Over all 156 single-trait rows the smallest Welch p is 0.00499, against
   a pilot Bonferroni bound of 1.60·10⁻⁴.
 
+**Household C = 0.2, single trait, r = 0 and 0.5** (added 2026-11-05;
+`am/pilot/summary.md`, "Household C"). Both sides match the Bulmer
+expectation, with C added to the full-sib liability covariance only:
+
+| Statistic | r | simACE | xftsim | Predicted |
+|---|---|---|---|---|
+| `r_FS_L`, g = 2 to 6 | 0 | 0.4482 to 0.4517 | 0.4477 to 0.4529 | 0.45 |
+| `r_PO_L`, g = 2 to 6 | 0 | 0.2472 to 0.2528 | 0.2493 to 0.2518 | 0.25 |
+| Var(A), g = 6 | 0.5 | 0.6837 | 0.6794 | 0.6821 |
+| `r_FS_L`, g = 6 | 0.5 | 0.5377 | 0.5344 | 0.5347 |
+
+- Over the 104 rows, the smallest Welch p is 1.75·10⁻⁴: `r_FO_L`, an INFO
+  row, at r = 0 and g = 5. simACE gives 0.2440 (z −3.67). That is below
+  that table's Bonferroni bound of 4.81·10⁻⁴.
+- A rerun of simACE alone on 200 fresh seeds (`am/followup_c.py`,
+  `am/pilot/followup_c.md`) gives `r_FO_L` z −1.34 to +0.31 over
+  g = 2 to 6, so that row was chance.
+- The same rerun shows simACE's full-sib `r_FS_L` slightly low at every g:
+  0.4478 to 0.4497 against 0.45, z −2.23 to −0.26. That is a gap of about
+  0.001, far below the FS MDD at R = 100 (decision 7). It is recorded here,
+  not chased. Layer 1 scores this law conditionally on the pedigree.
+
 **Two-trait AM, r = 0.2 and 0.4.** simACE and xftsim agree with each other
 and with `bulmer2`. At r = 0.4, g = 6:
 
@@ -350,7 +390,7 @@ and with `bulmer2`. At r = 0.4, g = 6:
 - The largest |z| against `bulmer2` is 2.37 for simACE (`var_A_t2`,
   r = 0.2, g = 6) and 2.28 for xftsim (`var_A`, r = 0.4, g = 6).
 
-## Decision 8, proposed and not built: wiring into the harness
+## Decision 8: wiring into the harness
 
 - **A committed xftsim reference sample.** xftsim's output does not depend
   on simACE. Each case's R xftsim runs are made once, by
@@ -387,12 +427,16 @@ and with `bulmer2`. At r = 0.4, g = 6:
       (10);
     - the cross-trait mate correlations on A, in both orders, at g = 2 to 6
       (10).
-  - Single-trait rows add 126 p-values to K, and two-trait rows add 228:
-    354 in all. With the 835 of the last full run, α/K would fall from
-    5.99·10⁻⁵ to 0.05/1189 = 4.2·10⁻⁵.
-  - INFO rows: the Bulmer z, the MO and FO rows, and the KS p.
+  - `amc_r05`, single trait with household C 0.2: 42 Welch rows.
+  - Single-trait rows add 168 p-values to K, and two-trait rows add 228:
+    396 in all. With the 835 of the last full run, α/K would fall from
+    5.99·10⁻⁵ to 0.05/1231 = 4.06·10⁻⁵.
+  - INFO rows: the MO and FO rows, and one `bulmer:<row>` row per scored
+    row, a one-sample t of simACE against the Bulmer expectation. As
+    built, no KS is computed at all.
   - An INFO sentinel case compares xftsim at M = 250 and M = 4000, at
-    r = 0.5 and 0.8, and reports the 95% CI of the gap. Agreement does not
+    r = 0.5 and 0.8, and reports the mean gap and its Welch t by generation
+    (the 95% CI follows from them). Agreement does not
     prove closeness to the large-M limit; the CI bounds the gap only as
     tightly as R allows.
 - **simACE pin: option (b), decided.** Layer 5 scores simace v0.2.0 now.
@@ -423,10 +467,11 @@ and with `bulmer2`. At r = 0.4, g = 6:
     which includes simACE's own spread;
   - xftsim against xftsim.
 - **status.md G2b** becomes Closed with the cases' results, for the scope
-  tested: single-trait AM, and two-trait AM with every mate correlation
-  equal, both with C = 0 and independent traits. differences.md gains a D
-  entry for the matched configurations, covering:
-  - C = 0;
+  tested: single-trait AM (C = 0, and household C 0.2 at r = 0.5), and
+  two-trait AM with every mate correlation equal (C = 0), with independent
+  traits. differences.md gains a D entry for the matched configurations,
+  covering:
+  - C only as a household draw by mother, single trait, no half-sibs;
   - the family-structure difference behind decision 4;
   - the finite-M CI of decision 5;
   - the restriction of two-trait AM to the R_mf = r·11ᵀ law.
@@ -438,10 +483,23 @@ and with `bulmer2`. At r = 0.4, g = 6:
   wrong. The Bulmer columns are a diagnostic, not a referee, since they are
   approximations themselves.
 - These stay unchecked; each needs its own matched law:
-  - AM with C > 0;
+  - two-trait AM with C > 0, and the half-sib split of C (xftsim's regimes
+    make no half-sibs);
   - two-trait AM with unequal or derived cross terms (`_cross_am_matrix`);
   - correlated traits;
-  - AM combined with C transmission.
+  - AM combined with C transmission (rwaples/simACE-validate#5).
 - xftsim's environment is Python 3.9 with numba 0.56.4 and numpy 1.23 (pixi
   env `xftsim`, no default feature). It is installed, never vendored (ADR
   0001 §7).
+
+## Open items
+
+- **rwaples/simACE-validate#5: C transmission against xftsim** (ADR 0025;
+  check 2 of #4, promoted). It chains the parents' c through a vertical
+  component, plus the household term above. Not built, pending approval.
+  Constraints found here that apply to it:
+  - xftsim's built-in regimes make no half-sibs (decision 2), so the MHS
+    (1 − b_f²) and PHS (b_f²) rows need a regime of our own. That would be
+    our code on xftsim's side, which weakens independence.
+  - Its reference samples would follow decision 8's manifest design. The
+    household construction already lives in `am/run_xft.py`.

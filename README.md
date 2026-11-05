@@ -7,6 +7,7 @@ simulates against code simACE does not share:
 - [msprime](https://tskit.dev/msprime/) gene-drop
 - [ped-sim](https://github.com/williamslab/ped-sim)
 - [SLiM](https://messerlab.org/slim/)
+- [xftsim](https://github.com/rborder/xftsim), for assortative mating
 
 The latest results are in [`results/results.md`](results/results.md), and
 the harness's measured power is in [`results/power.md`](results/power.md)
@@ -34,6 +35,7 @@ pixi run harness --replicate 1            # the same cases on independent seeds;
 pixi run power                            # rejection rates at stated errors (rm_base, ctm_base)
 pixi run power --case std_mating          # any case whose oracle has mutations; to .work/results/power.md
 pixi run lint
+pixi run -e xftsim xft-reference          # layer 5's xftsim reference samples (skips current ones)
 ```
 
 The script exits 1 if any row is FAIL or ERROR. There is no CI.
@@ -169,6 +171,51 @@ The same issue reports two id-order artifacts, which neither case tests:
 offspring are sorted by mother, and MZ co-twins always have consecutive
 ids.
 
+**Layer 5: assortative mating against xftsim** (`am/`, [ADR
+0003](docs/adr/0003-xftsim-am-layer.md)). Under assortative mating (AM),
+simACE's pedigree is chosen on the liabilities, so no layer-1 law exists.
+Instead, simACE's population moments are compared with those of
+[xftsim](https://github.com/rborder/xftsim), a finite-locus forward
+simulator that shares no code with simACE. xftsim is pinned to commit
+`8a4cdf0` in its own pixi environment (Python 3.9) and is called, never
+vendored (GPLv3).
+
+The two simulators run at a matched configuration:
+- A 0.5, C 0, E 0.5 per trait (C 0.2, E 0.3 in `amc_r05`), with
+  independent traits;
+- N 10⁴ and 6 rounds of mating;
+- xftsim with M = 1000 unlinked loci.
+
+The cases are:
+- `am_r0`: random mating, through xftsim's regime at r = 0;
+- `am_r05` and `am_r08`: single-trait AM (`assort1`);
+- `amc_r05`: single-trait AM at 0.5 with a household C of 0.2. xftsim
+  builds C from the mother's private draw, passed to her children by a
+  vertical component;
+- `am2_r02` and `am2_r04`: two-trait AM, with every mate correlation r
+  (`assort1 = assort2 = r` and `assort_matrix [[r, r], [r, r]]`). That is
+  the law of xftsim's `LinearAssortativeMatingRegime` on two phenotypes.
+
+Per generation, the cases compare:
+- Var(A) and Var(L);
+- the mate correlations on L and on A;
+- the full-sib and parent–offspring correlations of A and L;
+- for two traits, the within-person and cross-trait mate correlations.
+
+**How it is scored:**
+- xftsim's side is a committed **reference sample** (`am/reference/`), R
+  runs per case made by `pixi run -e xftsim xft-reference`. Its manifest
+  pins the xftsim lock, the scripts' hashes, the thread count and the
+  seeds, and `pixi run harness` refuses a stale one.
+- The harness reruns only simACE and scores each row by a Welch t over
+  seeds. There is no KS test, because the two spreads differ by design.
+- Each row carries an INFO companion `bulmer:<row>`, simACE against the
+  infinitesimal Bulmer recursion.
+- `am_finite_m` (INFO) compares xftsim at M = 250 with M = 4000, to bound
+  the finite-locus gap ([D4](differences.md)).
+
+The pilot behind the design is in `am/pilot/`.
+
 **Multiplicity.** Every p-value of every scored row in a run forms one
 Bonferroni family, α = 0.05/K. The `null` row of `results/power.md`
 measures the false-positive rate of `rm_base` scored as its own family; a
@@ -196,4 +243,6 @@ of the Mendelian residual.
 
 Not covered yet ([`status.md`](status.md)):
 
-- assortative mating, whose liability law is not 2φA
+- assortative mating with two traits and C > 0, with correlated traits, with unequal or
+  derived two-trait cross terms, or combined with C transmission; layer 5
+  covers single-trait AM and two-trait AM with every mate correlation equal
