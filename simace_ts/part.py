@@ -41,8 +41,8 @@ import numpy as np
 import polars as pl
 import yaml
 from run_seed import validate_commit
+from score import PAIR_CLASSES, PART_VERSION, po_generations
 
-PAIR_CLASSES = ("FS", "MHS", "PHS", "MO", "FO")
 TWO_PHI = {"FS": 0.5, "MHS": 0.25, "PHS": 0.25, "MO": 0.5, "FO": 0.5}  # outbred 2 * kinship, for the INFO diagnostic
 TOL = 1e-10  # simACE's own arithmetic, so only summation order differs: up to 4.7e-12 on a 360k-row smoke seed
 
@@ -113,7 +113,7 @@ def num(value: object) -> float | None:
     return f if math.isfinite(f) else None
 
 
-def architecture_part(d: Path, c1: float, e1: float, po_generations: list[int]) -> dict:
+def architecture_part(d: Path, c1: float, e1: float, gens: list[int]) -> dict:
     """Return the scored, exact and INFO statistics of one architecture's outputs in ``d``."""
     ped = pl.read_parquet(d / "pedigree.full.tstrait.parquet")
     if not np.array_equal(ped["id"].to_numpy(), np.arange(ped.height)):
@@ -158,7 +158,7 @@ def architecture_part(d: Path, c1: float, e1: float, po_generations: list[int]) 
     # Analysis sample: midparent regression per child generation.
     kids = ped.filter(pl.col("mother") >= 0)
     child, mother, father = (kids[c].to_numpy() for c in ("id", "mother", "father"))
-    for g in po_generations:
+    for g in gens:
         k = (gen[child] == g) & in_sample[child] & in_sample[mother] & in_sample[father]
         entry = obs["parent_offspring_corr"]["trait1"][f"gen{g}"]
         add_exact(f"po_g{g}_n", entry["n_pairs"], int(k.sum()), tol=0)
@@ -212,14 +212,12 @@ def seed_part(out: Path) -> dict:
     manifest = json.loads((out / "manifest.json").read_text())
     case = manifest["case"]
     c1, e1 = float(case["simulate"]["C1"]), float(case["simulate"]["E1"])
-    g_ped, g_pheno = int(case["simulate"]["G-ped"]), int(case["cohort"]["G-pheno"])
-    po_generations = list(range(g_ped - g_pheno + 1, g_ped))  # children whose parents are phenotyped too
+    gens = po_generations(case)
     return {
+        "part_version": PART_VERSION,
         "manifest": manifest,
         "part_by": validate_commit(),
-        "architectures": {
-            a["name"]: architecture_part(out / a["name"], c1, e1, po_generations) for a in case["architectures"]
-        },
+        "architectures": {a["name"]: architecture_part(out / a["name"], c1, e1, gens) for a in case["architectures"]},
     }
 
 

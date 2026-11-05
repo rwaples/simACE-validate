@@ -58,6 +58,9 @@ def case_seed(case_id: str, salt: str) -> int:
     return int.from_bytes(hashlib.sha256(f"{case_id}:{salt}".encode()).digest()[:4], "big") >> 1
 
 
+# Oracles whose cases are scored from committed results and never simulated here (layer 4, ADR 0002).
+NOT_SIMULATED = {"simace_ts"}
+
 SIMULATED: dict[tuple, Path] = {}  # one run's pedigrees by (seed, flags), shared across cases
 
 
@@ -293,10 +296,16 @@ def run_simace_ts(case: dict) -> list[dict]:
         r = row(case, stat, mean_zero(gaps))
         r["gap_sd"] = float(np.std(gaps, ddof=1))
         rows.append(r)
+    # An exact row's center is the largest |simACE - harness| and its effect the number of (seed, architecture)
+    # entries that mismatch or are empty; only the scored architecture's can FAIL.
     for stat, (bad, worst) in values.exact.items():
-        r = row(case, f"exact/{stat}", Score(n=len(parts), center=worst, effect=np.nan, p_values={}))
+        r = row(case, f"exact/{stat}", Score(n=len(parts), center=worst, effect=bad, p_values={}))
         r["exact_mismatches"] = bad
         rows.append(r)
+    for stat, (bad, worst) in values.exact_sweep.items():
+        rows.append(
+            row(case, f"exact_sweep/{stat}", Score(n=len(parts), center=worst, effect=bad, p_values={}), info=True)
+        )
     for stat, gaps in values.info_gaps.items():
         rows.append(row(case, stat, mean_zero(gaps), info=True))
     for stat, v in values.info_values.items():
@@ -310,7 +319,7 @@ def run_simace_ts(case: dict) -> list[dict]:
 
 def run_case(case: dict) -> list[dict]:
     """Simulate the case's pedigrees and score them with its oracle."""
-    if case["oracle"] == "simace_ts":
+    if case["oracle"] in NOT_SIMULATED:
         return run_simace_ts(case)
     if case["oracle"] == "liability":
         unknown = set(case["simulate"]) - LIABILITY_FLAGS
@@ -358,7 +367,7 @@ def simace_ref() -> str:
 
 def minimum_detectable(rows: list[dict], threshold: float) -> list[str]:
     """Return results.md's table of each layer-4 scored row's minimum detectable mean gap (ADR 0002 item 10)."""
-    layer4 = [r for r in rows if "gap_sd" in r]
+    layer4 = [r for r in rows if "gap_sd" in r and r["status"] != "INFO" and r["score"].n >= 2]
     if not layer4:
         return []
     md = [
@@ -398,7 +407,9 @@ def write_results(rows: list[dict], threshold: float, errors: list[tuple[dict, s
         "with K the number of p-values over every scored row of the run (ADR 0001). Layer 1: center is the",
         "mean PIT (0.5 under the null) and effect the mean z of simACE against the oracle draws. Layer 2:",
         "center is the mean per-seed difference (0 under the null) and effect its t statistic; a spread row",
-        "is the SD ratio simACE / gene-drop over seeds.",
+        "is the SD ratio simACE / gene-drop over seeds. Layer 4: a scored row is like layer 2 (simACE minus its",
+        "realised truth); an exact row has no p-value and is FAIL when any entry mismatches, with center the",
+        "largest difference and effect the number of mismatching (seed, architecture) entries.",
         "",
         f"**Totals:** {total_line}",
         "",
@@ -468,6 +479,11 @@ def main() -> int:
     args = parser.parse_args()
     cases = load_cases(parser, args.only)
     if args.replicate:
+        # A case scored from committed results has no other seeds to replicate.
+        skipped = [c["id"] for c in cases if c["oracle"] in NOT_SIMULATED]
+        if skipped:
+            print(f"--replicate skips {', '.join(skipped)}: scored from committed Parts, not simulated", flush=True)
+        cases = [c for c in cases if c["oracle"] not in NOT_SIMULATED]
         # The new id also moves every seed derived by case_seed (oracle, gene-drop, ped-sim, SLiM).
         shift = 100_000 * args.replicate
         cases = [

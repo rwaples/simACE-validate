@@ -219,7 +219,11 @@ pixi run test-pipeline                    # tests of tskit_pipeline/ and simace_
 
 The harness never simulates this case. A seed without a Part, or a Part
 whose case, simace, data pins or chromosomes differ from this run's, makes
-the case ERROR, so a simace bump needs all R seeds rerun on GenomeDK.
+the case ERROR, so a simace bump needs all R seeds rerun on GenomeDK. So does
+a Part computed by another `PART_VERSION` of `simace_ts/part.py`, or from
+uncommitted code; that needs only the Part recomputed from the seed's
+outputs on GenomeDK, a few seconds each:
+`pixi run python simace_ts/part.py ~/simace_ts_work/scored/simace_ts_p2/seed9000`.
 
 **Multiplicity.** Every p-value of every scored row in a run forms one
 Bonferroni family, α = 0.05/K. The `null` row of `results/power.md`

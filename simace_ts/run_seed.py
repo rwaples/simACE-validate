@@ -45,13 +45,12 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from importlib import metadata
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import numpy as np
 import yaml
-from score import OUTPUT_KEYS
+from score import CHROMOSOMES, OUTPUT_KEYS, installed_simace
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -60,7 +59,6 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "tskit_pipeline" / "scripts"
 CASES = ROOT / "cases.yaml"
 CASE_ID = "simace_ts_p2"
-CHROMOSOMES = tuple(range(1, 23))
 
 # Seed namespaces (ADR 0002 item 8). Append only: renumbering changes every seed.
 STAGE_SIMULATE, STAGE_DROP, STAGE_EFFECTS, STAGE_COHORT, STAGE_ANALYZE = range(5)
@@ -124,13 +122,6 @@ class Data:
             "simhumanity_commit": head.stdout.strip(),
             "preprocessed_fingerprint": fingerprint.read_text().strip() if fingerprint.exists() else None,
         }
-
-
-def simace_provenance() -> dict:
-    """Return the installed simace's version and the git source it was installed from."""
-    dist = metadata.distribution("simace")
-    direct = dist.read_text("direct_url.json")
-    return {"version": dist.version, "direct_url": json.loads(direct) if direct else None}
 
 
 def validate_commit() -> str:
@@ -229,7 +220,7 @@ def run_seed(
         "case": case,
         "seed": seed,
         "chromosomes": list(chromosomes),
-        "simace": simace_provenance(),
+        "simace": installed_simace(),
         "data": data.pins(),
         "runs": [{"simace_validate": validate_commit(), "started": time.strftime("%Y-%m-%dT%H:%M:%S")}],
     }
