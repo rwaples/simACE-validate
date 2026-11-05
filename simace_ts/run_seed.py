@@ -31,6 +31,7 @@ and so are their drop markers.
 Usage::
 
     pixi run simace-ts --seed 990000 --data ~/data/humanity_sim --work .work/simace_ts
+    pixi run simace-ts --seed 9000 ... --trees-dir "${TMPDIR:-/tmp}/sts_$SLURM_JOB_ID"   # trees off home
 """
 
 from __future__ import annotations
@@ -209,10 +210,29 @@ class Stages:
         marker.touch()
 
 
+def clear_lost_drops(stages: Stages, trees: Callable[[int], Path], chromosomes: tuple[int, ...]) -> None:
+    """Remove the drop marker of every chromosome whose trees are gone (e.g. node-local, lost with a job)."""
+    for c in chromosomes:
+        if not trees(c).exists():
+            stages.marker(f"drop_chrom{c}").unlink(missing_ok=True)
+
+
 def run_seed(
-    case: dict, seed: int, data: Data, work: Path, jobs: int, chromosomes: tuple[int, ...], keep_trees: bool
+    case: dict,
+    seed: int,
+    data: Data,
+    work: Path,
+    jobs: int,
+    chromosomes: tuple[int, ...],
+    keep_trees: bool,
+    trees_dir: Path | None = None,
 ) -> Path:
-    """Run every stage of one seed and return its output directory."""
+    """Run every stage of one seed and return its output directory.
+
+    The grafted ``.trees`` (about 10 GB per seed) go to ``trees_dir``, default the seed's directory. A
+    node-local directory keeps them off a quota-limited home; they are lost with the job, so a drop
+    whose marker survives without its trees runs again.
+    """
     data.check(chromosomes)
     out = seed_dir(work, case, seed, chromosomes)
     out.mkdir(parents=True, exist_ok=True)
@@ -245,8 +265,11 @@ def run_seed(
          "--g-ped", str(g_ped), "--g-pheno", str(g_ped)],
     )  # fmt: skip
 
+    trees_root = trees_dir or out
+    trees_root.mkdir(parents=True, exist_ok=True)
+
     def trees(c: int) -> Path:
-        return out / f"genotypes_chrom_{c}.trees"
+        return trees_root / f"genotypes_chrom_{c}.trees"
 
     def drop(c: int) -> None:
         stages.run(
@@ -262,6 +285,7 @@ def run_seed(
         not stages.marker(f"{a['name']}/gv_chrom{c}").exists() for a in case["architectures"] for c in chromosomes
     )
     if needs_trees:
+        clear_lost_drops(stages, trees, chromosomes)
         with ThreadPoolExecutor(jobs) as pool:
             list(pool.map(drop, chromosomes))
 
@@ -362,12 +386,24 @@ def main(argv: list[str] | None = None) -> int:
         "--chroms", type=int, nargs="+", default=list(CHROMOSOMES), help="a subset, for smoke runs only"
     )
     parser.add_argument("--keep-trees", action="store_true")
+    parser.add_argument(
+        "--trees-dir", type=Path, default=None, help="where the grafted .trees go (default: the seed directory)"
+    )
     parser.add_argument("--case", default=CASE_ID, help="a simace_ts case id in cases.yaml")
     args = parser.parse_args(argv)
 
     case = load_case(args.case)
     chromosomes = tuple(sorted(set(args.chroms)))
-    out = run_seed(case, args.seed, Data(args.data.expanduser()), args.work, args.jobs, chromosomes, args.keep_trees)
+    out = run_seed(
+        case,
+        args.seed,
+        Data(args.data.expanduser()),
+        args.work,
+        args.jobs,
+        chromosomes,
+        args.keep_trees,
+        args.trees_dir,
+    )
     print(out)
     return 0
 

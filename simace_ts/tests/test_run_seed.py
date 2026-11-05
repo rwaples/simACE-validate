@@ -91,3 +91,17 @@ def test_chromosome_subset_gets_its_own_directory(tmp_path):
 def test_manifest_write_leaves_no_temporary_file(tmp_path):
     run_seed.check_manifest(tmp_path, {"case": {}, "runs": []})  # first run: nothing to compare
     assert [p.name for p in tmp_path.iterdir()] == ["manifest.json"]
+
+
+def test_drop_markers_without_trees_are_cleared(tmp_path):
+    stages = run_seed.Stages(tmp_path / "seed")
+    trees_dir = tmp_path / "node_tmp"
+    trees_dir.mkdir()
+    for c in (1, 2):
+        stages.marker(f"drop_chrom{c}").touch()
+    (trees_dir / "genotypes_chrom_1.trees").write_text("kept")  # chromosome 2's trees were lost with the job
+
+    run_seed.clear_lost_drops(stages, lambda c: trees_dir / f"genotypes_chrom_{c}.trees", (1, 2))
+
+    assert stages.marker("drop_chrom1").exists()
+    assert not stages.marker("drop_chrom2").exists()

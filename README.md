@@ -207,8 +207,10 @@ SimHumanity checkout (recombination maps) by commit, and the preprocessed
 founders by fingerprint.
 
 ```bash
-# on GenomeDK, one job per seed (8 CPUs, 48 GB, 1 h)
-pixi run simace-ts --seed 9000 --data ~/data/humanity_sim --work ~/simace_ts_work/scored
+# on GenomeDK, one job per seed (8 CPUs, 48 GB, 1 h); the ~10 GB of grafted .trees go to
+# node-local disk, since home has a quota that 50 seeds at once exceed
+pixi run simace-ts --seed 9000 --data ~/data/humanity_sim --work ~/simace_ts_work/scored \
+  --trees-dir "${TMPDIR:-/tmp}/sts_$SLURM_JOB_ID"
 # on the laptop: fetch each seed's part.json into simace_ts/parts/, then score
 mkdir -p simace_ts/parts/simace_ts_p2
 for d in $(ssh gdk 'ls -d ~/simace_ts_work/scored/simace_ts_p2/seed*'); do
