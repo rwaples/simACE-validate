@@ -4,7 +4,7 @@ The standard simACE pipeline draws additive genetic values $A$ from a Gaussian u
 
 This page explains the design. The worked sweep over `alpha` and `num_causal` is in [Architecture sweep](architecture-sweep.md). The parameters are in [Parameters](#parameters).
 
-This pipeline moved here from simACE's `scripts/gene_drop/`. Unlike the oracles in `genedrop/`, `oracles/` and `structure/`, it is not independent of simACE: it consumes a simACE `pedigree.parquet` and feeds the result back to `simace cohort` and `simace analyze`. It is not part of `pixi run harness`. simACE's config no longer has the `tstrait`, `tskit_preprocess`, `drop_from` or `use_gene_drop` keys, so `scenarios.yaml` records the parameters of past runs and is not a simACE config file. Each script takes its parameters as flags.
+This pipeline moved here from simACE's `scripts/gene_drop/`. Unlike the oracles in `genedrop/`, `oracles/` and `structure/`, it is not independent of simACE: it consumes a simACE `pedigree.parquet` and feeds the result back to `simace cohort` and `simace analyze`. Layer 4 (`simace_ts/`, ADR 0002) runs it per seed on GenomeDK, and `pixi run harness` scores the committed results; the harness itself never runs the pipeline. simACE's config no longer has the `tstrait`, `tskit_preprocess`, `drop_from` or `use_gene_drop` keys, so `scenarios.yaml` records the parameters of past runs and is not a simACE config file. Each script takes its parameters as flags.
 
 ## Why gene drop
 

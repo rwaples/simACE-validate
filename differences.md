@@ -63,3 +63,30 @@ at R = 50 and M = 199. For every `var_C*_g*` and `var_L*_g*` row in
 So these diagnostics cannot tell the two laws apart with three recorded
 generations at N = 2000. ctm_base still checks simACE against the law it
 documents.
+
+## D3. Gaussian liability in simACE's phenotype and analysis stages
+
+Some of simACE's stages assume liability is Gaussian, by design:
+
+- the threshold models mark a case where standardised liability exceeds
+  `ndtri(1 − K)` (simACE `phenotype/models/_prevalence.py:130` at v0.2.0),
+  so realised prevalence is K only for normal liability;
+- ADuLT and LTM onset map liability through a normal survival function
+  (`phenotype/models/adult.py:224`);
+- tetrachoric correlations, and the observed-scale h² built on affection
+  status, read a bivariate-normal liability.
+
+Layer 4 (ADR 0002) hands simACE a finite-locus A from a gene drop, whose
+distribution is not exactly normal, so these quantities can depart from
+their Gaussian targets without any defect in simACE. Case `simace_ts_p2`
+reports them as INFO rows (`info/tetrachoric_*`, `info/affected_corr_*`,
+`info/h2_observed_*`) and scores only quantities whose expectation needs
+second moments alone. Its phenotype model is Weibull frailty, whose hazard
+scales with exp(β L) and does not use `ndtri`; its prevalence
+(`info/prevalence`) is INFO because no target is derived for it, not
+because of this gap.
+
+The size of the departure is not measured yet. It comes from the 50 scored
+seeds and the architecture sweep (100 to 1M causal sites), and is to be
+entered here. That it grows as the number of causal sites falls is expected
+but UNVERIFIED.

@@ -46,7 +46,8 @@ replace the `simace` entry in `pixi.toml` with
 ## What it checks
 
 Each case simulates R pedigrees with `simace simulate` (seeds fixed in
-[`cases.yaml`](cases.yaml)) and scores them in one of three layers.
+[`cases.yaml`](cases.yaml)) and scores them in one of four layers. Layer 4
+runs its seeds on GenomeDK and is scored from committed results.
 
 **Layer 1: the liability law on simACE's own pedigree** (`oracles/liability.R`).
 The cases cover random mating, with and without vertical C transmission
@@ -169,22 +170,61 @@ The same issue reports two id-order artifacts, which neither case tests:
 offspring are sorted by mother, and MZ co-twins always have consecutive
 ids.
 
+**Layer 4: simACE's downstream stages on a gene-drop A** (`simace_ts/`,
+[ADR 0002](docs/adr/0002-simace-ts-layer.md)). Case `simace_ts_p2` drops
+the 35,951 SimHumanity p2 genomes through simACE's 10-generation pedigree
+with [`tskit_pipeline/`](tskit_pipeline/README.md) (real LD and allele
+frequencies, the HapMapII GRCh38 map), assigns a finite causal architecture
+with tstrait, rescales A1 to the configured variance in each generation, and
+runs `simace cohort` and `simace analyze` on it. It checks that those
+stages are right when A is a finite-locus value rather than a Gaussian
+draw. The pipeline supplies A, so this layer depends on simACE more than
+layers 1 to 3: its oracle consumes simACE's pedigree and feeds simACE's own
+stages.
+
+Each seed gives three kinds of row:
+
+- **Scored:** a `report.yaml` field against its realised truth, computed
+  from the gene-drop A simACE was handed and the configured C and E law:
+  liability correlations of FS, MHS, PHS, MO and FO pairs, the full-sib
+  correlation, and midparent slopes and correlations. A t-test over the
+  R = 50 seeds says the mean gap is 0. `results.md` adds each row's minimum
+  detectable gap.
+- **Exact:** fields that depend only on the supplied values (pair counts,
+  A correlations and slopes, the liability correlations themselves),
+  recomputed with simACE's arithmetic. A mismatch is FAIL; these rows have
+  no p-value and are not in K.
+- **INFO:** quantities that assume Gaussian liability by simACE's design
+  ([D3](differences.md)), the gene-drop A correlation minus 2φ by class and
+  generation, and the architecture sweep (100 to 1M causal sites, α = 0 or
+  −0.5).
+
+The case has no MZ twins (the pipeline drops co-twins as separate
+offspring, so it refuses them), no ascertainment, no C transmission and no
+assortative mating. A seed costs about 4 CPU-hours and 36 GB. Its data are
+pinned in `cases.yaml`: the SimHumanity trees archive by sha256, the
+SimHumanity checkout (recombination maps) by commit, and the preprocessed
+founders by fingerprint.
+
+```bash
+# on GenomeDK, one job per seed (8 CPUs, 48 GB, 1 h)
+pixi run simace-ts --seed 9000 --data ~/data/humanity_sim --work ~/simace_ts_work/scored
+# on the laptop: fetch each seed's part.json into simace_ts/parts/, then score
+mkdir -p simace_ts/parts/simace_ts_p2
+for d in $(ssh gdk 'ls -d ~/simace_ts_work/scored/simace_ts_p2/seed*'); do
+  s=$(basename "$d"); rsync -a "gdk:$d/part.json" "simace_ts/parts/simace_ts_p2/$s.json"; done
+pixi run harness --only simace_ts_p2
+pixi run test-pipeline                    # tests of tskit_pipeline/ and simace_ts/
+```
+
+The harness never simulates this case. A seed without a Part, or a Part
+whose case, simace, data pins or chromosomes differ from this run's, makes
+the case ERROR, so a simace bump needs all R seeds rerun on GenomeDK.
+
 **Multiplicity.** Every p-value of every scored row in a run forms one
 Bonferroni family, α = 0.05/K. The `null` row of `results/power.md`
 measures the false-positive rate of `rm_base` scored as its own family; a
 full run's K is larger, so its threshold is stricter.
-
-## The tskit gene-drop pipeline
-
-[`tskit_pipeline/`](tskit_pipeline/README.md) is simACE's former
-`scripts/gene_drop/`: it drops SimHumanity founder haplotypes through a
-simACE pedigree with msprime, assigns causal effects with tstrait, and
-replaces A1 with the rescaled genetic value. It is not an oracle, since it
-feeds its pedigree back to simACE, and `pixi run harness` does not run it.
-
-```bash
-pixi run test-pipeline                    # its unit tests
-```
 
 ## Scope
 
