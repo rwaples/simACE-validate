@@ -86,16 +86,29 @@ scales with exp(β L) and does not use `ndtri`; its prevalence
 (`info/prevalence`) is INFO because no target is derived for it, not
 because of this gap.
 
-Measured on the 50 scored seeds (9000 to 9049, run of 2026-11-05). Frailty
-onset and censoring move these quantities far from the liability-scale
-targets whatever the distribution of A (tetrachoric FS 0.077 against a
-liability correlation near 0.3), so the measure is each architecture's
-paired per-seed difference from c1m_a05, the closest to Gaussian. Over the
-15 statistics and 5 architectures (75 comparisons), the largest |t| is 2.87
-(`h2_observed_po`, c1k_a05, −0.0028), below the 3.63 that Bonferroni over 75
-needs at 0.05, and the paired differences are at most 0.0045 in size
-(`tetrachoric_FO`, c10k_a05). They do not grow as the number of causal sites
-falls: c10k_a05 and c100k_a05 differ from c1m_a05 as much as c100_a05 does.
-The FO and PO rows sit below c1m_a05 in every architecture, which points
-to c1m_a05 being high at these seeds rather than to the others being low.
-No departure is detected at this sample size; a smaller one remains possible.
+Measured on the 50 scored seeds (9000 to 9049, run of 2026-11-05) by
+`pixi run python simace_ts/sweep_info.py`. Frailty onset and censoring move
+these quantities far from the liability-scale targets whatever the
+distribution of A (tetrachoric FS 0.077 against a liability correlation
+near 0.3), so no Gaussian target is available. The measure is instead each
+architecture's paired per-seed difference from c1m_a05, the architecture
+with the most causal sites; c1m_a05 is itself finite-locus, so this cannot
+show a departure that all architectures share.
+
+Over the 15 computable statistics and 5 architectures (75 comparisons;
+`h2_observed_falconer` is empty with no MZ twins), no single comparison
+rejects: the largest |t| is 2.87 (`h2_observed_po`, c1k_a05, mean
+−0.0028), below the two-sided Bonferroni cutoff of 3.63. The largest
+absolute mean difference is 0.0045 (`tetrachoric_FO`, c10k_a05);
+single seeds differ by far more. But c1m_a05 sits above the other
+architecture in 65 of the 75 mean differences, 12 to 14 of 15 in each
+architecture; only the MHS rows and `h2_observed_cousins` break the
+pattern. The comparisons share c1m_a05 and the seeds' phenotypes, so they
+are correlated, and the sign count is not a test. It does not separate an
+unusually high c1m_a05 at these seeds from a real effect of the
+architecture, and with c100_a05 no further from c1m_a05 than c10k_a05 or
+c100k_a05 there is no sign of a departure that grows as the number of
+causal sites falls (the series is c100, c1k, c10k, c100k and c1m at alpha
+−0.5; c1k_a0 changes alpha instead). The cause is unresolved; a joint test
+across statistics, with c1m_a05 against the other architectures, would
+settle whether it is noise.

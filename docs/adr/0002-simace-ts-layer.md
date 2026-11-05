@@ -105,8 +105,10 @@ pedigree, which is out of reach.
    the chromosomes run. Parts are committed. `pixi run harness` scores a
    Case's Parts like any Case. It makes the Case ERROR when:
    - a seed in 0..R−1 has no Part, or two Parts share a seed;
-   - any manifest field differs from the current case config, schema,
-     simace ref or data pins;
+   - the manifest's case config differs from the current one in a key the
+     outputs depend on (`OUTPUT_KEYS` in `simace_ts/score.py`: id,
+     simulate, cohort, architectures; R and notes may change), or its
+     schema, simace ref, data pins, chromosomes or Part version differs;
    - a scored value or truth is not finite, or a scored row is missing in
      any seed.
    K counts the scored rows (item 4) fixed by the schema, not the rows that
