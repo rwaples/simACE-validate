@@ -9,6 +9,9 @@ mating_lambda 0.5, G_sim = G_ped = g.
 - TRAITS = 2: both-trait assortment with every mate correlation r:
   assort1 = assort2 = r and assort_matrix [[r, r], [r, r]], the law of
   xftsim mating on the sum of two standardised traits (run_xft.py).
+  R may be R1/R2 instead: assort1 = R1, assort2 = R2 and the rank-1
+  assort_matrix [[R1, c], [c, R2]] with c = sqrt(R1 R2), the law of
+  am/xft_rank1.py (R1, R2 > 0). The record's r is then the string "R1/R2".
 
 C > 0 (one trait only) sets trait 1's household C to C and its E to 0.5 - C,
 matching run_xft.py's household C.
@@ -31,15 +34,19 @@ import polars as pl
 from am.simace_stats import pedigree_rows
 
 seed, n, g = (int(a) for a in sys.argv[1:4])
-r = float(sys.argv[4])
 traits = int(sys.argv[6]) if len(sys.argv) > 6 else 1
+r1, r2 = (float(x) for x in sys.argv[4].split("/")) if "/" in sys.argv[4] else (float(sys.argv[4]),) * 2
+if r1 != r2 and (traits != 2 or min(r1, r2) <= 0):
+    raise SystemExit("R1/R2 needs TRAITS 2 and R1, R2 > 0")
+r = r1 if r1 == r2 else sys.argv[4]
 c = float(sys.argv[7]) if len(sys.argv) > 7 else 0.0
-out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r}_t{traits}_c{c}.parquet"
+out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r1}-{r2}_t{traits}_c{c}.parquet"
 out.parent.mkdir(parents=True, exist_ok=True)
 
-am = ["--assort1", str(r)]
+am = ["--assort1", str(r1)]
 if traits == 2:
-    am = ["--assort1", str(r), "--assort2", str(r), "--assort-matrix", json.dumps([[r, r], [r, r]])]
+    x = r1 if r1 == r2 else (r1 * r2) ** 0.5
+    am = ["--assort1", str(r1), "--assort2", str(r2), "--assort-matrix", json.dumps([[r1, x], [x, r2]])]
 
 t0 = time.perf_counter()
 subprocess.run(
