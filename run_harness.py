@@ -14,6 +14,7 @@ import argparse
 import hashlib
 import importlib.metadata
 import json
+import math
 import os
 import subprocess
 import sys
@@ -278,15 +279,18 @@ def run_mating_law(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], 
 def check_matched(case: dict) -> None:
     """Refuse a layer-5 case whose simACE flags do not match its xftsim spec (ADR 0003, decision 2)."""
     sim, x = case["simulate"], case_spec(case)
-    r, traits = x["r"], x["traits"]
+    r, r2, traits = x["r"], x["r2"], x["traits"]
     c = x["C"]
     want = {"N": x["N"], "G-ped": x["G"], "G-sim": x["G"], "p-mztwin": 0, "A1": 0.5, "C1": c, "E1": 0.5 - c}
     want |= {"A2": 0.5, "C2": 0, "E2": 0.5, "rA": 0, "rC": 0, "rE": 0, "assort1": r}
     if traits == 2:
-        want |= {"assort2": r, "assort-matrix": json.dumps([[r, r], [r, r]])}
+        cross = r if r2 == r else math.sqrt(r * r2)  # rank 1 (am/run_xft.py)
+        want |= {"assort2": r2, "assort-matrix": json.dumps([[r, cross], [cross, r2]])}
     bad = [f"{k}={sim.get(k)!r} (want {v!r})" for k, v in want.items() if sim.get(k) != v]
     if traits == 1 and sim.get("assort2", 0) != 0:
         bad.append("assort2 must be 0 for a single-trait case")
+    if traits == 1 and r2 != r:
+        bad.append("xftsim r2 needs two traits")
     if bad:
         raise ValueError(f"{case['id']}: simulate does not match the xftsim spec: {'; '.join(bad)}")
 
@@ -298,10 +302,9 @@ def bulmer_prediction(case: dict, stat: str) -> float | None:
     g = int(g)
     if x["traits"] == 1:
         return predict1(0.5, 0.5, x["r"], g, c=x["C"]).get(name)
-    if name.startswith("r_mate_L"):
-        return x["r"]
-    pred = bulmer2(0.5, 0.5, x["r"], g)[g]
-    return pred.get({"r_mate_A21": "r_mate_A12", "r_mate_A_t2": "r_mate_A", "var_L_t2": "var_L"}.get(name, name))
+    r, r2 = x["r"], x["r2"]
+    cross = r if r2 == r else math.sqrt(r * r2)
+    return bulmer2(0.5, 0.5, [[r, cross], [cross, r2]], g)[g].get(name)
 
 
 def run_xftsim(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:

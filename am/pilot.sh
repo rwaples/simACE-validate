@@ -3,7 +3,7 @@
 # Pilot seeds (GLOSSARY) come from 9000001.., a range never scored.
 # Usage: [CELLS=all|c|rank1] bash am/pilot.sh OUTDIR [JOBS]
 #   CELLS=c runs only the household-C cells (C = 0.2, single trait), added after the rest.
-#   CELLS=rank1 runs only the unequal-r two-trait cell (r1 0.4, r2 0.1, rank 1; am/xft_rank1.py).
+#   CELLS=rank1 runs only the unequal-r two-trait cell (r1 0.4, r2 0.1, rank 1; am/run_xft.py R1/R2).
 # Writes OUTDIR/xft.jsonl and OUTDIR/simace.jsonl, one JSON line per run.
 set -euo pipefail
 here=$(cd "$(dirname "$0")/.." && pwd)
@@ -32,7 +32,7 @@ for i in $(seq 1 $R); do
   if [ "$cells" = rank1 ]; then
     r1=0.4 r2=0.1
     sim $s $r1/$r2 2
-    echo "$xpy -m am.xft_rank1 $s $N 1000 $G $r1 $r2 > $out/tmp/xft/s${s}_rank1.json" >> "$tasks"
+    echo "$xpy -m am.run_xft $s $N 1000 $G $r1/$r2 2 > $out/tmp/xft/s${s}_rank1.json" >> "$tasks"
     continue
   fi
   # household C (xftsim-bench's construction in run_xft.py), single trait

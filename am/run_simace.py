@@ -11,7 +11,7 @@ mating_lambda 0.5, G_sim = G_ped = g.
   xftsim mating on the sum of two standardised traits (run_xft.py).
   R may be R1/R2 instead: assort1 = R1, assort2 = R2 and the rank-1
   assort_matrix [[R1, c], [c, R2]] with c = sqrt(R1 R2), the law of
-  am/xft_rank1.py (R1, R2 > 0). The record's r is then the string "R1/R2".
+  am/run_xft.py (R1, R2 > 0). The record's r is then the string "R1/R2".
 
 C > 0 (one trait only) sets trait 1's household C to C and its E to 0.5 - C,
 matching run_xft.py's household C.

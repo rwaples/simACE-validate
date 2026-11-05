@@ -5,6 +5,9 @@
   two-trait AM at two levels (decision 2).
 - Decision 8 is built: `am/manifest.py`, `am/reference.py`,
   `run_harness.py` (`run_xftsim`), `power.py` and cases.yaml.
+- The user added a scored two-trait case with unequal mate correlations
+  (`am2_r0401`, rank 1; decision 2) and accepted regenerating every
+  reference for it.
 
 **Date:** 2026-11-04
 
@@ -132,6 +135,29 @@ within the measured MDDs, not equality.
      only for r < (1 + ρ_w)/2 = 0.5, where ρ_w is the within-person trait
      correlation (it starts at 0 and grows under this AM). 0.4 leaves
      margin; 0.5 or more would put generation 0 at or past the bound.
+   - **Two traits, unequal r, rank 1: r1 = 0.4, r2 = 0.1** (`am2_r0401`).
+     The mate correlation matrix is R_mf = v·vᵀ with v = (√r1, √r2), so the
+     cross terms are √(r1·r2) = 0.2. simACE uses `assort1 = 0.4`,
+     `assort2 = 0.1` and `assort_matrix [[0.4, 0.2], [0.2, 0.1]]`.
+     - xftsim's LAM gives every mate correlation one r (it pairs on the
+       equally weighted sum). Its `GeneralAssortativeMatingRegime` takes
+       any target but needs LocalSolver, a commercial solver
+       (`xftsim/mate.py:1026-1053` at `8a4cdf0`).
+     - So `am/run_xft.py` adds `Rank1AssortativeMatingRegime`, written
+       against xftsim's `MatingRegime` interface. Each side pairs on the
+       score s = Z·S⁻¹v (Z the standardised traits, S their covariance on
+       that side) at correlation ρ = √(q_f·q_m), with q = vᵀS⁻¹v. That
+       pins all four mate correlations at v·vᵀ in every generation, as LAM
+       re-solves its R for the realised ρ_w.
+     - At r1 = r2 it reproduces LAM's output exactly (103 statistics, one
+       seed, max |diff| 0.0). Meiosis, effects, the architecture and the
+       pedigree stay xftsim's; the pairing law of this case is ours.
+     - Pilot: 40 seeds per side (`am/pilot/rank1_summary.md`). simACE
+       against xftsim gives 139 Welch rows, smallest p 0.0147. Against the
+       Bulmer recursion with this R (`bulmer2`), the largest |z| is 2.45
+       for simACE and 1.94 for xftsim.
+     - Feasible while ρ < 1; the regime raises otherwise rather than clamp
+       as LAM does.
    - **simACE:** `G_ped = G_sim = 6` and `mating_lambda` 0.5. Recorded
      generation k follows k + 1 matings (ADR 0001 §3), so it is reported as
      g = k + 1.
@@ -171,10 +197,10 @@ within the measured MDDs, not equality.
      Rejected: only moments are compared, never pedigrees.
    - *Two-trait AM through simACE's derived cross term* (no
      `assort_matrix`; `_cross_am_matrix` derives it from ρ_w). xftsim has
-     no regime with that structure. A different-r-per-trait or
-     cross-term-0 law would need xftsim's `GeneralAssortativeMatingRegime`,
-     which solves an assignment problem and is slow (issue #4). Not
-     piloted.
+     no regime with that structure. A cross-term-0 law (simACE's default
+     with unequal r and `rA = 0`) is rank 2. No single-score pairing
+     reaches it, so it would need xftsim's `GeneralAssortativeMatingRegime`
+     and LocalSolver. Not piloted; unequal r is covered at rank 1 only.
 3. **xftsim effects are fixed-scale.** β ~ N(0, 1) per trait is rescaled so
    that mean(β²) = h² exactly, through `AdditiveEffects(scaled=True,
    standardized=True)`. The founders' expected Var(A) is then h² given the
@@ -427,10 +453,13 @@ and with `bulmer2`. At r = 0.4, g = 6:
       (10);
     - the cross-trait mate correlations on A, in both orders, at g = 2 to 6
       (10).
+  - `am2_r0401`, two traits with r1 0.4 and r2 0.1 (rank 1): the same 114
+    Welch rows.
   - `amc_r05`, single trait with household C 0.2: 42 Welch rows.
-  - Single-trait rows add 168 p-values to K, and two-trait rows add 228:
-    396 in all. With the 835 of the last full run, α/K would fall from
-    5.99·10⁻⁵ to 0.05/1231 = 4.06·10⁻⁵.
+  - Single-trait rows add 168 p-values to K, and the first two two-trait
+    cases add 228: 396 in all. With the 835 of the last full run, α/K fell
+    from 5.99·10⁻⁵ to 0.05/1231 = 4.06·10⁻⁵ (run of 2026-11-05).
+    `am2_r0401` adds 114 more: 0.05/1345 = 3.72·10⁻⁵.
   - INFO rows: the MO and FO rows, and one `bulmer:<row>` row per scored
     row, a one-sample t of simACE against the Bulmer expectation. As
     built, no KS is computed at all.
@@ -479,7 +508,8 @@ and with `bulmer2`. At r = 0.4, g = 6:
   - C only as a household draw by mother, single trait, no half-sibs;
   - the family-structure difference behind decision 4;
   - the finite-M CI of decision 5;
-  - the restriction of two-trait AM to the R_mf = r·11ᵀ law.
+  - the restriction of two-trait AM to rank-1 laws: R_mf = r·11ᵀ, and
+    v·vᵀ with unequal r through our pairing regime.
 
 ## Consequences
 
@@ -490,7 +520,9 @@ and with `bulmer2`. At r = 0.4, g = 6:
 - These stay unchecked; each needs its own matched law:
   - two-trait AM with C > 0, and the half-sib split of C (xftsim's regimes
     make no half-sibs);
-  - two-trait AM with unequal or derived cross terms (`_cross_am_matrix`);
+  - two-trait AM with any cross term other than √(r1·r2), including
+    simACE's derived one (`_cross_am_matrix`), which is 0 for independent
+    traits;
   - correlated traits;
   - AM combined with C transmission (rwaples/simACE-validate#5).
 - xftsim's environment is Python 3.9 with numba 0.56.4 and numpy 1.23 (pixi

@@ -1,10 +1,10 @@
-"""Summary of the unequal-r two-trait pilot (rank-1 mate correlation; am/xft_rank1.py).
+"""Summary of the unequal-r two-trait pilot (rank-1 mate correlation; am/run_xft.py R1/R2).
 
 Reads the simACE and xftsim JSONL of `CELLS=rank1 bash am/pilot.sh` (committed as
 am/pilot/rank1_simace.jsonl and rank1_xft.jsonl), keeps the rank-1 records (r is
 the string "R1/R2"; every kept record must share r, g and h2) and prints, per statistic and generation, the simACE and xftsim means, the
 Welch p between them, and each tool's z against a two-trait Bulmer recursion
-with a general mate correlation matrix R (bulmer2 in am/stats.py takes one r).
+with the general mate correlation matrix R (bulmer2 in am/stats.py).
 
 Usage: python -m am.rank1_summary SIMACE_JSONL XFT_JSONL
 """
@@ -16,44 +16,9 @@ from pathlib import Path
 import numpy as np
 from scipy import stats
 
+from am.stats import bulmer2
+
 COUNTS = ("n", "n_couples", "n_fs_pairs")  # family structure differs by design (differences.md D4)
-
-
-def bulmer2_general(a0: float, e: float, rmat: np.ndarray, g: int) -> list[dict[str, float]]:
-    """am/stats.py bulmer2 with the liability mate correlation R = rmat (female rows, male columns)."""
-    sa = np.eye(2) * a0
-    out = [{}]
-    for _ in range(g):
-        sy = sa + e * np.eye(2)
-        d = np.sqrt(np.diag(sy))
-        k = sa @ np.linalg.solve(sy, np.eye(2))
-        c = k @ (np.outer(d, d) * rmat) @ k.T
-        sda = np.sqrt(np.diag(sa))
-        mate = {
-            "r_mate_A": c[0, 0] / sa[0, 0],
-            "r_mate_A_t2": c[1, 1] / sa[1, 1],
-            "r_mate_A12": c[0, 1] / (sda[0] * sda[1]),
-            "r_mate_A21": c[1, 0] / (sda[0] * sda[1]),
-            "r_mate_L": rmat[0, 0],
-            "r_mate_L_t2": rmat[1, 1],
-            "r_mate_L12": rmat[0, 1],
-            "r_mate_L21": rmat[1, 0],
-            "r_w_L_parents": sy[0, 1] / (d[0] * d[1]),
-        }
-        sa = sa / 2 + (c + c.T) / 4 + np.eye(2) * a0 / 2
-        sy = sa + e * np.eye(2)
-        out.append(
-            {
-                "var_A": sa[0, 0],
-                "var_A_t2": sa[1, 1],
-                "var_L": sy[0, 0],
-                "var_L_t2": sy[1, 1],
-                "r_w_A": sa[0, 1] / np.sqrt(sa[0, 0] * sa[1, 1]),
-                "r_w_L": sy[0, 1] / np.sqrt(sy[0, 0] * sy[1, 1]),
-                **mate,
-            }
-        )
-    return out
 
 
 def load(path: Path) -> tuple[tuple, dict[tuple[str, int], np.ndarray]]:
@@ -83,7 +48,7 @@ if spec != spec_xft:
     raise SystemExit(f"simACE {spec} and xftsim {spec_xft} differ")
 (R1, R2), G, h2 = (float(v) for v in spec[0].split("/")), spec[1], spec[2]
 x = np.sqrt(R1 * R2)
-pred = bulmer2_general(h2, 1 - h2, np.array([[R1, x], [x, R2]]), G)
+pred = bulmer2(h2, 1 - h2, np.array([[R1, x], [x, R2]]), G)
 keys = sorted(set(sim) & set(xft), key=lambda k: (k[1], k[0]))
 for tool, only in (("simACE", set(sim) - set(xft)), ("xftsim", set(xft) - set(sim))):
     if only:

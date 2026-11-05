@@ -234,6 +234,19 @@ cases:
     R: 100
     xftsim: {N: 10000, M: 1000, G: 6, r: 0.4, traits: 2, seed0: 17800, R: 100}
 
+  - id: am2_r0401
+    layer: 5
+    oracle: xftsim
+    note: two-trait assortment with unequal mate correlations, rank 1 (0.4, 0.1, cross sqrt(0.04) = 0.2; ADR 0003 decision 2)
+    simulate:
+      <<: *am
+      assort1: 0.4
+      assort2: 0.1
+      assort-matrix: "[[0.4, 0.2], [0.2, 0.1]]"
+    seed0: 8200
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0.4, r2: 0.1, traits: 2, seed0: 19000, R: 100}
+
   - id: amc_r05
     layer: 5
     oracle: xftsim

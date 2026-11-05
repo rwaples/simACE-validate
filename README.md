@@ -244,6 +244,7 @@ of the Mendelian residual.
 
 Not covered yet ([`status.md`](status.md)):
 
-- assortative mating with two traits and C > 0, with correlated traits, with unequal or
-  derived two-trait cross terms, or combined with C transmission; layer 5
-  covers single-trait AM and two-trait AM with every mate correlation equal
+- assortative mating with two traits and C > 0, with correlated traits, with two-trait
+  cross terms other than √(r1·r2) (including simACE's derived one), or combined with C
+  transmission; layer 5 covers single-trait AM and two-trait AM with a rank-1 mate
+  correlation matrix (every correlation equal, or r1 0.4 and r2 0.1)

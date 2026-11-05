@@ -94,10 +94,14 @@ the two population laws agree to first order. They agree only approximately:
   - xftsim's targets R = r(n−1)/n with one component;
   - simACE v0.2.0's single-trait copula falls slightly short (simACE #74);
   - simACE's two-trait path pins all four correlations by Metropolis.
-- **Two-trait AM** is checked only for the law xftsim's linear regime
-  produces: every mate correlation (same-trait and cross-trait) equal to
-  r. simACE's derived cross term (`_cross_am_matrix`) and unequal cross
-  terms are unchecked.
+- **Two-trait AM** is checked only for rank-1 mate correlation matrices:
+  every mate correlation equal to r (xftsim's linear regime), and
+  r1 = 0.4, r2 = 0.1 with cross terms √(r1·r2) = 0.2. The unequal case
+  pairs by `Rank1AssortativeMatingRegime` in `am/run_xft.py`, our code on
+  xftsim's interface, so that case's pairing law is not independent of
+  this repo (ADR 0003, decision 2). Other cross terms are unchecked,
+  including simACE's derived one (`_cross_am_matrix`), which is 0 for
+  independent traits.
 - **Labels.** xftsim pairs a random split of the population, so its
   "mother" and "father" are labels. The mother–offspring and
   father–offspring rows are INFO.

@@ -24,10 +24,10 @@ FORMAT = 1
 # Power mutations of the reference side (ADR 0003, decision 8): each maps the case's
 # xftsim spec to the mutated one; applicable(case_spec) says where it makes sense.
 XFT_MUTATIONS = {
-    "r_090": (lambda x: {**x, "r": round(0.9 * x["r"], 10)}, lambda x: x["r"] != 0),
-    "r_0": (lambda x: {**x, "r": 0.0}, lambda x: x["r"] != 0),
+    "r_090": (lambda x: {**x, "r": round(0.9 * x["r"], 10), "r2": round(0.9 * x["r2"], 10)}, lambda x: x["r"] != 0),
+    "r_0": (lambda x: {**x, "r": 0.0, "r2": 0.0}, lambda x: x["r"] != 0),
     "mate_A": (lambda x: {**x, "mate": "additive"}, lambda x: x["r"] != 0),
-    "mate_y1": (lambda x: {**x, "mate": "y1"}, lambda x: x["traits"] == 2 and x["r"] != 0),
+    "mate_y1": (lambda x: {**x, "mate": "y1"}, lambda x: x["traits"] == 2 and x["r"] != 0 and x["r2"] == x["r"]),
 }
 
 
@@ -36,9 +36,14 @@ def derived_seed0(name: str) -> int:
     return int.from_bytes(hashlib.sha256(f"{name}:xftsim".encode()).digest()[:4], "big") >> 1
 
 
+def defaults(xftsim: dict) -> dict:
+    """An xftsim spec with defaults filled in; r2 (trait 2's mate correlation, two traits) defaults to r."""
+    return {"traits": 1, "mate": "phenotype", "C": 0, "r2": xftsim["r"], **xftsim}
+
+
 def case_spec(case: dict) -> dict:
     """A scored case's own xftsim spec, defaults filled in."""
-    return {"traits": 1, "mate": "phenotype", "C": 0, **case["xftsim"]}
+    return defaults(case["xftsim"])
 
 
 def derived(case: dict, mutation: str, rep: int = 0) -> tuple[str, dict]:
@@ -67,9 +72,14 @@ def xftsim_lock() -> tuple[str, str]:
 
 def full_spec(xftsim: dict) -> dict:
     """The case's xftsim block with defaults filled in, in a fixed key order."""
-    keys = ("N", "M", "G", "r", "traits", "mate", "C", "seed0", "R")
-    x = {"traits": 1, "mate": "phenotype", "C": 0, **xftsim}
+    keys = ("N", "M", "G", "r", "r2", "traits", "mate", "C", "seed0", "R")
+    x = defaults(xftsim)
     return {k: x[k] for k in keys}
+
+
+def r_arg(spec: dict) -> str:
+    """The R argument of am/run_xft.py for a spec: r, or R1/R2 when the two traits' r differ."""
+    return str(spec["r"]) if spec["r2"] == spec["r"] else f"{spec['r']}/{spec['r2']}"
 
 
 def manifest(name: str, xftsim: dict) -> dict:
