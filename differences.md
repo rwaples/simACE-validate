@@ -86,7 +86,16 @@ scales with exp(β L) and does not use `ndtri`; its prevalence
 (`info/prevalence`) is INFO because no target is derived for it, not
 because of this gap.
 
-The size of the departure is not measured yet. It comes from the 50 scored
-seeds and the architecture sweep (100 to 1M causal sites), and is to be
-entered here. That it grows as the number of causal sites falls is expected
-but UNVERIFIED.
+Measured on the 50 scored seeds (9000 to 9049, run of 2026-11-05). Frailty
+onset and censoring move these quantities far from the liability-scale
+targets whatever the distribution of A (tetrachoric FS 0.077 against a
+liability correlation near 0.3), so the measure is each architecture's
+paired per-seed difference from c1m_a05, the closest to Gaussian. Over the
+15 statistics and 5 architectures (75 comparisons), the largest |t| is 2.87
+(`h2_observed_po`, c1k_a05, −0.0028), below the 3.63 that Bonferroni over 75
+needs at 0.05, and the paired differences are at most 0.0045 in size
+(`tetrachoric_FO`, c10k_a05). They do not grow as the number of causal sites
+falls: c10k_a05 and c100k_a05 differ from c1m_a05 as much as c100_a05 does.
+The FO and PO rows sit below c1m_a05 in every architecture, which points
+to c1m_a05 being high at these seeds rather than to the others being low.
+No departure is detected at this sample size; a smaller one remains possible.
