@@ -53,6 +53,6 @@ architectures:
   - {name: c1m_a05, num-causal: 1000000, alpha: -0.5, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
   - {name: c1k_a0, num-causal: 1000, alpha: 0.0, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
 seed0: 9000
-R: null               # set after the pilot, before any scored seed runs
+R: 50                 # fixed 2026-11-05 from the pilot (ADR 0002 item 10), before any scored seed ran
 pilot_seed0: 990000
 pilot_R: 3

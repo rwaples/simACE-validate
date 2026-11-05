@@ -9,6 +9,7 @@ Stages, each a subprocess of this repo's pixi env (``sys.executable``, so the
 4. per architecture: ``tstrait_assign_effects.py``, ``tstrait_gv_chrom.py``
    per chromosome, ``tstrait_augment_pedigree.py --per-generation``,
    ``simace cohort`` and ``simace analyze``
+5. ``part.py``, which writes the seed's Part, ``part.json``
 
 Every stage seed comes from its own namespace of the seed s,
 ``SeedSequence([s, stage, index])``, never from integer offsets of s.
@@ -259,6 +260,10 @@ def run_seed(
     params = write_params(case, seed, out / "params.yaml")
     for i, arch in enumerate(case["architectures"]):
         run_architecture(stages, case, seed, i, arch, out, ped, params, trees, chromosomes, jobs, data)
+
+    # The Part is cheap and derived only from outputs on disk, so it is recomputed on every run.
+    stages.marker("part").unlink(missing_ok=True)
+    stages.run("part", [py, str(Path(__file__).resolve().parent / "part.py"), str(out)])
 
     if not keep_trees:
         for c in chromosomes:

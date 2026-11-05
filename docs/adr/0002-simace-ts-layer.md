@@ -39,10 +39,15 @@ pedigree, which is out of reach.
 2. **Realised truth.** For each scored `report.yaml` field, the harness
    computes the expectation on the same rows, in the same scope, from the
    realised gene-drop A and the configured C and E law:
-   - a liability pair correlation of class k:
-     (realised Cov(A) over the class's pairs + C1·[same household]) / V_P,
-     where a household is the mother (simACE `simulate.py`) and V_P is the
-     realised liability variance of those rows;
+   - a liability pair correlation over a class's pairs (i, j):
+     (Cov(A_i, A_j) + C1·s) / √((Var A_i + C1 + E1)(Var A_j + C1 + E1)),
+     with the realised A's population moments over exactly those pairs and
+     s the realised fraction of pairs sharing a `household_id`;
+   - a midparent liability slope: (Cov(A_child, A_mid) + C1·s_cm) /
+     (Var A_mid + (C1·(1 + s_mf) + E1)/2), with s_mf the fraction of parent
+     pairs from one household and s_cm that of child–parent pairs;
+   - in both, C1 and E1 are the configured variances, not the realised
+     ones: a realised V_P would absorb a wrong C or E variance in simACE;
    - an A correlation or A regression slope and R²: none is computed. These
      are statistics of the supplied A alone, so the harness recomputes them
      exactly (item 3);
@@ -113,6 +118,14 @@ pedigree, which is out of reach.
     power study (ADR 0001 §6) would need repeated full sets of R seeds,
     which is out of reach. Instead, results.md reports each row's minimum
     detectable mean gap at α/K, computed from its observed SE across seeds.
+
+    **Fixed 2026-11-05: R = 50** (seeds 9000 to 9049), from the pilot seeds
+    990000 to 990002. Each took 32 to 33 min on 8 CPUs, about 4.0 CPU-hours
+    summed over stages (drops about 2.0, genetic values about 2.0, of which
+    the 1M-site sweep architecture took 1.66), with a job memory peak of
+    36.0 GB. At α/K = 5.91e-5 (K = 846), R = 50 detects a mean gap of
+    0.74 per-seed SDs at 80% power, against 1.01 at R = 30 and 0.51 at
+    R = 99. The pilot's gaps were not used to choose R beyond that spread.
 
 ## Data
 
