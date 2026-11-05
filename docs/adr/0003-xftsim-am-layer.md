@@ -463,9 +463,14 @@ and with `bulmer2`. At r = 0.4, g = 6:
   - for two traits, xftsim mating on y1 alone.
 
   There are two nulls:
-  - simACE against a second reference sample from a disjoint seed range,
-    which includes simACE's own spread;
-  - xftsim against xftsim.
+  - simACE on fresh seeds against the committed reference (`null`), the
+    false-positive rate given that sample;
+  - xftsim against xftsim (`null_xft`), a second xftsim sample in simACE's
+    place. It needs R xftsim runs per rep and was not run.
+
+  Run on am_r05 and am2_r04 at 10 reps (results/power_am.md): every
+  mutation rejected 10/10; `null` rejected 0/10 (am_r05) and 1/10
+  (am2_r04, one row, `r_FS_L_g4`).
 - **status.md G2b** becomes Closed with the cases' results, for the scope
   tested: single-trait AM (C = 0, and household C 0.2 at r = 0.5), and
   two-trait AM with every mate correlation equal (C = 0), with independent

@@ -13,7 +13,8 @@ The latest results are in [`results/results.md`](results/results.md), and
 the harness's measured power is in [`results/power.md`](results/power.md)
 (layer 1), [`results/power_std_mating.md`](results/power_std_mating.md) and
 [`results/power_std_structure.md`](results/power_std_structure.md) (layer
-3b; run before power.py wrote every case to one table).
+3b; run before power.py wrote every case to one table) and
+[`results/power_am.md`](results/power_am.md) (layer 5).
 Every known model gap is explained in [`differences.md`](differences.md),
 and where each non-PASS row stands is in [`status.md`](status.md).
 
