@@ -51,13 +51,15 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import yaml
+from score import OUTPUT_KEYS
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "tskit_pipeline" / "scripts"
-CASE = Path(__file__).resolve().parent / "case.yaml"
+CASES = ROOT / "cases.yaml"
+CASE_ID = "simace_ts_p2"
 CHROMOSOMES = tuple(range(1, 23))
 
 # Seed namespaces (ADR 0002 item 8). Append only: renumbering changes every seed.
@@ -139,12 +141,25 @@ def validate_commit() -> str:
     ).stdout.strip()  # fmt: skip
 
 
+def load_case(case_id: str) -> dict:
+    """Return the case of id ``case_id`` from cases.yaml."""
+    cases = {c["id"]: c for c in yaml.safe_load(CASES.read_text())["cases"]}
+    if case_id not in cases or cases[case_id]["oracle"] != "simace_ts":
+        raise SystemExit(f"{case_id}: not a simace_ts case in {CASES}")
+    return cases[case_id]
+
+
 def check_manifest(out: Path, manifest: dict) -> None:
-    """Write ``manifest.json``, or refuse a rerun whose inputs differ from the first run's."""
+    """Write ``manifest.json``, or refuse a rerun whose inputs differ from the first run's.
+
+    Of the case, only the keys the outputs depend on (``OUTPUT_KEYS``) are compared, so editing R or a note
+    does not invalidate a seed.
+    """
     path = out / "manifest.json"
     if path.exists():
         previous = json.loads(path.read_text())
-        changed = sorted(k for k in manifest if k != "runs" and previous.get(k) != manifest[k])
+        changed = sorted(k for k in manifest if k not in ("case", "runs") and previous.get(k) != manifest[k])
+        changed += [f"case.{k}" for k in OUTPUT_KEYS if previous["case"].get(k) != manifest["case"].get(k)]
         if changed:
             raise SystemExit(f"{out}: {', '.join(changed)} changed since this seed's first run; use a new --work")
         manifest["runs"] = previous["runs"] + manifest["runs"]
@@ -218,6 +233,8 @@ def run_seed(
         "data": data.pins(),
         "runs": [{"simace_validate": validate_commit(), "started": time.strftime("%Y-%m-%dT%H:%M:%S")}],
     }
+    if manifest["data"] != case["data"]:
+        raise SystemExit(f"{data.root}: data pins {manifest['data']} are not the case's {case['data']}")
     check_manifest(out, manifest)
     stages = Stages(out)
     py = sys.executable
@@ -354,9 +371,10 @@ def main(argv: list[str] | None = None) -> int:
         "--chroms", type=int, nargs="+", default=list(CHROMOSOMES), help="a subset, for smoke runs only"
     )
     parser.add_argument("--keep-trees", action="store_true")
+    parser.add_argument("--case", default=CASE_ID, help="a simace_ts case id in cases.yaml")
     args = parser.parse_args(argv)
 
-    case = yaml.safe_load(CASE.read_text())
+    case = load_case(args.case)
     chromosomes = tuple(sorted(set(args.chroms)))
     out = run_seed(case, args.seed, Data(args.data.expanduser()), args.work, args.jobs, chromosomes, args.keep_trees)
     print(out)

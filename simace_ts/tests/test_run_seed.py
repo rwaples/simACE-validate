@@ -7,7 +7,6 @@ import sys
 from pathlib import Path
 
 import pytest
-import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import run_seed
@@ -34,7 +33,7 @@ def test_consecutive_seeds_do_not_share_drop_seeds():
 
 
 def test_case_config_keeps_the_adr_restrictions():
-    case = yaml.safe_load(run_seed.CASE.read_text())
+    case = run_seed.load_case(run_seed.CASE_ID)
     assert case["simulate"]["p-mztwin"] == 0
     assert case["cohort"]["N-sample"] == 0
     assert "analyze" not in case  # analyze takes censor-age from cohort
@@ -69,13 +68,16 @@ def test_failed_stage_raises_and_leaves_no_marker(tmp_path):
 
 
 def test_rerun_with_a_changed_case_is_refused(tmp_path):
-    first = {"case": {"A1": 0.4}, "seed": 1, "runs": [{"simace_validate": "a"}]}
+    first = {"case": {"simulate": {"A1": 0.4}, "R": 3}, "seed": 1, "runs": [{"simace_validate": "a"}]}
     run_seed.check_manifest(tmp_path, first)
-    run_seed.check_manifest(tmp_path, {"case": {"A1": 0.4}, "seed": 1, "runs": [{"simace_validate": "b"}]})
+    # R is not an output key, so changing it does not invalidate the seed.
+    second = {"case": {"simulate": {"A1": 0.4}, "R": 50}, "seed": 1, "runs": [{"simace_validate": "b"}]}
+    run_seed.check_manifest(tmp_path, second)
     assert [r["simace_validate"] for r in json.loads((tmp_path / "manifest.json").read_text())["runs"]] == ["a", "b"]
 
-    with pytest.raises(SystemExit, match="case changed"):
-        run_seed.check_manifest(tmp_path, {"case": {"A1": 0.5}, "seed": 1, "runs": [{"simace_validate": "c"}]})
+    third = {"case": {"simulate": {"A1": 0.5}, "R": 50}, "seed": 1, "runs": [{"simace_validate": "c"}]}
+    with pytest.raises(SystemExit, match=r"case\.simulate changed"):
+        run_seed.check_manifest(tmp_path, third)
 
 
 def test_chromosome_subset_gets_its_own_directory(tmp_path):
@@ -87,5 +89,5 @@ def test_chromosome_subset_gets_its_own_directory(tmp_path):
 
 
 def test_manifest_write_leaves_no_temporary_file(tmp_path):
-    run_seed.check_manifest(tmp_path, {"case": {}, "runs": []})
+    run_seed.check_manifest(tmp_path, {"case": {}, "runs": []})  # first run: nothing to compare
     assert [p.name for p in tmp_path.iterdir()] == ["manifest.json"]
