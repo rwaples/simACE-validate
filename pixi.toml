@@ -53,5 +53,6 @@ build-nadiv = { cmd = "bash tools/build_nadiv.sh", description = "Install the pi
 build-pedsim = { cmd = "bash tools/build_pedsim.sh", description = "Build the pinned ped-sim tag into .pedsim/" }
 harness = { cmd = "python run_harness.py", depends-on = ["build-nadiv", "build-pedsim"], description = "Run every case and write results/" }
 power = { cmd = "python power.py", depends-on = ["build-nadiv"], description = "Rejection rates at stated oracle errors; writes results/power.md" }
-test-pipeline = { cmd = "pytest tskit_pipeline/tests -q", description = "Tests of the tskit/tstrait gene-drop pipeline" }
+simace-ts = { cmd = "python simace_ts/run_seed.py", description = "Run one simACE-ts seed end to end (ADR 0002); see simace_ts/run_seed.py" }
+test-pipeline = { cmd = "pytest tskit_pipeline/tests simace_ts/tests -q", description = "Tests of the tskit/tstrait gene-drop pipeline and the simACE-ts runner" }
 lint = { cmd = "ruff check && ruff format --check", description = "Lint and format check" }
