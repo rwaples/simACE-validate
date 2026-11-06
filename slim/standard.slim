@@ -1,7 +1,7 @@
 // Layer 3b: simACE's `standard` mating model (random mating, no assortment),
 // re-implemented in SLiM's nonWF model from simACE's documentation:
 // methods.md "Reproduction: mating and family structure" and "Monozygotic
-// twins", simulation-design.md "Mating and reproduction", ADR 0002.
+// twins" (v0.3.0), simulation-design.md "Mating and reproduction", ADR 0002.
 //
 //   slim -d N=500 -d G=6 -d LAMBDA=0.5 -d PMZ=0.02 -d SEED=1 -d "OUT='ped.tsv'" slim/standard.slim
 //
@@ -16,19 +16,29 @@
 //    sexes have nSlots = min(total female, total male) slots.
 // 3. Female slots in order, male slots shuffled, paired by position. A couple
 //    that occurs twice has its father swapped with a random other mating.
-// 4. The N children go to the nSlots matings by Multinomial(N, 1/nSlots).
-// 5. Each mating with at least two children gets one MZ pair with
-//    probability PMZ: its first two children, with the same sex.
+//    One that survives the passes stays a second mating with the same parents.
+// 4. t ~ Binomial(N, PMZ / (1 + PMZ)) MZ pairs (nTwin), at most N / 2, so PMZ
+//    is the rate per birth; the B = N - t births go to the nSlots matings by
+//    Multinomial(B, 1/nSlots).
+// 5. t of the B births, uniformly without replacement, are twin births: two
+//    co-twins with the same sex.
 // 6. Sex is Bernoulli(1/2) for founders and children.
+// 7. Each couple's children are created in birth order, couples in mother
+//    order, so co-twins and each couple's children have consecutive ids.
 //
 // Settled from simACE's code (v0.2.0 simulate.py) because the docs leave them
-// open; reported in rwaples/simACE#78:
+// open; reported in rwaples/simACE#78 (v0.3.0's methods.md now states the first
+// two):
 // - Step 2 removes random slots, not random persons ("loses slots at random";
 //   balance_mating_slots keeps a uniform subset of the slots).
 // - Step 3: the docs swap "with a nearby partner"; pair_partners swaps the
 //   father with a uniformly random non-duplicate mating, for at most 5 passes.
 // - Step 6 for children: methods.md states Bernoulli(1/2) for founders only;
 //   ADR 0002 and reproduce() use it for every child.
+// - Step 7: methods.md orders couples by mother. A mother's couples stay in
+//   mating order, except that v0.3.0 pair_partners sorts all matings by
+//   mother then father when the passes end without a clean check (a duplicate
+//   survives, or the fifth pass ran), so a repeat sits next to its first row.
 //
 // As in simACE, the founders are not recorded: the first offspring generation
 // is recorded generation 0, with unknown parents. Writes one row per recorded
@@ -80,16 +90,19 @@ reproduction() {
 		mSlots = sample(mSlots, nSlots);
 
 		// Step 3: up to 5 passes; the first occurrence of a couple is kept.
+		clean = F;
 		for (pass in 1:5) {
 			key = fSlots * size(males) + mSlots;
-			ord = order(key);
+			// order() is not stable; the row index breaks ties, as simACE's mergesort.
+			ord = order(key * nSlots + seqLen(nSlots));
 			sorted = key[ord];
 			dupSorted = c(F, sorted[seqLen(nSlots - 1) + 1] == sorted[seqLen(nSlots - 1)]);
 			dup = rep(F, nSlots);
 			dup[ord] = dupSorted;
 			dups = which(dup);
 			others = which(!dup);
-			if (size(dups) == 0 | size(others) == 0)
+			clean = size(dups) == 0;
+			if (clean | size(others) == 0)
 				break;
 			for (d in dups) {
 				s = sample(others, 1);
@@ -99,24 +112,36 @@ reproduction() {
 			}
 		}
 
-		// Step 4: tabulate N uniform mating choices (Eidos has no rmultinom).
-		nKids = tabulate(sample(0:(nSlots - 1), N, replace=T), nSlots - 1);
-		for (j in which(nKids > 0)) {
+		if (!clean) {
+			// No clean check: order by mother then father (step 7).
+			ord = order(fSlots * size(males) + mSlots);
+			fSlots = fSlots[ord];
+			mSlots = mSlots[ord];
+		}
+
+		// Step 4: tabulate B uniform mating choices (Eidos has no rmultinom).
+		nTwin = (PMZ > 0) ? min(rbinom(1, N, PMZ / (1 + PMZ)), asInteger(floor(N / 2))) else 0;
+		nBirths = N - nTwin;
+		births = tabulate(sample(0:(nSlots - 1), nBirths, replace=T), nSlots - 1);
+		// Step 5: which births, numbered over the matings in order, are twin births.
+		isTwin = rep(F, nBirths);
+		if (nTwin > 0)
+			isTwin[sample(0:(nBirths - 1), nTwin)] = T;
+		b = 0;
+		for (j in which(births > 0)) {
 			mo = females[fSlots[j]];
 			fa = males[mSlots[j]];
-			done = 0;
-			if (nKids[j] >= 2) {
-				if (runif(1) < PMZ) {
+			for (i in seqLen(births[j])) {
+				if (isTwin[b]) {
 					k1 = p1.addCrossed(mo, fa, sex=NULL);
 					k2 = p1.addCrossed(mo, fa, sex=k1.sex);
 					k1.tag = k2.pedigreeID;
 					k2.tag = k1.pedigreeID;
-					done = 2;
+				} else {
+					k = p1.addCrossed(mo, fa, sex=NULL);
+					k.tag = -1;
 				}
-			}
-			for (i in seqLen(nKids[j] - done)) {
-				k = p1.addCrossed(mo, fa, sex=NULL);
-				k.tag = -1;
+				b = b + 1;
 			}
 		}
 	}

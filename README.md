@@ -13,7 +13,7 @@ The latest results are in [`results/results.md`](results/results.md), and
 the harness's measured power is in [`results/power.md`](results/power.md)
 (layer 1), [`results/power_std_mating.md`](results/power_std_mating.md) and
 [`results/power_std_structure.md`](results/power_std_structure.md) (layer
-3b; run before power.py wrote every case to one table) and
+3b, simace v0.3.0; each merged from one `--parts` run per mutation) and
 [`results/power_am.md`](results/power_am.md) (layer 5).
 Every known model gap is explained in [`differences.md`](differences.md),
 and where each non-PASS row stands is in [`status.md`](status.md).
@@ -26,7 +26,7 @@ That is the main difference from
 
 ## Run it
 
-With [pixi](https://pixi.sh). `pixi.toml` pins simace to the `v0.2.0`
+With [pixi](https://pixi.sh). `pixi.toml` pins simace to the `v0.3.0`
 family tag.
 
 ```bash
@@ -49,7 +49,8 @@ replace the `simace` entry in `pixi.toml` with
 ## What it checks
 
 Each case simulates R pedigrees with `simace simulate` (seeds fixed in
-[`cases.yaml`](cases.yaml)) and scores them in one of three layers.
+[`cases.yaml`](cases.yaml)) and scores them in one of four layers. Layer 4
+runs its seeds on GenomeDK and is scored from committed results.
 
 **Layer 1: the liability law on simACE's own pedigree** (`oracles/liability.R`).
 The cases cover random mating, with and without vertical C transmission
@@ -116,20 +117,22 @@ compared with a two-sample KS test and a Welch t-test:
 
 **Layer 3b: simACE's `standard` mating** (`structure/mating.py`,
 `slim/standard.slim`). Two cases check the default mating model, both at
-λ = 0.5 and p_mz = 0.02.
+λ = 0.5 and p_mz = 0.02, an MZ rate per birth since simace v0.3.0
+(rwaples/simACE#78).
 
 `std_mating` tests simACE's own pedigrees against the documented rules,
 with no second simulator. Each rule gets a statistic whose null conditions
 on as much as that rule allows:
 
 - sex ratio: Bin(N − MZ pairs, 1/2), exact
-- MZ pairs: Bin(couples with ≥ 2 children, p_mz), exact
+- MZ pairs: Bin(N, p_mz / (1 + p_mz)) capped at N / 2, exact
 - children per couple and their split over a mother's couples, given the
-  couples: a multinomial conditioned on every couple having a child,
-  which does not depend on λ
+  couples and the MZ pairs: the N − (MZ pairs) births by a multinomial
+  conditioned on every couple having a birth, which does not depend on λ,
+  then the twin births uniform among the births
 - couples, and mothers and fathers with ≥ 2 partners, given the parents'
-  sexes: ZTP(λ) slots, trimmed to the smaller sex's total, then the
-  occupied matings
+  sexes and the MZ pairs: ZTP(λ) slots, trimmed to the smaller sex's
+  total, then the matings the births occupy
 
 A generation's children are the next one's parents, so each statistic
 gets one randomised PIT per generation given the generations before it.
@@ -140,12 +143,15 @@ duplicate couple survives simACE's 5 swap passes:
 `tools/residual_duplicates.py` found none in 200000 generations at
 N = 2000 or at N = 500, a 95% bound of 1.5e-5 per generation.
 `tools/check_mating_nulls.py` checks the samplers against exact
-enumeration and the MZ invariants.
+enumeration, every null against simACE's own mating, and the invariants.
 
 Some rules are deterministic, not random:
 
-- MZ co-twins share parents and sex.
-- A couple has at most one MZ pair.
+- MZ co-twins share parents and sex, and have consecutive ids.
+- Each couple's children have one block of consecutive ids, and mothers
+  are in id order within a generation.
+
+A couple can have several MZ pairs.
 
 A violation raises an error, so the case becomes an ERROR row.
 
@@ -168,9 +174,66 @@ says so. Those points went to simACE as
 - children's sex is Bernoulli(1/2), stated in methods.md for founders
   only.
 
-The same issue reports two id-order artifacts, which neither case tests:
-offspring are sorted by mother, and MZ co-twins always have consecutive
-ids.
+The same issue reported two id-order artifacts. simace v0.3.0 documents
+the order (methods.md, "Offspring order"), and both cases now check it as
+invariants above.
+
+**Layer 4: simACE's downstream stages on a gene-drop A** (`simace_ts/`,
+[ADR 0002](docs/adr/0002-simace-ts-layer.md)). Case `simace_ts_p2` drops
+the 35,951 SimHumanity p2 genomes through simACE's 10-generation pedigree
+with [`tskit_pipeline/`](tskit_pipeline/README.md) (real LD and allele
+frequencies, the HapMapII GRCh38 map), assigns a finite causal architecture
+with tstrait, rescales A1 to the configured variance in each generation, and
+runs `simace cohort` and `simace analyze` on it. It checks that those
+stages are right when A is a finite-locus value rather than a Gaussian
+draw. The pipeline supplies A, so this layer depends on simACE more than
+layers 1 to 3: its oracle consumes simACE's pedigree and feeds simACE's own
+stages.
+
+Each seed gives three kinds of row:
+
+- **Scored:** a `report.yaml` field against its realised truth, computed
+  from the gene-drop A simACE was handed and the configured C and E law:
+  liability correlations of FS, MHS, PHS, MO and FO pairs, the full-sib
+  correlation, and midparent slopes and correlations. A t-test over the
+  R = 50 seeds says the mean gap is 0. `results.md` adds each row's minimum
+  detectable gap.
+- **Exact:** fields that depend only on the supplied values (pair counts,
+  A correlations and slopes, the liability correlations themselves),
+  recomputed with simACE's arithmetic. A mismatch is FAIL; these rows have
+  no p-value and are not in K.
+- **INFO:** quantities that assume Gaussian liability by simACE's design
+  ([D3](differences.md)), the gene-drop A correlation minus 2φ by class and
+  generation, and the architecture sweep (100 to 1M causal sites, α = 0 or
+  −0.5).
+
+The case has no MZ twins (the pipeline drops co-twins as separate
+offspring, so it refuses them), no ascertainment, no C transmission and no
+assortative mating. A seed costs about 4 CPU-hours and 36 GB. Its data are
+pinned in `cases.yaml`: the SimHumanity trees archive by sha256, the
+SimHumanity checkout (recombination maps) by commit, and the preprocessed
+founders by fingerprint.
+
+```bash
+# on GenomeDK, one job per seed (8 CPUs, 48 GB, 1 h); the ~10 GB of grafted .trees go to
+# node-local disk, since home has a quota that 50 seeds at once exceed
+pixi run simace-ts --seed 9000 --data ~/data/humanity_sim --work ~/simace_ts_work/scored \
+  --trees-dir "${TMPDIR:-/tmp}/sts_$SLURM_JOB_ID"
+# on the laptop: fetch each seed's part.json into simace_ts/parts/, then score
+mkdir -p simace_ts/parts/simace_ts_p2
+for d in $(ssh gdk 'ls -d ~/simace_ts_work/scored/simace_ts_p2/seed*'); do
+  s=$(basename "$d"); rsync -a "gdk:$d/part.json" "simace_ts/parts/simace_ts_p2/$s.json"; done
+pixi run harness --only simace_ts_p2
+pixi run test-pipeline                    # tests of tskit_pipeline/ and simace_ts/
+```
+
+The harness never simulates this case. A seed without a Part, or a Part
+whose case, simace, data pins or chromosomes differ from this run's, makes
+the case ERROR, so a simace bump needs all R seeds rerun on GenomeDK. So does
+a Part computed by another `PART_VERSION` of `simace_ts/part.py`, or from
+uncommitted code; that needs only the Part recomputed from the seed's
+outputs on GenomeDK, a few seconds each:
+`pixi run python simace_ts/part.py ~/simace_ts_work/scored/simace_ts_p2/seed9000`.
 
 **Layer 5: assortative mating against xftsim** (`am/`, [ADR
 0003](docs/adr/0003-xftsim-am-layer.md)). Under assortative mating (AM),
@@ -221,18 +284,6 @@ The pilot behind the design is in `am/pilot/`.
 Bonferroni family, α = 0.05/K. The `null` row of `results/power.md`
 measures the false-positive rate of `rm_base` scored as its own family; a
 full run's K is larger, so its threshold is stricter.
-
-## The tskit gene-drop pipeline
-
-[`tskit_pipeline/`](tskit_pipeline/README.md) is simACE's former
-`scripts/gene_drop/`: it drops SimHumanity founder haplotypes through a
-simACE pedigree with msprime, assigns causal effects with tstrait, and
-replaces A1 with the rescaled genetic value. It is not an oracle, since it
-feeds its pedigree back to simACE, and `pixi run harness` does not run it.
-
-```bash
-pixi run test-pipeline                    # its unit tests
-```
 
 ## Scope
 

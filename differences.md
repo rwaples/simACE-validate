@@ -64,6 +64,55 @@ So these diagnostics cannot tell the two laws apart with three recorded
 generations at N = 2000. ctm_base still checks simACE against the law it
 documents.
 
+## D3. Gaussian liability in simACE's phenotype and analysis stages
+
+Some of simACE's stages assume liability is Gaussian, by design:
+
+- the threshold models mark a case where standardised liability exceeds
+  `ndtri(1 − K)` (simACE `phenotype/models/_prevalence.py:130` at v0.2.0),
+  so realised prevalence is K only for normal liability;
+- ADuLT and LTM onset map liability through a normal survival function
+  (`phenotype/models/adult.py:224`);
+- tetrachoric correlations, and the observed-scale h² built on affection
+  status, read a bivariate-normal liability.
+
+Layer 4 (ADR 0002) hands simACE a finite-locus A from a gene drop, whose
+distribution is not exactly normal, so these quantities can depart from
+their Gaussian targets without any defect in simACE. Case `simace_ts_p2`
+reports them as INFO rows (`info/tetrachoric_*`, `info/affected_corr_*`,
+`info/h2_observed_*`) and scores only quantities whose expectation needs
+second moments alone. Its phenotype model is Weibull frailty, whose hazard
+scales with exp(β L) and does not use `ndtri`; its prevalence
+(`info/prevalence`) is INFO because no target is derived for it, not
+because of this gap.
+
+Measured on the 50 scored seeds (9000 to 9049, run of 2026-11-05) by
+`pixi run python simace_ts/sweep_info.py`. Frailty onset and censoring move
+these quantities far from the liability-scale targets whatever the
+distribution of A (tetrachoric FS 0.077 against a liability correlation
+near 0.3), so no Gaussian target is available. The measure is instead each
+architecture's paired per-seed difference from c1m_a05, the architecture
+with the most causal sites; c1m_a05 is itself finite-locus, so this cannot
+show a departure that all architectures share.
+
+Over the 15 computable statistics and 5 architectures (75 comparisons;
+`h2_observed_falconer` is empty with no MZ twins), no single comparison
+rejects: the largest |t| is 2.87 (`h2_observed_po`, c1k_a05, mean
+−0.0028), below the two-sided Bonferroni cutoff of 3.63. The largest
+absolute mean difference is 0.0045 (`tetrachoric_FO`, c10k_a05);
+single seeds differ by far more. But c1m_a05 sits above the other
+architecture in 65 of the 75 mean differences, 12 to 14 of 15 in each
+architecture; only the MHS rows and `h2_observed_cousins` break the
+pattern. The comparisons share c1m_a05 and the seeds' phenotypes, so they
+are correlated, and the sign count is not a test. It does not separate an
+unusually high c1m_a05 at these seeds from a real effect of the
+architecture, and with c100_a05 no further from c1m_a05 than c10k_a05 or
+c100k_a05 there is no sign of a departure that grows as the number of
+causal sites falls (the series is c100, c1k, c10k, c100k and c1m at alpha
+−0.5; c1k_a0 changes alpha instead). The cause is unresolved; a joint test
+across statistics, with c1m_a05 against the other architectures, would
+settle whether it is noise.
+
 ## D4. The xftsim matched configuration (layer 5)
 
 Layer 5 (ADR 0003) compares simACE with xftsim at a configuration where
@@ -92,7 +141,12 @@ the two population laws agree to first order. They agree only approximately:
   liability and in the large-N limit. Neither side's realised correlation
   is exactly r:
   - xftsim's targets R = r(n−1)/n with one component;
-  - simACE v0.2.0's single-trait copula falls slightly short (simACE #74);
+  - simACE v0.3.0 pins its single-trait slot-level correlation to within
+    5·10⁻⁴ of r by a Metropolis step after the copula (simACE ADR 0032);
+    v0.2.0's copula alone fell slightly short (simACE #74). Layer 5's
+    `r_mate_L` is over distinct couples with recorded children
+    (`am/stats.py:74-75`), not slots, so it still scatters: one v0.3.0
+    seed at r 0.8 (990001) gave 0.7946 to 0.8016 over g 2 to 6;
   - simACE's two-trait path pins all four correlations by Metropolis.
 - **Two-trait AM** is checked only for rank-1 mate correlation matrices:
   every mate correlation equal to r (xftsim's linear regime), and

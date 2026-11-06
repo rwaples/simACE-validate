@@ -28,6 +28,7 @@ import time
 from pathlib import Path
 
 import msprime
+import numpy as np
 import pandas as pd
 from _script_logging import route_logging_to_file
 
@@ -45,6 +46,16 @@ def pedigree_to_msprime(ped: pd.DataFrame, G_ped: int, G_pheno: int, Ne: int) ->
     """
     if G_pheno < 1 or G_pheno > G_ped:
         raise ValueError(f"G_pheno must be in [1, G_ped]; got G_pheno={G_pheno}, G_ped={G_ped}")
+    if not np.array_equal(ped["id"].to_numpy(), np.arange(len(ped))):
+        # tstrait_augment_pedigree.py maps msprime individual ids, which follow row order, to simACE ids.
+        raise ValueError("pedigree ids must equal row order 0..n-1")
+    founder = ped["mother"].to_numpy() == -1
+    if not np.all(founder[: founder.sum()]):
+        # genotype_drop_chrom.graft_ancestry maps the first 2 * n_founders nodes onto the panel.
+        raise ValueError("pedigree founders (mother == -1) must be its first rows")
+    if "twin" in ped.columns and (ped["twin"].to_numpy() >= 0).any():
+        # Co-twins would be dropped as separate offspring, so their genetic values would differ (ADR 0002).
+        raise ValueError("pedigree has MZ twins; simulate with p_mztwin = 0")
     demography = msprime.Demography()
     demography.add_population(name="A", initial_size=Ne)
     pb = msprime.PedigreeBuilder(demography=demography)

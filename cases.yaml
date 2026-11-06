@@ -6,8 +6,8 @@
 #
 # Case keys:
 #   id        unique name
-#   layer     1 (liability oracle), 2 (gene-drop), 3 (structure), 5 (assortative mating against xftsim)
-#   oracle    the oracle script (oracles/<name>.R)
+#   layer     1 (liability oracle), 2 (gene-drop), 3 (structure), 4 (simACE-ts), 5 (assortative mating against xftsim)
+#   oracle    the oracle script (oracles/<name>.R), or a Python runner in run_harness.py
 #   simulate  `simace simulate` flags, without --seed and --output-pedigree
 #   seed0, R  simACE seeds
 #   M         oracle (or null) draws per pedigree; M+1 divisible by 10 keeps chi-square bins equal
@@ -157,6 +157,61 @@ cases:
     seed0: 6000
     R: 100
 
+  # Layer 4 (ADR 0002). Seeds run on GenomeDK with `pixi run simace-ts` and
+  # are scored from the Parts committed under simace_ts/parts/<id>/; the
+  # harness never simulates them. Keys beyond the usual: cohort (`simace
+  # cohort` flags; analyze takes censor-age from here, as simace run does),
+  # architectures (tstrait_assign_effects.py flags; the first is scored, the
+  # rest are the INFO sweep), data (pins the Parts must carry), pilot_seed0
+  # and pilot_R (never scored).
+  - id: simace_ts_p2
+    layer: 4
+    oracle: simace_ts
+    note: SimHumanity p2 gene-drop A through simACE's pedigree; simACE cohort/analyze scored against the realised truth
+    simulate:
+      N: 35951            # the full p2 panel: founders must equal its eligible individuals
+      G-ped: 10
+      G-sim: 10
+      mating-model: standard
+      mating-lambda: 0.5
+      p-mztwin: 0         # the pipeline refuses twins (ADR 0002 item 6)
+      A1: 0.4
+      C1: 0.1
+      E1: 0.5
+      A2: 0.4
+      C2: 0.1
+      E2: 0.5
+      rA: 0
+      rC: 0
+      rE: 0
+    cohort:
+      G-pheno: 3
+      phenotype-model1: frailty
+      phenotype-params1: "{distribution: weibull, scale: 2160, rho: 0.8}"
+      beta1: 1.0
+      beta-sex1: 0.0
+      phenotype-model2: frailty
+      phenotype-params2: "{distribution: weibull, scale: 2160, rho: 0.8}"
+      beta2: 1.0
+      beta-sex2: 0.0
+      N-sample: 0         # pass-through ascertainment (ADR 0002 item 6)
+      censor-age: 80
+    architectures:
+      - {name: c1k_a05, num-causal: 1000, alpha: -0.5, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
+      - {name: c100_a05, num-causal: 100, alpha: -0.5, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
+      - {name: c10k_a05, num-causal: 10000, alpha: -0.5, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
+      - {name: c100k_a05, num-causal: 100000, alpha: -0.5, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
+      - {name: c1m_a05, num-causal: 1000000, alpha: -0.5, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
+      - {name: c1k_a0, num-causal: 1000, alpha: 0.0, maf-threshold: 0.01, effect-mean: 0.0, effect-var: 1.0}
+    data:
+      trees_zip_sha256: 003fa571a76ea646d50f21cfc3be383922a78aa661baafc5d86cdd00f42193e8
+      simhumanity_commit: aa2242e9c9128e5612e5309ad0a75bb799c3d030
+      preprocessed_fingerprint: ddea736699a31c66ade5a140051c3385
+    seed0: 9000
+    R: 50                 # fixed 2026-11-05 from the pilot (ADR 0002 item 10), before any scored seed ran
+    pilot_seed0: 990000
+    pilot_R: 3
+
   # Layer 5 (ADR 0003): simACE's population moments under assortative mating against
   # independent xftsim runs at a matched configuration, by a Welch t per row. Both traits
   # A 0.5, C 0, E 0.5, independent (simACE's CLI defaults rA 0.5 and rC 0.3 are overridden);
@@ -200,7 +255,7 @@ cases:
   - id: am_r08
     layer: 5
     oracle: xftsim
-    note: single-trait assortment at 0.8; simACE v0.2.0's realised mate correlation falls short (simACE #74)
+    note: single-trait assortment at 0.8; v0.2.0's realised mate correlation fell short (simACE #74), v0.3.0 pins it (ADR 0032)
     simulate:
       <<: *am
       assort1: 0.8

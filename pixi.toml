@@ -2,7 +2,7 @@
 # share (an R liability oracle, msprime gene-drop, ped-sim, SLiM), and
 # hosts simACE's former tskit/tstrait gene-drop pipeline (tskit_pipeline/).
 #
-# simACE is pinned to the v0.2.0 family tag. To check a local checkout
+# simACE is pinned to the v0.3.0 family tag. To check a local checkout
 # instead (do NOT commit):
 #   simace = { path = "../..", editable = true }
 # then `pixi install`. results/results.md records the simace version and
@@ -46,7 +46,7 @@ git = "*"
 slim = "5.2.*"
 
 [pypi-dependencies]
-simace = { git = "https://github.com/rwaples/simACE.git", tag = "v0.2.0" }
+simace = { git = "https://github.com/rwaples/simACE.git", tag = "v0.3.0" }
 
 # xftsim (rwaples/simACE-validate#4): an independent forward simulator, used
 # for assortative mating (G2b). It needs Python 3.9, numba 0.56.4 and
@@ -77,6 +77,7 @@ build-nadiv = { cmd = "bash tools/build_nadiv.sh", description = "Install the pi
 build-pedsim = { cmd = "bash tools/build_pedsim.sh", description = "Build the pinned ped-sim tag into .pedsim/" }
 harness = { cmd = "python run_harness.py", depends-on = ["build-nadiv", "build-pedsim"], description = "Run every case and write results/" }
 power = { cmd = "python power.py", depends-on = ["build-nadiv"], description = "Rejection rates at stated oracle errors; writes results/power.md" }
-test-pipeline = { cmd = "pytest tskit_pipeline/tests -q", description = "Tests of the tskit/tstrait gene-drop pipeline" }
+simace-ts = { cmd = "python simace_ts/run_seed.py", description = "Run one simACE-ts seed end to end (ADR 0002); see simace_ts/run_seed.py" }
+test-pipeline = { cmd = "pytest tskit_pipeline/tests simace_ts/tests -q", description = "Tests of the tskit/tstrait gene-drop pipeline and the simACE-ts runner" }
 am-pilot = { cmd = "bash am/pilot.sh .work/am_pilot 6 && python -m am.summarize .work/am_pilot", description = "simACE vs xftsim AM pilot, pilot seeds only (issue #4, ADR 0003); needs `pixi install -e xftsim`" }
-lint = { cmd ="ruff check && ruff format --check", description = "Lint and format check" }
+lint = { cmd = "ruff check && ruff format --check", description = "Lint and format check" }

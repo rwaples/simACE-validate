@@ -4,7 +4,7 @@ The standard simACE pipeline draws additive genetic values $A$ from a Gaussian u
 
 This page explains the design. The worked sweep over `alpha` and `num_causal` is in [Architecture sweep](architecture-sweep.md). The parameters are in [Parameters](#parameters).
 
-This pipeline moved here from simACE's `scripts/gene_drop/`. Unlike the oracles in `genedrop/`, `oracles/` and `structure/`, it is not independent of simACE: it consumes a simACE `pedigree.parquet` and feeds the result back to `simace cohort` and `simace analyze`. It is not part of `pixi run harness`. simACE's config no longer has the `tstrait`, `tskit_preprocess`, `drop_from` or `use_gene_drop` keys, so `scenarios.yaml` records the parameters of past runs and is not a simACE config file. Each script takes its parameters as flags.
+This pipeline moved here from simACE's `scripts/gene_drop/`. Unlike the oracles in `genedrop/`, `oracles/` and `structure/`, it is not independent of simACE: it consumes a simACE `pedigree.parquet` and feeds the result back to `simace cohort` and `simace analyze`. Layer 4 (`simace_ts/`, ADR 0002) runs it per seed on GenomeDK, and `pixi run harness` scores the committed results; the harness itself never runs the pipeline. simACE's config no longer has the `tstrait`, `tskit_preprocess`, `drop_from` or `use_gene_drop` keys, so `scenarios.yaml` records the parameters of past runs and is not a simACE config file. Each script takes its parameters as flags.
 
 ## Why gene drop
 
@@ -72,7 +72,7 @@ simace simulate ──► pedigree.parquet
 
 ### Step 2: drop founders through the simACE pedigree
 
-`build_pedigree_tables.py` builds the msprime fixed pedigree from the simACE pedigree once per replicate, tagging the latest `G_pheno` generations as samples. `genotype_drop_chrom.py` loads it for each chromosome and runs `msprime.sim_ancestry(model="fixed_pedigree")` with the per-chromosome SimHumanity recombination map, read from the SimHumanity checkout named by `--simhumanity-dir`. It then grafts the dropped tree onto the preprocessed ancestral tree at the founder generation. The result is a chromosome-scale tree sequence whose present-day samples carry alleles inherited from the SimHumanity founder haplotypes.
+`build_pedigree_tables.py` builds the msprime fixed pedigree from the simACE pedigree once per replicate, tagging the latest `G_pheno` generations as samples. It refuses a pedigree with MZ twins, since co-twins would be dropped as separate offspring, and one whose ids are not its row order. `genotype_drop_chrom.py` loads it for each chromosome and runs `msprime.sim_ancestry(model="fixed_pedigree")` with the per-chromosome SimHumanity recombination map, read from the SimHumanity checkout named by `--simhumanity-dir`. It then grafts the dropped tree onto the preprocessed ancestral tree at the founder generation. The result is a chromosome-scale tree sequence whose present-day samples carry alleles inherited from the SimHumanity founder haplotypes.
 
 This is the slowest step. To reuse one set of drops across several architectures, see [Sharing drops across variants](#sharing-drops-across-variants).
 
@@ -89,7 +89,7 @@ Only sample-tagged individuals, the generations covered by `G_pheno`, get a gene
 `tstrait_augment_pedigree.py` reads `pedigree.parquet` and sums the per-chromosome genetic values into one genome-wide value per sample individual. It then:
 
 1. Centres the values at zero.
-2. Rescales them so that $\mathrm{Var}(A_\text{new})$ equals the configured `A1`. The variance is the sample variance with `ddof=0`.
+2. Rescales them so that $\mathrm{Var}(A_\text{new})$ equals the configured `A1`. The variance is the sample variance with `ddof=0`. With `--per-generation`, steps 1 and 2 are done within each generation, so every generation has variance `A1` (ADR 0002).
 3. Overwrites the `A1` column for sample individuals.
 4. Recomputes `liability1` as $A_\text{new} + C + E$.
 5. Writes `pedigree.full.tstrait.parquet` next to the original. The original is unchanged.

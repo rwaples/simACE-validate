@@ -5,7 +5,9 @@ sample-tagged individuals (the latest G_pheno generations) is replaced with
 the tstrait genome-wide genetic value, centered to mean 0 and rescaled so
 its sample variance matches the configured A1 variance. Non-sample
 individuals (older ancestors not in the genotyped sample set) keep their
-original parametric A1.
+original parametric A1. With ``--per-generation`` each generation is
+centred and rescaled on its own, so every generation has the configured
+variance (simACE-validate ADR 0002); without it the sample is pooled.
 
 `liability1 = A1 + C1 + E1` is recomputed after the overwrite so it stays
 consistent. C1 and E1 come from the original pedigree unchanged — the goal
@@ -77,6 +79,25 @@ def rescale_gv(gv: np.ndarray, target_var: float) -> tuple[np.ndarray, dict]:
     return out, info
 
 
+def rescale_gv_per_generation(
+    gv: np.ndarray, generation: np.ndarray, target_var: float
+) -> tuple[np.ndarray, list[dict]]:
+    """Apply rescale_gv within each generation, so every generation has variance target_var (ADR 0002).
+
+    Returns the rescaled values and one rescale_gv info dict per generation, with its ``generation``.
+    """
+    out = np.empty_like(gv, dtype=np.float64)
+    info = []
+    for g in np.unique(generation).tolist():
+        rows = generation == g
+        try:
+            out[rows], row = rescale_gv(gv[rows], target_var)
+        except ValueError as err:
+            raise ValueError(f"generation {g} ({int(rows.sum())} individuals): {err}") from err
+        info.append({"generation": g, **row})
+    return out, info
+
+
 def write_like(df: pd.DataFrame, path: Path, source: Path) -> None:
     """Write ``df`` as a recorded pedigree of ``source``'s results layout.
 
@@ -97,6 +118,11 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--out-pedigree", required=True)
     parser.add_argument("--meta", required=True)
     parser.add_argument("--target-var-a", type=float, required=True)
+    parser.add_argument(
+        "--per-generation",
+        action="store_true",
+        help="centre and rescale each generation separately instead of pooling them",
+    )
     parser.add_argument("--log", default=None)
     args = parser.parse_args(argv)
 
@@ -117,23 +143,48 @@ def main(argv: list[str] | None = None) -> None:
     gvs = pd.concat(gv_dfs, ignore_index=True).groupby("individual_id", as_index=False)["genetic_value"].sum()
     log.info("  GV summed: %d unique individuals", len(gvs))
 
-    rescaled_arr, rescale_info = rescale_gv(gvs["genetic_value"].to_numpy(), target_var_a)
-    log.info(
-        "  rescale: realized_var=%.4f -> target_var=%.4f (scale=%.4f)",
-        rescale_info["realized_var"],
-        rescale_info["target_var"],
-        rescale_info["scale_factor"],
-    )
-
-    gv_map = pd.Series(rescaled_arr, index=gvs["individual_id"].to_numpy())
-    mask = ped["id"].isin(gv_map.index)
-    n_overwritten = int(mask.sum())
-    n_in_gv_not_in_ped = int((~gv_map.index.isin(ped["id"])).sum())
+    n_in_gv_not_in_ped = int((~gvs["individual_id"].isin(ped["id"])).sum())
     if n_in_gv_not_in_ped:
         raise ValueError(
             f"{n_in_gv_not_in_ped} GV individual_ids not present in pedigree.id — "
             "drop+graft and pedigree are out of sync"
         )
+    gv = gvs["genetic_value"].to_numpy()
+    rescale_by_generation = None
+    if args.per_generation:
+        # simACE-ts (ADR 0002): every row gets gene-drop A, and GV ids are simACE ids by row order.
+        if not np.array_equal(ped["id"].to_numpy(), np.arange(len(ped))):
+            raise ValueError("pedigree ids must equal row order 0..n-1")
+        if "twin" in ped.columns and (ped["twin"].to_numpy() >= 0).any():
+            raise ValueError("pedigree has MZ twins; simulate with p_mztwin = 0")
+        if len(gvs) != len(ped):
+            raise ValueError(
+                f"--per-generation needs a genetic value for every row: {len(ped) - len(gvs)} of {len(ped)} "
+                "would keep parametric A1 (build the tables with --g-pheno equal to --g-ped)"
+            )
+        generation = ped["generation"].to_numpy()[gvs["individual_id"].to_numpy()]
+        rescaled_arr, rescale_by_generation = rescale_gv_per_generation(gv, generation, target_var_a)
+        rescale_info = None
+        for row in rescale_by_generation:
+            log.info(
+                "  rescale g%d: realized_var=%.4f -> target_var=%.4f (scale=%.4f)",
+                row["generation"],
+                row["realized_var"],
+                row["target_var"],
+                row["scale_factor"],
+            )
+    else:
+        rescaled_arr, rescale_info = rescale_gv(gv, target_var_a)
+        log.info(
+            "  rescale: realized_var=%.4f -> target_var=%.4f (scale=%.4f)",
+            rescale_info["realized_var"],
+            rescale_info["target_var"],
+            rescale_info["scale_factor"],
+        )
+
+    gv_map = pd.Series(rescaled_arr, index=gvs["individual_id"].to_numpy())
+    mask = ped["id"].isin(gv_map.index)
+    n_overwritten = int(mask.sum())
 
     a1_orig = ped["A1"].to_numpy().copy()
     a1_new = a1_orig.copy()
@@ -154,7 +205,8 @@ def main(argv: list[str] | None = None) -> None:
         "n_pedigree_rows": len(ped),
         "n_inds_overwritten": n_overwritten,
         "n_inds_kept_parametric": int((~mask).sum()),
-        "rescale": rescale_info,
+        "rescale": rescale_info,  # pooled mode; None with --per-generation
+        "rescale_by_generation": rescale_by_generation,  # --per-generation; None when pooled
         "var_A1_after_in_overwritten": float(np.var(a1_new[sample_mask], ddof=0)),
         "mean_A1_after_in_overwritten": float(np.mean(a1_new[sample_mask])),
         "var_A1_orig_in_overwritten": float(np.var(a1_orig[sample_mask], ddof=0)),

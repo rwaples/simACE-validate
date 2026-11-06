@@ -29,8 +29,8 @@ reference at the population level.
 
 The AM laws at the pinned versions:
 
-- **simACE v0.2.0, single trait** (`assort1`; installed
-  `simace/simulation/simulate.py:699-726`).
+- **simACE, single trait** (`assort1`; v0.2.0
+  `simace/simulation/simulate.py:699-726`, v0.3.0 `:809-858`).
   - It ranks mating slots by liability A + C + E in each sex, draws M
     bivariate normals with correlation r, and pairs the female and male
     slots whose ranks match each draw's ranks: a Gaussian copula of
@@ -39,10 +39,12 @@ The AM laws at the pinned versions:
     partners fills k slots.
   - In v0.2.0 the realised correlation falls slightly below r (simACE #74;
     `plans/issue-69-mate-correlation-test.md` reports a bias of −0.0017
-    to −0.0029 at N 2k, λ 0.5). simACE dev now pins it with a 1-D
-    Metropolis step (simACE ADR 0032), which no release ships yet.
-- **simACE v0.2.0, both traits** (`assort1` and `assort2` both non-zero,
-  optional `assort_matrix`; `simulate.py:601-696`).
+    to −0.0029 at N 2k, λ 0.5). v0.3.0 pins it with a 1-D Metropolis
+    step after the copula, to within `METROPOLIS_TOL` = 5·10⁻⁴ (simACE ADR
+    0032; v0.3.0 `simulate.py:886`, `_refine_single_trait`).
+- **simACE, both traits** (`assort1` and `assort2` both non-zero,
+  optional `assort_matrix`; v0.2.0 `simulate.py:601-696`, v0.3.0
+  `:725-808`).
   - Each female's ideal mate is drawn from the Gaussian conditional, given
     the target 2×2 mate-correlation matrix R_mf and the realised
     within-sex trait correlations. Males are matched to those draws, and a
@@ -253,7 +255,7 @@ within the measured MDDs, not equality.
      Phase 2 keeps the M sweep as an INFO sentinel at harness R and
      reports CIs, not p-values.
    - **Inbreeding.** simACE ignores it in the segregation variance (D1;
-     off mode at v0.2.0). After 6 generations at N = 10⁴, F is of order
+     the default `off` mode at v0.2.0 and v0.3.0). After 6 generations at N = 10⁴, F is of order
      3·10⁻⁴, a change of about 10⁻⁴ in Var(A). That figure is an
      order-of-magnitude estimate, UNVERIFIED by a run.
    - **Cost per run, 6 jobs in parallel (median wall time; max RSS).** The
@@ -459,7 +461,8 @@ and with `bulmer2`. At r = 0.4, g = 6:
   - Single-trait rows add 168 p-values to K, and the first two two-trait
     cases add 228: 396 in all. With the 835 of the last full run, α/K fell
     from 5.99·10⁻⁵ to 0.05/1231 = 4.06·10⁻⁵ (run of 2026-11-05).
-    `am2_r0401` adds 114 more: 0.05/1345 = 3.72·10⁻⁵.
+    `am2_r0401` adds 114 more. The merge of main (2026-11-06) also added
+    layer 4 and rescored layer 3b, so K is recounted from the next full run.
   - INFO rows: the MO and FO rows, and one `bulmer:<row>` row per scored
     row, a one-sample t of simACE against the Bulmer expectation. As
     built, no KS is computed at all.
@@ -468,7 +471,9 @@ and with `bulmer2`. At r = 0.4, g = 6:
     (the 95% CI follows from them). Agreement does not
     prove closeness to the large-M limit; the CI bounds the gap only as
     tightly as R allows.
-- **simACE pin: option (b), decided.** Layer 5 scores simace v0.2.0 now.
+- **simACE pin: option (b), decided.** Layer 5 scored simace v0.2.0 at
+  first (run of 2026-11-05). The pin moved to v0.3.0, which ships ADR 0032,
+  with the merge of main on 2026-11-06; the next full run scores v0.3.0.
   - At r = 0.8 its mean `r_mate_L` over g is 0.7987, against xftsim's
     0.7997. That gap is below the `r_mate_L` MDD at R = 100 (0.0030 at its
     smallest), so a FAIL is possible but not likely.

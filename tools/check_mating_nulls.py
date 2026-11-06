@@ -4,10 +4,14 @@
 
 1. surjection_draws against the exact law, enumerated on a small case.
 2. Each Part A null against simACE's own `_mating_standard` on one parent
-   generation: the per-generation PITs must be U(0, 1). This is a consistency
-   check of the derivations, not evidence about simACE (the harness is).
-3. The MZ invariants raise on hand-broken pedigrees.
-Exits 1 if a test p-value is below 0.001 or an invariant does not raise.
+   generation, read through `generations` (so its invariants hold on
+   simACE's output): the per-generation PITs must be U(0, 1). Run at the
+   case's p_mz and at p_mz = 0.9, where couples carry several MZ pairs and
+   the N // 2 cap on t binds. This is a consistency check of the
+   derivations, not evidence about simACE (the harness is).
+3. The MZ and order invariants raise on hand-broken pedigrees and accept
+   valid ones, including a couple with two MZ pairs.
+Exits 1 if a test p-value is below 0.001 or an invariant check is wrong.
 """
 
 from __future__ import annotations
@@ -24,13 +28,12 @@ from simace.simulation.simulate import _mating_standard
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from structure.mating import (
-    Generation,
     allocation_draws,
     binomial_pit,
     generations,
+    mz_rate,
     n_multi,
     observed_allocation,
-    occurrences,
     partner_draws,
     rank_pit,
     surjection_draws,
@@ -65,33 +68,33 @@ def check_surjection(rng: np.random.Generator) -> list[tuple[str, float]]:
     return out
 
 
-def simace_generation(rng: np.random.Generator, n: int, p_mz: float) -> Generation:
-    """Run simACE's standard mating on one parent generation and read it as a Generation."""
+def simace_pedigree(rng: np.random.Generator, n: int, p_mz: float) -> pl.DataFrame:
+    """Run simACE's standard mating and reproduction sex rule on one parent generation; return both generations."""
     sex = rng.binomial(1, 0.5, size=n)
     parents, twins, _ = _mating_standard(rng, sex, 0.5, p_mz)
-    keys, counts = np.unique(parents.T, axis=1, return_counts=True)
     kid_sex = rng.binomial(1, 0.5, size=n)
     kid_sex[twins[:, 1]] = kid_sex[twins[:, 0]]
-    return Generation(
-        n_female=int(np.sum(sex == 0)),
-        n_male=int(np.sum(sex == 1)),
-        n_kids=n,
-        n_mz=len(twins),
-        males=int(np.sum(kid_sex == 1) - np.sum(kid_sex[twins[:, 1]] == 1)),
-        counts=counts,
-        couple_mother=keys[0],
-        couple_father=keys[1],
-        mother_couples=occurrences(keys[0]),
+    twin = np.full(n, -1)
+    twin[twins[:, 0]], twin[twins[:, 1]] = twins[:, 1] + n, twins[:, 0] + n
+    none = np.full(n, -1)
+    return pl.DataFrame(
+        {
+            "generation": np.repeat([0, 1], n),
+            "sex": np.concatenate([sex, kid_sex]),
+            "mother": np.concatenate([none, parents[:, 0]]),
+            "father": np.concatenate([none, parents[:, 1]]),
+            "twin": np.concatenate([none, twin]),
+        }
     )
 
 
-def check_nulls(rng: np.random.Generator, reps: int = 300, n: int = 500) -> list[tuple[str, float]]:
+def check_nulls(rng: np.random.Generator, n: int, p_mz: float, reps: int = 300) -> list[tuple[str, float]]:
     """KS-test the per-generation PIT of every Part A row on simACE's own mating."""
     pits: dict[str, list[float]] = {}
     for _ in range(reps):
-        gen = simace_generation(rng, n, 0.05)
+        (gen,) = generations(simace_pedigree(rng, n, p_mz))
         pits.setdefault("sex_males", []).append(binomial_pit(gen.males, n - gen.n_mz, 0.5, rng)[0])
-        pits.setdefault("mz_pairs", []).append(binomial_pit(gen.n_mz, int(np.sum(gen.counts >= 2)), 0.05, rng)[0])
+        pits.setdefault("mz_pairs", []).append(binomial_pit(gen.n_mz, n, mz_rate(p_mz), rng, cap=n // 2)[0])
         sumsq, mean_multi = allocation_draws(rng, gen, 199, None)
         obs_sumsq, obs_multi = observed_allocation(gen)
         pits.setdefault("alloc_sumsq", []).append(rank_pit(obs_sumsq, sumsq, rng)[0])
@@ -102,7 +105,7 @@ def check_nulls(rng: np.random.Generator, reps: int = 300, n: int = 500) -> list
         for j, row in enumerate(("n_couples", "n_mothers_multi", "n_fathers_multi")):
             pits.setdefault(row, []).append(rank_pit(observed[j], partners[:, j], rng)[0])
     return [
-        (f"null {row} vs simACE (KS of {reps} PITs)", float(stats.kstest(u, "uniform").pvalue))
+        (f"null {row} vs simACE at N={n}, p_mz={p_mz} (KS of {len(u)} PITs)", float(stats.kstest(u, "uniform").pvalue))
         for row, u in pits.items()
     ]
 
@@ -117,13 +120,31 @@ VALID = {
 }
 
 
+# generation 1 of each: ids 4-7, all children of couple (0, 2)
+ONE_COUPLE = {"mother": [-1, -1, -1, -1, 0, 0, 0, 0], "father": [-1, -1, -1, -1, 2, 2, 2, 2]}
+
+
+def valid_pedigrees() -> dict[str, pl.DataFrame]:
+    """Return small pedigrees that every invariant must accept."""
+    cases = {
+        "one MZ pair": {},
+        "a couple with two MZ pairs": ONE_COUPLE | {"twin": [-1, -1, -1, -1, 5, 4, 7, 6]},
+        "an MZ pair after a singleton": ONE_COUPLE
+        | {"twin": [-1, -1, -1, -1, -1, 6, 5, -1], "sex": [0, 0, 1, 1, 0, 1, 1, 0]},
+    }
+    return {name: pl.DataFrame(VALID | change) for name, change in cases.items()}
+
+
 def broken_pedigrees() -> dict[str, pl.DataFrame]:
-    """Return small pedigrees that each break one parent or MZ invariant."""
+    """Return small pedigrees that each break one parent, MZ or order invariant."""
     cases = {
         "an MZ pair differs in sex": {"twin": [-1, -1, -1, -1, -1, -1, 7, 6], "sex": [0, 0, 1, 1, 0, 0, 0, 1]},
         "an MZ pair has different parents": {"twin": [-1, -1, -1, -1, -1, 6, 5, -1], "sex": [0, 0, 1, 1, 0, 1, 1, 1]},
-        "a couple has two MZ pairs": {"twin": [-1, -1, -1, -1, 5, 4, 7, 6], "mother": [-1, -1, -1, -1, 0, 0, 0, 0]}
-        | {"father": [-1, -1, -1, -1, 2, 2, 2, 2], "sex": [0, 0, 1, 1, 0, 0, 1, 1]},
+        "co-twins do not have consecutive ids": ONE_COUPLE
+        | {"twin": [-1, -1, -1, -1, 6, -1, 4, -1], "sex": [0, 0, 1, 1, 0, 1, 0, 1]},
+        "mothers are not in id order": {"mother": [-1, -1, -1, -1, 1, 1, 0, 0], "father": [-1, -1, -1, -1, 3, 3, 2, 2]},
+        "a couple's children are not one block of consecutive ids": {"father": [-1, -1, -1, -1, 2, 3, 2, 3]}
+        | {"mother": [-1, -1, -1, -1, 0, 0, 0, 0], "twin": [-1] * 8},
         "not reciprocal": {"twin": [-1, -1, -1, -1, 5, 6, -1, -1]},
         "a mother is not a generation-0 individual of that sex": {"mother": [-1, -1, -1, -1, 0, 0, 2, 2]},
         "a father is not a generation-0 individual of that sex": {"father": [-1, -1, -1, -1, 2, 2, 5, 5]},
@@ -136,8 +157,16 @@ def main() -> int:
     """Run every check and print one line each."""
     rng = np.random.default_rng(20261022)
     failed = False
-    generations(pl.DataFrame(VALID))  # raises if a valid pedigree is rejected
-    for name, p in [*check_surjection(rng), *check_nulls(rng)]:
+    for name, ped in valid_pedigrees().items():
+        try:
+            generations(ped)
+        except ValueError as exc:
+            print(f"FAIL valid pedigree '{name}' raises: {exc}")
+            failed = True
+        else:
+            print(f"ok   valid pedigree '{name}' passes")
+    checks = [*check_surjection(rng), *check_nulls(rng, 500, 0.02), *check_nulls(rng, 101, 0.9)]
+    for name, p in checks:
         failed |= p < P_MIN
         print(f"{'FAIL' if p < P_MIN else 'ok  '} {name}: p = {p:.3g}")
     for msg, ped in broken_pedigrees().items():
