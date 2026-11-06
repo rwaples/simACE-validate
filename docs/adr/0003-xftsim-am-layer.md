@@ -461,8 +461,9 @@ and with `bulmer2`. At r = 0.4, g = 6:
   - Single-trait rows add 168 p-values to K, and the first two two-trait
     cases add 228: 396 in all. With the 835 of the last full run, α/K fell
     from 5.99·10⁻⁵ to 0.05/1231 = 4.06·10⁻⁵ (run of 2026-11-05).
-    `am2_r0401` adds 114 more. The merge of main (2026-11-06) also added
-    layer 4 and rescored layer 3b, so K is recounted from the next full run.
+    `am2_r0401` adds 114 more. With main merged (layer 4, layer 3b
+    rescored), the run of 2026-11-06 against simace v0.3.0 has K = 1353,
+    α/K 3.7·10⁻⁵.
   - INFO rows: the MO and FO rows, and one `bulmer:<row>` row per scored
     row, a one-sample t of simACE against the Bulmer expectation. As
     built, no KS is computed at all.
@@ -502,9 +503,11 @@ and with `bulmer2`. At r = 0.4, g = 6:
   - xftsim against xftsim (`null_xft`), a second xftsim sample in simACE's
     place. It needs R xftsim runs per rep and was not run.
 
-  Run on am_r05 and am2_r04 at 10 reps (results/power_am.md): every
+  Run on am_r05 and am2_r04 at 10 reps against simace v0.2.0: every
   mutation rejected 10/10; `null` rejected 0/10 (am_r05) and 1/10
-  (am2_r04, one row, `r_FS_L_g4`).
+  (am2_r04, one row, `r_FS_L_g4`). Rerun against v0.3.0 on 2026-11-06
+  (results/power_am.md): every mutation 10/10; `null` 0/10 (am_r05) and
+  1/10 (am2_r04, one row, `r_FS_A_t2_g3`).
 - **status.md G2b** becomes Closed with the cases' results, for the scope
   tested: single-trait AM (C = 0, and household C 0.2 at r = 0.5), and
   two-trait AM with every mate correlation equal (C = 0), with independent
