@@ -43,9 +43,9 @@ Why each null is exact:
 - Multinomial cells are exchangeable. Given t (so B) and which K matings are
   occupied, their births are B balls on K boxes conditioned on none empty,
   whatever T was: the allocation rows do not depend on lambda. iid ZTP(mu)
-  counts conditioned on summing to B have that law for any mu, which only
-  sets the acceptance rate. Twin births are a uniform t-subset of the B
-  births, so given the births a couple's twin births are multivariate
+  counts conditioned on summing to B have that law for any mu, and
+  `surjection_draws` samples it exactly by halving. Twin births are a
+  uniform t-subset of the B births, so given the births a couple's twin births are multivariate
   hypergeometric, and c_k = b_k + (its twin births).
 - A person's couples are their occupied slots, and a mating is occupied when
   it has a birth (twin births fall on births). The duplicate swap exchanges
@@ -77,7 +77,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
-from scipy import optimize, stats
+from scipy import optimize, special, stats
 
 from calibration import randomised_pit, randomised_pit_discrete
 
@@ -89,7 +89,7 @@ if TYPE_CHECKING:
 LAMBDA_ALT = 0.6  # lambda_06
 PMZ_ALT = 0.03  # pmz_03
 P_MALE_ALT = 0.52  # sex_052
-GAMMA_SHAPE = 10.0  # alloc_overdispersed
+DIRICHLET_SHAPE = 10.0  # alloc_overdispersed
 
 # std_mating (oracle mating_law): mutations of the per-rule nulls.
 MUTATIONS = {
@@ -99,7 +99,7 @@ MUTATIONS = {
     "pmz_03": f"MZ null with p_mz = {PMZ_ALT} instead of the case's",
     "sex_052": f"sex null with P(male) = {P_MALE_ALT}",
     "alloc_overdispersed": (
-        f"allocation null with Gamma({GAMMA_SHAPE:g})-perturbed couple weights; acceptance tilts the weights kept"
+        f"allocation null with Dirichlet({DIRICHLET_SHAPE:g})-multinomial births, conditioned on no empty couple"
     ),
     "alloc_by_mother": "allocation null with couple weights 1/(mother's couples)",
 }
@@ -216,48 +216,127 @@ def ztp(rng: np.random.Generator, lam: np.ndarray | float, size: int | tuple[int
     return 1 + rng.poisson(np.maximum(lam - t, 0.0))
 
 
+Pmf = tuple[int, np.ndarray, np.ndarray]  # (offset, p, log p): p[i] is proportional to P(S = offset + i)
+
+
+def trimmed(offset: int, log_p: np.ndarray) -> Pmf:
+    """Drop the -inf ends of log p and scale p to a maximum of 1."""
+    nz = np.flatnonzero(np.isfinite(log_p))
+    log_p = log_p[nz[0] : nz[-1] + 1]
+    log_p = log_p - log_p.max()
+    return offset + int(nz[0]), np.exp(log_p), log_p
+
+
+def cell_pmf(n_max: int, lam: float, shape: float | None) -> Pmf:
+    """Return one cell's law on c = 1..n_max: ZTP(lam), or with shape the zero-truncated Poisson-Gamma(shape) of mean lam."""
+    c = np.arange(1, n_max + 1)
+    if shape is None:
+        return trimmed(1, c * np.log(lam) - special.gammaln(c + 1))
+    return trimmed(1, special.gammaln(c + shape) - special.gammaln(c + 1) + c * np.log(lam / (lam + shape)))
+
+
+def cell_mean(lam: np.ndarray, shape: float | None) -> np.ndarray:
+    """Return the mean of cell_pmf's law before its n_max cap."""
+    p_zero = np.exp(-lam) if shape is None else np.exp(-shape * np.log1p(lam / shape))
+    return lam / (1 - p_zero)
+
+
+def split_sums(rng: np.random.Generator, s: np.ndarray, left: Pmf, right: Pmf) -> np.ndarray:
+    """Draw each left-half sum a given the node's sum s, from P(a | s) proportional to left(a) right(s - a).
+
+    The products are formed in logs and scaled to a row maximum of 1, so a
+    row of tiny products neither underflows nor rounds its target to 0.
+    """
+    (o_l, _, lp_l), (o_r, _, lp_r) = left, right
+    lo = np.maximum(o_l, s - (o_r + len(lp_r) - 1))
+    hi = np.minimum(o_l + len(lp_l) - 1, s - o_r)
+    if not np.all(lo <= hi):
+        raise ValueError("a node's sum lies outside its support")
+    a = lo[:, None] + np.arange(int((hi - lo).max()) + 1)
+    ok = a <= hi[:, None]
+    a = np.where(ok, a, lo[:, None])
+    log_p = np.where(ok, lp_l[a - o_l] + lp_r[s[:, None] - a - o_r], -np.inf)
+    top = log_p.max(axis=1, keepdims=True)
+    if not np.all(np.isfinite(top)):
+        raise ValueError("a node's sum lies outside its support")
+    cum = np.cumsum(np.exp(log_p - top), axis=1)  # each row's largest weight is 1, so its total is >= 1
+    target = (1 - rng.uniform(size=len(s))) * cum[:, -1]  # > 0, so the pick has positive weight
+    return lo + np.sum(cum < target[:, None], axis=1)
+
+
 def surjection_draws(
-    rng: np.random.Generator, n: int, weights: np.ndarray, m: int, gamma_shape: float | None = None
+    rng: np.random.Generator, n: int, weights: np.ndarray, m: int, dirichlet_shape: float | None = None
 ) -> np.ndarray:
-    """Return m draws of counts on K couples, each >= 1 and summing to n, shape (m, K).
+    """Return m exact draws of counts on K couples, each >= 1 and summing to n, shape (m, K).
 
-    The counts are independent ZTP(mu * w_k) conditioned on summing to n. With
-    equal weights that is Multinomial(n, 1/K) conditioned on every count >= 1,
-    for any mu; mu, set so that the mean sum is n, only sets the acceptance
-    rate. With gamma_shape, each proposal draws its own weights
-    w_k ~ Gamma(gamma_shape) rescaled to mean 1: an overdispersed allocation on
-    the same occupied couples, for power.py.
+    The counts are independent ZTP(mu * w_k) conditioned on summing to n: with
+    equal weights Multinomial(n, 1/K) conditioned on every count >= 1, with
+    weights Multinomial(n, w / sum w) so conditioned, for any mu. With
+    dirichlet_shape a, the cells are instead zero-truncated Poisson-Gamma(a),
+    so with equal weights the counts are Dirichlet(a)-multinomial conditioned
+    on every count >= 1: an overdispersed allocation for power.py.
 
-    Rejection sampling: K - 1 counts are drawn, the last is n minus their sum,
-    and the proposal is kept with probability p(last) / max p, where p is the
-    last cell's ZTP pmf (the largest-weight cell goes last).
+    The couples, sorted by weight, are split in halves down to single cells.
+    Going up, each node's sum law is the direct convolution of its halves'
+    (nodes with the same weights share one). Going down from the root's n,
+    each node's sum is split between its halves from the exact conditional
+    law. mu, set so that the mean sum is n, only centres the laws in floating
+    point; the conditionals do not depend on it.
     """
     k = len(weights)
+    if not k <= n:
+        raise ValueError(f"{n} births cannot occupy {k} couples")
+    if dirichlet_shape is not None and np.ptp(weights) > 0:
+        raise ValueError("a Dirichlet-multinomial allocation takes equal weights")
     if k == n:
         return np.ones((m, k), dtype=np.int64)
     order = np.argsort(weights, kind="stable")
-    w = weights[order]
-    mu = optimize.brentq(lambda s: np.sum(s * w / -np.expm1(-s * w)) - n, 1e-12, 1e6)
-    batch = max(64, (1 << 22) // k)
-    got: list[np.ndarray] = []
-    n_got = 0
-    while n_got < m:
-        lam = np.broadcast_to(mu * w, (batch, k))
-        if gamma_shape is not None:
-            g = rng.gamma(gamma_shape, size=(batch, k))
-            lam = mu * g * (k / g.sum(axis=1, keepdims=True))
-        x = ztp(rng, lam[:, :-1], (batch, k - 1))
-        last = n - x.sum(axis=1)
-        lam_last = lam[:, -1]
-        mode = np.maximum(1, np.floor(lam_last))
-        log_max = np.maximum(stats.poisson.logpmf(mode, lam_last), stats.poisson.logpmf(mode + 1, lam_last))
-        log_p = stats.poisson.logpmf(np.maximum(last, 1), lam_last)
-        keep = (last >= 1) & (np.log(rng.uniform(size=batch)) < log_p - log_max)
-        got.append(np.column_stack([x[keep], last[keep]]))
-        n_got += int(keep.sum())
+    w = weights[order] / weights.mean()  # the law does not depend on the weights' scale
+    mu = optimize.brentq(lambda s: np.sum(cell_mean(s * w, dirichlet_shape)) - n, 1e-12, 1e6)
+    laws: dict[bytes, Pmf] = {}
+
+    def law(lo: int, hi: int) -> bytes:
+        key = w[lo:hi].tobytes()
+        if key not in laws:
+            if hi - lo == 1:
+                laws[key] = cell_pmf(n - k + 1, mu * w[lo], dirichlet_shape)
+            else:
+                mid = (lo + hi) // 2
+                (o_a, a, _), (o_b, b, _) = laws[law(lo, mid)], laws[law(mid, hi)]
+                with np.errstate(divide="ignore"):  # an underflowed sum is log 0 = -inf
+                    laws[key] = trimmed(o_a + o_b, np.log(np.convolve(a, b)))
+        return key
+
+    law(0, k)
     draws = np.empty((m, k), dtype=np.int64)
-    draws[:, order] = np.concatenate(got)[:m]
+    nodes, sums = [(0, k)], np.full((m, 1), n)
+    while nodes:
+        groups: dict[tuple[bytes, bytes], list[int]] = {}
+        for j, (lo, hi) in enumerate(nodes):
+            if hi - lo == 1:
+                draws[:, order[lo]] = sums[:, j]
+            else:
+                mid = (lo + hi) // 2
+                groups.setdefault((law(lo, mid), law(mid, hi)), []).append(j)
+        next_nodes, next_sums = [], []
+        for (left_law, right_law), js in groups.items():  # one call per pair of half laws on this level
+            s = sums[:, js]
+            left = split_sums(rng, s.ravel(), laws[left_law], laws[right_law]).reshape(s.shape)
+            halves = [((lo + hi) // 2, lo, hi) for lo, hi in (nodes[j] for j in js)]
+            next_nodes += [(lo, mid) for mid, lo, _ in halves] + [(mid, hi) for mid, _, hi in halves]
+            next_sums += [left, s - left]
+        nodes = next_nodes
+        sums = np.hstack(next_sums) if next_sums else sums
     return draws
+
+
+def twin_births(rng: np.random.Generator, births: np.ndarray, t: int) -> np.ndarray:
+    """Count each couple's twin births: t of each row's births, uniformly without replacement (R5)."""
+    m, k = births.shape
+    b = int(births[0].sum())
+    picked = rng.permuted(np.tile(np.arange(b), (m, 1)), axis=1)[:, :t] + b * np.arange(m)[:, None]
+    ends = np.cumsum(births, axis=1) + b * np.arange(m)[:, None]
+    return np.bincount(np.searchsorted(ends.ravel(), picked.ravel(), side="right"), minlength=m * k).reshape(m, k)
 
 
 def trimmed_slots(rng: np.random.Generator, owners: np.ndarray, target: int) -> np.ndarray:
@@ -321,13 +400,13 @@ def allocation_draws(
     k = len(gen.counts)
     births = gen.n_kids - gen.n_mz
     if mutation == "alloc_overdispersed":
-        draws = surjection_draws(rng, births, np.ones(k), m, gamma_shape=GAMMA_SHAPE)
+        draws = surjection_draws(rng, births, np.ones(k), m, dirichlet_shape=DIRICHLET_SHAPE)
     elif mutation == "alloc_by_mother":
         draws = surjection_draws(rng, births, 1.0 / gen.mother_couples, m)
     else:
         draws = surjection_draws(rng, births, np.ones(k), m)
     if gen.n_mz:
-        draws = draws + np.array([rng.multivariate_hypergeometric(row, gen.n_mz) for row in draws])
+        draws = draws + twin_births(rng, draws, gen.n_mz)
     multi = gen.mother_couples >= 2
     mean_multi = draws[:, multi].mean(axis=1) if multi.any() else np.full(m, np.nan)
     return (draws**2).sum(axis=1), mean_multi
