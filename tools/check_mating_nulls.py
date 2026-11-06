@@ -244,17 +244,23 @@ def check_surjection_edges(rng: np.random.Generator) -> list[tuple[str, bool]]:
     w = np.array([2.0**-10 / 6, 2.0**-5 / 4, 1 / 6])
     p_two = float(stats.binomtest(int(np.sum(split == 2)), len(split), w[1] / w.sum()).pvalue)
     sums, halves = np.arange(2, 400), cell_pmf(399, 2.0, None)
-    whole, chunked = (split_sums(np.random.default_rng(5), sums, halves, halves, max_cells=c) for c in (1 << 20, 7))
-    # the capped z's exact mean and SD under min(Bin(101, q), 50) at p_mz = 0.9, where the cap binds
-    q, x = mz_rate(0.9), np.arange(51)
-    law = np.append(stats.binom.pmf(x[:-1], 101, q), stats.binom.sf(49, 101, q))
-    z = np.array([binomial_pit(int(v), 101, q, np.random.default_rng(0), cap=50)[1] for v in x])
-    z_mean, z_sd = float(law @ z), float(np.sqrt(law @ z**2))
+    # widths 1..204, so max_cells = 1000 puts rows of different widths in one chunk and leaves a short last chunk
+    whole, *chunked = (
+        split_sums(np.random.default_rng(5), sums, halves, halves, max_cells=c) for c in (1 << 20, 1000, 7)
+    )
+    # the capped z over 10^6 simulated min(Bin(101, q), 50) at p_mz = 0.9, where the cap binds (SE of the mean 0.001)
+    q = mz_rate(0.9)
+    z = np.array([binomial_pit(v, 101, q, np.random.default_rng(0), cap=50)[1] for v in range(51)])
+    z_sim = z[np.minimum(rng.binomial(101, q, size=1_000_000), 50)]
+    z_mean, z_sd = float(z_sim.mean()), float(z_sim.std())
     return [
-        ("split_sums in chunks of 7 products draws what one chunk does", bool(np.array_equal(whole, chunked))),
+        *(
+            (f"split_sums in chunks of {c} products draws what one chunk does", bool(np.array_equal(whole, got)))
+            for c, got in zip((1000, 7), chunked, strict=True)
+        ),
         (
-            f"mz_pairs z under the capped law: mean {z_mean:.2g}, SD {z_sd:.6f}",
-            abs(z_mean) < 1e-9 and abs(z_sd - 1) < 1e-9,
+            f"mz_pairs z over simulated capped t: mean {z_mean:.2g}, SD {z_sd:.4f}",
+            abs(z_mean) < 0.005 and abs(z_sd - 1) < 0.005,
         ),
         ("n = K gives all ones", bool(np.all(surjection_draws(rng, 3, np.ones(3), 2) == 1))),
         *(

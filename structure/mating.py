@@ -248,8 +248,9 @@ def split_sums(rng: np.random.Generator, s: np.ndarray, left: Pmf, right: Pmf, m
 
     The products are formed in logs and scaled to a row maximum of 1, so a
     row of tiny products neither underflows nor rounds its target to 0. Rows
-    go in chunks of at most max_cells products; the uniforms are drawn in row
-    order either way, so the chunking does not change the draws.
+    go in chunks of at most max_cells products, or one row at a time when a
+    row is wider than that; the uniforms are drawn in row order either way,
+    so the chunking does not change the draws.
     """
     (o_l, lp_l), (o_r, lp_r) = left, right
     lo = np.maximum(o_l, s - (o_r + len(lp_r) - 1))
@@ -342,9 +343,14 @@ def surjection_draws(
 def twin_births(rng: np.random.Generator, births: np.ndarray, t: int) -> np.ndarray:
     """Count each couple's twin births: t of each row's births, uniformly without replacement (R5)."""
     m, k = births.shape
-    b = int(births.sum()) // m if m else 0
+    totals = births.sum(axis=1)
+    if np.any(totals != totals[0]):
+        raise ValueError("every draw must have the same number of births")
+    b = int(totals[0])
     offsets = b * np.arange(m)[:, None]
-    picked = np.array([rng.choice(b, t, replace=False) for _ in range(m)], dtype=np.int64).reshape(m, t) + offsets
+    # which births are picked is all that matters, so their order is left unshuffled
+    picked = np.array([rng.choice(b, t, replace=False, shuffle=False) for _ in range(m)], dtype=np.int64)
+    picked = picked.reshape(m, t) + offsets
     ends = np.cumsum(births, axis=1) + offsets
     return np.bincount(np.searchsorted(ends.ravel(), picked.ravel(), side="right"), minlength=m * k).reshape(m, k)
 
@@ -383,10 +389,12 @@ def binomial_pit(x: int, n: int, p: float, rng: np.random.Generator, cap: int | 
     if cap is None or cap >= n:
         mean, sd = n * p, np.sqrt(n * p * (1 - p))
     else:
-        values = np.arange(cap + 1)
-        probs = np.append(stats.binom.pmf(values[:-1], n, p), stats.binom.sf(cap - 1, n, p))
-        mean = float(probs @ values)
-        sd = float(np.sqrt(probs @ (values - mean) ** 2))
+        # X ~ Bin(n, p): E[X; X < c] = n p P(Bin(n-1, p) <= c-2), E[X(X-1); X < c] = n(n-1) p^2 P(Bin(n-2, p) <= c-3)
+        at_or_above = stats.binom.sf(cap - 1, n, p)
+        first = n * p * stats.binom.cdf(cap - 2, n - 1, p)
+        falling = n * (n - 1) * p**2 * stats.binom.cdf(cap - 3, max(n - 2, 0), p) if n >= 2 else 0.0
+        mean = first + cap * at_or_above
+        sd = np.sqrt(max(falling + first + cap**2 * at_or_above - mean**2, 0.0))
     return u, float((x - mean) / sd) if sd > 0 else 0.0
 
 
