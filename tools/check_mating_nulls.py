@@ -119,8 +119,20 @@ def rejection_surjection(rng: np.random.Generator, n: int, w: np.ndarray, m: int
     return draws
 
 
+def two_sample_chisquare(x: np.ndarray, y: np.ndarray, bins: int = 20) -> float:
+    """Return the chi-square p-value of x and y counted in bins cut at the pooled sample's quantiles.
+
+    The cut points are values, so tied (integer) data stay in one bin and the
+    test keeps its nominal size, unlike a two-sample KS on ties.
+    """
+    cuts = np.unique(np.quantile(np.concatenate([x, y]), np.linspace(0, 1, bins + 1)[1:-1]))
+    table = [np.bincount(np.searchsorted(cuts, v, side="right"), minlength=len(cuts) + 1) for v in (x, y)]
+    table = np.array(table)
+    return float(stats.chi2_contingency(table[:, table.sum(axis=0) > 0]).pvalue)
+
+
 def check_surjection_large(rng: np.random.Generator, m: int = 4000) -> list[tuple[str, float]]:
-    """Two-sample KS of surjection_draws against rejection_surjection on a simACE generation at N = 2000."""
+    """Two-sample chi-square of surjection_draws against rejection_surjection on a simACE generation at N = 2000."""
     (gen,) = generations(simace_pedigree(rng, 2000, 0.02))
     k, n = len(gen.counts), gen.n_kids - gen.n_mz
     multi = gen.mother_couples >= 2
@@ -132,8 +144,8 @@ def check_surjection_large(rng: np.random.Generator, m: int = 4000) -> list[tupl
             ("couples with c = 1", lambda d: (d == 1).sum(axis=1)),
             ("mean c over multi-couple mothers", lambda d: d[:, multi].mean(axis=1)),
         ):
-            p = float(stats.ks_2samp(f(tree), f(ref)).pvalue)
-            out.append((f"surjection K={k} n={n} {label}: {stat} vs rejection (KS, {m} + {m})", p))
+            p = two_sample_chisquare(f(tree), f(ref))
+            out.append((f"surjection K={k} n={n} {label}: {stat} vs rejection (binned chi-square, {m} + {m})", p))
     return out
 
 
@@ -238,6 +250,10 @@ def check_surjection_edges(rng: np.random.Generator) -> list[tuple[str, bool]]:
                 bool(np.all(surjection_draws(rng, 3, np.full(2, scale), 5).sum(axis=1) == 3)),
             )
             for scale in (1e-12, 1e14)
+        ),
+        *(  # a long leaf support must be trimmed, and mu's bracket must not cancel at n = K + 1
+            (f"n = {n:,}, K = {k:,} sums to n", bool(np.all(surjection_draws(rng, n, np.ones(k), 2).sum(axis=1) == n)))
+            for n, k in ((40_000, 4), (50_001, 50_000), (100_001, 100_000))
         ),
         ("Dirichlet(1e-4), n = K + 1: one couple with 2", bool(np.all(np.sort(tiny, axis=1)[:, -2:] == [1, 2]))),
         (f"split of subnormal halves: P(left = 2) binomial p = {p_two:.3g}", p_two >= P_MIN),

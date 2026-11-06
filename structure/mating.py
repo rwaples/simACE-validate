@@ -216,15 +216,14 @@ def ztp(rng: np.random.Generator, lam: np.ndarray | float, size: int | tuple[int
     return 1 + rng.poisson(np.maximum(lam - t, 0.0))
 
 
-Pmf = tuple[int, np.ndarray, np.ndarray]  # (offset, p, log p): p[i] is proportional to P(S = offset + i)
+Pmf = tuple[int, np.ndarray]  # (offset, log p): exp(log p[i]) is proportional to P(S = offset + i)
 
 
 def trimmed(offset: int, log_p: np.ndarray) -> Pmf:
-    """Drop the -inf ends of log p and scale p to a maximum of 1."""
-    nz = np.flatnonzero(np.isfinite(log_p))
-    log_p = log_p[nz[0] : nz[-1] + 1]
+    """Scale log p to a maximum of 0 and drop the ends below double precision (exp underflows to 0) relative to it."""
     log_p = log_p - log_p.max()
-    return offset + int(nz[0]), np.exp(log_p), log_p
+    nz = np.flatnonzero(np.exp(log_p) > 0)
+    return offset + int(nz[0]), log_p[nz[0] : nz[-1] + 1]
 
 
 def cell_pmf(n_max: int, lam: float, shape: float | None) -> Pmf:
@@ -237,8 +236,8 @@ def cell_pmf(n_max: int, lam: float, shape: float | None) -> Pmf:
 
 def cell_mean(lam: np.ndarray, shape: float | None) -> np.ndarray:
     """Return the mean of cell_pmf's law before its n_max cap."""
-    p_zero = np.exp(-lam) if shape is None else np.exp(-shape * np.log1p(lam / shape))
-    return lam / (1 - p_zero)
+    log_p_zero = -lam if shape is None else -shape * np.log1p(lam / shape)
+    return lam / -np.expm1(log_p_zero)
 
 
 def split_sums(rng: np.random.Generator, s: np.ndarray, left: Pmf, right: Pmf) -> np.ndarray:
@@ -247,7 +246,7 @@ def split_sums(rng: np.random.Generator, s: np.ndarray, left: Pmf, right: Pmf) -
     The products are formed in logs and scaled to a row maximum of 1, so a
     row of tiny products neither underflows nor rounds its target to 0.
     """
-    (o_l, _, lp_l), (o_r, _, lp_r) = left, right
+    (o_l, lp_l), (o_r, lp_r) = left, right
     lo = np.maximum(o_l, s - (o_r + len(lp_r) - 1))
     hi = np.minimum(o_l + len(lp_l) - 1, s - o_r)
     if not np.all(lo <= hi):
@@ -302,9 +301,9 @@ def surjection_draws(
                 laws[key] = cell_pmf(n - k + 1, mu * w[lo], dirichlet_shape)
             else:
                 mid = (lo + hi) // 2
-                (o_a, a, _), (o_b, b, _) = laws[law(lo, mid)], laws[law(mid, hi)]
+                (o_a, a), (o_b, b) = laws[law(lo, mid)], laws[law(mid, hi)]
                 with np.errstate(divide="ignore"):  # an underflowed sum is log 0 = -inf
-                    laws[key] = trimmed(o_a + o_b, np.log(np.convolve(a, b)))
+                    laws[key] = trimmed(o_a + o_b, np.log(np.convolve(np.exp(a), np.exp(b))))
         return key
 
     law(0, k)
