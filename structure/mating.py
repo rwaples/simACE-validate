@@ -1,7 +1,8 @@
 """Layer 3b: simACE's `standard` mating rules, read off one recorded pedigree.
 
-simACE's standard model (simACE methods.md, "Reproduction"; v0.2.0
-`simulate.py`) makes each generation of N children from the previous one:
+simACE's standard model (simACE methods.md, "Reproduction" and "Monozygotic
+twins"; v0.3.0 `simulate.py`, `_mating_standard` and `place_twins`) makes
+each generation of N children from the previous one:
 
 - R1: every parent draws ZTP(lambda) mating slots, the sexes independently.
 - R2: the sex with more slots keeps a uniform random subset of them, so both
@@ -9,11 +10,15 @@ simACE's standard model (simACE methods.md, "Reproduction"; v0.2.0
 - R3: female slots in order, male slots shuffled, paired by position into T
   matings. A duplicate couple has its father swapped with a random other
   mating, for at most 5 passes.
-- R4: (c_1..c_T) ~ Multinomial(N, 1/T) children per mating.
-- R5: each mating with c >= 2 gets one MZ pair with probability p_mz.
+- R4: t ~ Bin(N, p_mz / (1 + p_mz)) MZ pairs, capped at N // 2, leaving
+  B = N - t births; (b_1..b_T) ~ Multinomial(B, 1/T) births per mating.
+- R5: t of the B births, uniformly without replacement, are twin births. A
+  mating's children are its births plus one co-twin per twin birth.
 - R6: sex is Bernoulli(1/2); an MZ co-twin copies the first twin's sex.
+- R7: each couple's children have consecutive ids in birth order, so
+  co-twins have consecutive ids, and couples are in mother-id order.
 
-A mating with no children leaves no trace, so a generation shows its couples
+A mating with no births leaves no trace, so a generation shows its couples
 (GLOSSARY): K couples with c_k >= 1 children each. Generation 0's parents are
 erased (ADR 0001 §3), so only generations g >= 1 are read.
 
@@ -23,23 +28,27 @@ erased (ADR 0001 §3), so only generations g >= 1 are read.
 | row | statistic of generation g | null given everything before g |
 |---|---|---|
 | sex_males | males, one co-twin of each MZ pair left out | Bin(N - t_g, 1/2), exact (R6) |
-| mz_pairs | MZ pairs t_g | Bin(E_g, p_mz), E_g couples with c >= 2, exact (R5) |
-| alloc_sumsq | sum of c_k^2 | uniform surjection of N onto the K couples (R4) |
-| alloc_multi_mother | mean c_k over couples of mothers with >= 2 couples | the same surjection (R4) |
-| n_couples | K | ZTP slots, trim, occupied matings (R1, R2, R4) |
+| mz_pairs | MZ pairs t_g | Bin(N, p_mz / (1 + p_mz)) capped at N // 2, exact (R4) |
+| alloc_sumsq | sum of c_k^2 | B births surjected onto the K couples, t twin births among them (R4, R5) |
+| alloc_multi_mother | mean c_k over couples of mothers with >= 2 couples | the same draws (R4, R5) |
+| n_couples | K | ZTP slots, trim, matings occupied by B births (R1, R2, R4) |
 | n_mothers_multi | mothers with >= 2 couples | the same draws (R1, R2) |
 | n_fathers_multi | fathers with >= 2 couples | the same draws (R1, R2) |
 
 Why each null is exact:
 
 - Sex is drawn apart from mating, and a co-twin copies its twin, so the other
-  children are iid Bernoulli(1/2). Each eligible mating's MZ roll is an
-  independent Bernoulli(p_mz) that depends only on c >= 2.
-- Multinomial cells are exchangeable. Given which K are occupied, their counts
-  are N balls on K boxes conditioned on none empty, whatever T was: the
-  allocation rows do not depend on lambda. iid ZTP(mu) counts conditioned on
-  summing to N have that law for any mu, which only sets the acceptance rate.
-- A person's couples are their occupied slots. The duplicate swap exchanges
+  children are iid Bernoulli(1/2). t_g is drawn from N alone, after pairing
+  and independently of it.
+- Multinomial cells are exchangeable. Given t (so B) and which K matings are
+  occupied, their births are B balls on K boxes conditioned on none empty,
+  whatever T was: the allocation rows do not depend on lambda. iid ZTP(mu)
+  counts conditioned on summing to B have that law for any mu, which only
+  sets the acceptance rate. Twin births are a uniform t-subset of the B
+  births, so given the births a couple's twin births are multivariate
+  hypergeometric, and c_k = b_k + (its twin births).
+- A person's couples are their occupied slots, and a mating is occupied when
+  it has a birth (twin births fall on births). The duplicate swap exchanges
   fathers between matings, so it keeps every person's slot count, and who
   pairs with whom does not enter these rows.
 
@@ -47,15 +56,18 @@ Conditioning. A generation's children are the next generation's parents, so
 summed statistics would condition on earlier outcomes. Instead each row takes
 one randomised PIT u_g per generation, under the law of generation g given
 everything before it. Mating depends on the past only through the parents'
-sexes, and each row's other conditioning (t_g, E_g, the couples) is drawn
-apart from the row's own randomness. So u_1..u_{G-1} are iid U(0, 1), and
-their Stouffer combination is one exactly uniform PIT per pedigree, scored
-over seeds by calibration.calibrate (ADR 0001 §2).
+sexes, and each row's other conditioning (t_g, the couples) is drawn apart
+from the row's own randomness. So u_1..u_{G-1} are iid U(0, 1), and their
+Stouffer combination is one exactly uniform PIT per pedigree, scored over
+seeds by calibration.calibrate (ADR 0001 §2).
 
 Every exact claim assumes no duplicate couple survives the 5 swap passes;
 tools/residual_duplicates.py measures how rare that is. A surviving duplicate
-merges two matings into one couple, which can then carry two MZ pairs: the
-invariant check below raises on that, as on any other broken MZ pair.
+is kept as a second mating next to the first, so it shows as one couple whose
+children came from two multinomial cells.
+
+R6's shared sex and parents and R7's order are deterministic: `generations`
+raises on a violation, which makes the case an ERROR row.
 """
 
 from __future__ import annotations
@@ -129,18 +141,20 @@ def occurrences(owners: np.ndarray) -> np.ndarray:
 
 
 def check_twins(g: int, kids: np.ndarray, gen: np.ndarray, sex: np.ndarray, twin: np.ndarray) -> np.ndarray:
-    """Check that generation g's MZ links are reciprocal and same-sex; return each pair's lower id."""
+    """Check that generation g's MZ links are reciprocal, consecutive and same-sex; return each pair's lower id."""
     first = kids[twin[kids] > kids]
     second = twin[first]
     if 2 * len(first) != np.sum(twin[kids] >= 0) or np.any(gen[second] != g) or np.any(twin[second] != first):
         raise ValueError(f"generation {g}: an MZ link is not reciprocal within the generation")
+    if np.any(second != first + 1):
+        raise ValueError(f"generation {g}: co-twins do not have consecutive ids")
     if np.any(sex[first] != sex[second]):
         raise ValueError(f"generation {g}: an MZ pair differs in sex")
     return first
 
 
 def generations(ped: pl.DataFrame) -> list[Generation]:
-    """Read every generation g >= 1, checking parents and the MZ invariants; rows must be in id order.
+    """Read every generation g >= 1, checking parents, the MZ invariants and R7's order; rows must be in id order.
 
     Recorded generation 0 has no parents, so only its MZ links are checked.
     """
@@ -157,16 +171,16 @@ def generations(ped: pl.DataFrame) -> list[Generation]:
         for label, parents, want in (("mother", mother[kids], 0), ("father", father[kids], 1)):
             if np.any(parents < 0) or np.any(gen[parents] != g - 1) or np.any(sex[parents] != want):
                 raise ValueError(f"generation {g}: a {label} is not a generation-{g - 1} individual of that sex")
-        keys, couple, counts = np.unique(
-            np.stack([mother[kids], father[kids]]), axis=1, return_inverse=True, return_counts=True
-        )
+        if np.any(np.diff(mother[kids]) < 0):
+            raise ValueError(f"generation {g}: mothers are not in id order")
+        keys, counts = np.unique(np.stack([mother[kids], father[kids]]), axis=1, return_counts=True)
+        runs = 1 + np.count_nonzero(np.diff(mother[kids]) | np.diff(father[kids]))
+        if runs != len(counts):
+            raise ValueError(f"generation {g}: a couple's children are not one block of consecutive ids")
         first = check_twins(g, kids, gen, sex, twin)
         second = twin[first]
         if np.any(mother[first] != mother[second]) or np.any(father[first] != father[second]):
             raise ValueError(f"generation {g}: an MZ pair has different parents")
-        pair_couple = couple[np.searchsorted(kids, first)]
-        if len(np.unique(pair_couple)) < len(pair_couple):
-            raise ValueError(f"generation {g}: a couple has two MZ pairs")
         out.append(
             Generation(
                 n_female=int(np.sum(sex[prev] == 0)),
@@ -261,14 +275,21 @@ def partner_draws(rng: np.random.Generator, gen: Generation, lam: float, m: int)
         t = min(len(f), len(mm))
         f = trimmed_slots(rng, f, t)
         mm = rng.permutation(trimmed_slots(rng, mm, t))
-        occupied = rng.multinomial(gen.n_kids, np.full(t, 1.0 / t)) > 0
+        occupied = rng.multinomial(gen.n_kids - gen.n_mz, np.full(t, 1.0 / t)) > 0
         out[i] = occupied.sum(), n_multi(f[occupied]), n_multi(mm[occupied])
     return out
 
 
-def binomial_pit(x: int, n: int, p: float, rng: np.random.Generator) -> tuple[float, float]:
-    """Return the randomised PIT of x under Bin(n, p), and its z."""
-    u = float(randomised_pit_discrete(stats.binom.cdf(x - 1, n, p), stats.binom.pmf(x, n, p), rng))
+def mz_rate(p_mz: float) -> float:
+    """Return the per-child MZ-pair probability p_mz / (1 + p_mz) of R4; without the cap, E[t] / E[B] = p_mz."""
+    return p_mz / (1 + p_mz)
+
+
+def binomial_pit(x: int, n: int, p: float, rng: np.random.Generator, cap: int | None = None) -> tuple[float, float]:
+    """Return the randomised PIT of x under min(Bin(n, p), cap), and its z under the uncapped Bin(n, p)."""
+    at_cap = cap is not None and x >= cap
+    pmf = stats.binom.sf(x - 1, n, p) if at_cap else stats.binom.pmf(x, n, p)
+    u = float(randomised_pit_discrete(stats.binom.cdf(x - 1, n, p), pmf, rng))
     sd = np.sqrt(n * p * (1 - p))
     return u, float((x - n * p) / sd) if sd > 0 else 0.0
 
@@ -290,14 +311,22 @@ def stouffer(u: list[float]) -> float:
 def allocation_draws(
     rng: np.random.Generator, gen: Generation, m: int, mutation: str | None
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Return m null draws of (sum c^2, mean c over multi-couple mothers' couples) on the observed couples."""
+    """Return m null draws of (sum c^2, mean c over multi-couple mothers' couples) on the observed couples.
+
+    Births are surjected onto the couples (R4); the allocation mutations
+    perturb that step only. Each draw then places the t twin births uniformly
+    among its births (R5) and adds one child per twin birth.
+    """
     k = len(gen.counts)
+    births = gen.n_kids - gen.n_mz
     if mutation == "alloc_overdispersed":
-        draws = surjection_draws(rng, gen.n_kids, np.ones(k), m, gamma_shape=GAMMA_SHAPE)
+        draws = surjection_draws(rng, births, np.ones(k), m, gamma_shape=GAMMA_SHAPE)
     elif mutation == "alloc_by_mother":
-        draws = surjection_draws(rng, gen.n_kids, 1.0 / gen.mother_couples, m)
+        draws = surjection_draws(rng, births, 1.0 / gen.mother_couples, m)
     else:
-        draws = surjection_draws(rng, gen.n_kids, np.ones(k), m)
+        draws = surjection_draws(rng, births, np.ones(k), m)
+    if gen.n_mz:
+        draws = draws + np.array([rng.multivariate_hypergeometric(row, gen.n_mz) for row in draws])
     multi = gen.mother_couples >= 2
     mean_multi = draws[:, multi].mean(axis=1) if multi.any() else np.full(m, np.nan)
     return (draws**2).sum(axis=1), mean_multi
@@ -314,7 +343,7 @@ def mating_law(
 ) -> dict[str, tuple[float, float]]:
     """Return each Part A row's per-pedigree PIT and mean z (module docstring)."""
     lam_null = LAMBDA_ALT if mutation == "lambda_06" else lam
-    p_null = PMZ_ALT if mutation == "pmz_03" else p_mz
+    q_null = mz_rate(PMZ_ALT if mutation == "pmz_03" else p_mz)
     p_male = P_MALE_ALT if mutation == "sex_052" else 0.5
     swap = mutation == "null"  # simACE's value becomes one more null draw
     per_gen: dict[str, list[tuple[float, float]]] = {}
@@ -322,8 +351,10 @@ def mating_law(
     def add(row: str, pit: tuple[float, float]) -> None:
         per_gen.setdefault(row, []).append(pit)
 
-    def exact(row: str, x: int, n: int, p: float) -> None:
-        add(row, binomial_pit(int(rng.binomial(n, p)) if swap else x, n, p, rng))
+    def exact(row: str, x: int, n: int, p: float, cap: int | None = None) -> None:
+        if swap:
+            x = min(int(rng.binomial(n, p)), n if cap is None else cap)
+        add(row, binomial_pit(x, n, p, rng, cap))
 
     def ranked(row: str, obs: float, draws: np.ndarray) -> None:
         if np.isnan(obs):
@@ -332,7 +363,7 @@ def mating_law(
 
     for gen in generations(ped):
         exact("sex_males", gen.males, gen.n_kids - gen.n_mz, p_male)
-        exact("mz_pairs", gen.n_mz, int(np.sum(gen.counts >= 2)), p_null)
+        exact("mz_pairs", gen.n_mz, gen.n_kids, q_null, cap=gen.n_kids // 2)
         sumsq, mean_multi = allocation_draws(rng, gen, m + 1, mutation)
         obs_sumsq, obs_multi = observed_allocation(gen)
         ranked("alloc_sumsq", obs_sumsq, sumsq)

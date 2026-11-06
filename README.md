@@ -24,7 +24,7 @@ That is the main difference from
 
 ## Run it
 
-With [pixi](https://pixi.sh). `pixi.toml` pins simace to the `v0.2.0`
+With [pixi](https://pixi.sh). `pixi.toml` pins simace to the `v0.3.0`
 family tag.
 
 ```bash
@@ -114,20 +114,22 @@ compared with a two-sample KS test and a Welch t-test:
 
 **Layer 3b: simACE's `standard` mating** (`structure/mating.py`,
 `slim/standard.slim`). Two cases check the default mating model, both at
-λ = 0.5 and p_mz = 0.02.
+λ = 0.5 and p_mz = 0.02, an MZ rate per birth since simace v0.3.0
+(rwaples/simACE#78).
 
 `std_mating` tests simACE's own pedigrees against the documented rules,
 with no second simulator. Each rule gets a statistic whose null conditions
 on as much as that rule allows:
 
 - sex ratio: Bin(N − MZ pairs, 1/2), exact
-- MZ pairs: Bin(couples with ≥ 2 children, p_mz), exact
+- MZ pairs: Bin(N, p_mz / (1 + p_mz)) capped at N / 2, exact
 - children per couple and their split over a mother's couples, given the
-  couples: a multinomial conditioned on every couple having a child,
-  which does not depend on λ
+  couples and the MZ pairs: the N − (MZ pairs) births by a multinomial
+  conditioned on every couple having a birth, which does not depend on λ,
+  then the twin births uniform among the births
 - couples, and mothers and fathers with ≥ 2 partners, given the parents'
-  sexes: ZTP(λ) slots, trimmed to the smaller sex's total, then the
-  occupied matings
+  sexes and the MZ pairs: ZTP(λ) slots, trimmed to the smaller sex's
+  total, then the matings the births occupy
 
 A generation's children are the next one's parents, so each statistic
 gets one randomised PIT per generation given the generations before it.
@@ -138,12 +140,15 @@ duplicate couple survives simACE's 5 swap passes:
 `tools/residual_duplicates.py` found none in 200000 generations at
 N = 2000 or at N = 500, a 95% bound of 1.5e-5 per generation.
 `tools/check_mating_nulls.py` checks the samplers against exact
-enumeration and the MZ invariants.
+enumeration, every null against simACE's own mating, and the invariants.
 
 Some rules are deterministic, not random:
 
-- MZ co-twins share parents and sex.
-- A couple has at most one MZ pair.
+- MZ co-twins share parents and sex, and have consecutive ids.
+- Each couple's children have one block of consecutive ids, and mothers
+  are in id order within a generation.
+
+A couple can have several MZ pairs.
 
 A violation raises an error, so the case becomes an ERROR row.
 
@@ -166,9 +171,9 @@ says so. Those points went to simACE as
 - children's sex is Bernoulli(1/2), stated in methods.md for founders
   only.
 
-The same issue reports two id-order artifacts, which neither case tests:
-offspring are sorted by mother, and MZ co-twins always have consecutive
-ids.
+The same issue reported two id-order artifacts. simace v0.3.0 documents
+the order (methods.md, "Offspring order"), and both cases now check it as
+invariants above.
 
 **Layer 4: simACE's downstream stages on a gene-drop A** (`simace_ts/`,
 [ADR 0002](docs/adr/0002-simace-ts-layer.md)). Case `simace_ts_p2` drops
