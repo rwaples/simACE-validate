@@ -2,7 +2,7 @@
 # share (an R liability oracle, msprime gene-drop, ped-sim, SLiM), and
 # hosts simACE's former tskit/tstrait gene-drop pipeline (tskit_pipeline/).
 #
-# simACE is pinned to the v0.2.0 family tag. To check a local checkout
+# simACE is pinned to the v0.3.0 family tag. To check a local checkout
 # instead (do NOT commit):
 #   simace = { path = "../..", editable = true }
 # then `pixi install`. results/results.md records the simace version and
@@ -46,7 +46,7 @@ git = "*"
 slim = "5.2.*"
 
 [pypi-dependencies]
-simace = { git = "https://github.com/rwaples/simACE.git", tag = "v0.2.0" }
+simace = { git = "https://github.com/rwaples/simACE.git", tag = "v0.3.0" }
 
 [tasks]
 build-nadiv = { cmd = "bash tools/build_nadiv.sh", description = "Install the pinned nadiv CRAN version into .rlib/" }

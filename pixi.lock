@@ -230,9 +230,9 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/tstrait-0.2.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/typing_extensions-4.16.0-pyhcf101f3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/tzdata-2026c-h151e31d_0.conda
-      - pypi: git+https://github.com/rwaples/simACE.git?tag=v0.2.0#283ae1ad78ca64c2634e24a04d52bbb323519380
-      - pypi: https://files.pythonhosted.org/packages/1e/07/f971f0cb2531c8ad9961299355140f3f311b5c2ddb030bf09773ea3be455/pg_phenotype-0.5.0-cp313-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-      - pypi: https://files.pythonhosted.org/packages/f9/51/d4d76d9ce610ae27178d369d9a215bad6a768635b61880bb9bf32389e568/pedigree_graph-0.13.0-cp313-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+      - pypi: git+https://github.com/rwaples/simACE.git?tag=v0.3.0#b623cffa54de014e425fb1f9a3aaa92e3b3c3a2b
+      - pypi: https://files.pythonhosted.org/packages/7c/e4/ad0aee3a1572704186ca64a260f67fd2fff4d1206d9bbf73caf71a98ce7c/pg_phenotype-0.6.1-cp313-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
+      - pypi: https://files.pythonhosted.org/packages/9d/e0/c5247f55d5881734f315bb68724d2a518653f59dc2cb48745203f0c8af5d/pedigree_graph-0.15.0-cp313-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -3706,12 +3706,12 @@ packages:
   run_exports: {}
   size: 118849
   timestamp: 1784250406640
-- pypi: git+https://github.com/rwaples/simACE.git?tag=v0.2.0#283ae1ad78ca64c2634e24a04d52bbb323519380
+- pypi: git+https://github.com/rwaples/simACE.git?tag=v0.3.0#b623cffa54de014e425fb1f9a3aaa92e3b3c3a2b
   name: simace
-  version: 0.2.0
+  version: 0.3.0
   requires_dist:
-  - pedigree-graph>=0.12,<0.14
-  - pg-phenotype>=0.4,<0.6
+  - pedigree-graph>=0.15,<0.16
+  - pg-phenotype>=0.6,<0.7
   - numpy>=2.2,<3
   - scipy>=1.14,<2
   - polars>=1.43.2,<2
@@ -3733,15 +3733,15 @@ packages:
   - mkdocstrings[python]>=0.27 ; extra == 'docs'
   - ty==0.0.89 ; extra == 'typecheck'
   - simace[docs,plot,test,typecheck] ; extra == 'dev'
-  requires_python: '>=3.14'
-- pypi: https://files.pythonhosted.org/packages/1e/07/f971f0cb2531c8ad9961299355140f3f311b5c2ddb030bf09773ea3be455/pg_phenotype-0.5.0-cp313-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  requires_python: '>=3.14,<3.15'
+- pypi: https://files.pythonhosted.org/packages/7c/e4/ad0aee3a1572704186ca64a260f67fd2fff4d1206d9bbf73caf71a98ce7c/pg_phenotype-0.6.1-cp313-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
   name: pg-phenotype
-  version: 0.5.0
-  sha256: 48e096cc7f2c5e9b6640a534ab04e8a54326cd1c317d2c7ae86d498ecca18821
+  version: 0.6.1
+  sha256: 65aec80ad7f29f60de3bac8cea1df0512aa3b933dfe1144b4b662386822595af
   requires_dist:
   - numpy>=2.2,<3
   - scipy>=1.14,<2 ; extra == 'test'
-  - pedigree-graph>=0.12.2,<0.14 ; extra == 'test'
+  - pedigree-graph>=0.14,<0.15 ; extra == 'test'
   - pytest>=9,<10 ; extra == 'test'
   - pytest-xdist>=3.8,<4 ; extra == 'test'
   - ruff>=0.17,<0.18 ; extra == 'test'
@@ -3750,10 +3750,10 @@ packages:
   - polars>=1.43.2,<2 ; extra == 'test'
   - ty==0.0.89 ; extra == 'typecheck'
   requires_python: '>=3.13'
-- pypi: https://files.pythonhosted.org/packages/f9/51/d4d76d9ce610ae27178d369d9a215bad6a768635b61880bb9bf32389e568/pedigree_graph-0.13.0-cp313-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+- pypi: https://files.pythonhosted.org/packages/9d/e0/c5247f55d5881734f315bb68724d2a518653f59dc2cb48745203f0c8af5d/pedigree_graph-0.15.0-cp313-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl
   name: pedigree-graph
-  version: 0.13.0
-  sha256: 2be8a432a42e2d95a7b21a120a6c2e409ded745ed1b5e01bf66a5d5bd8f6af18
+  version: 0.15.0
+  sha256: ec4942013b7b236f20b51b8f88d33de9dbee56f49248e81a74da1ff6a758208e
   requires_dist:
   - numpy>=2.2,<3
   - scipy>=1.14,<2
