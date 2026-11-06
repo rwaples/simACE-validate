@@ -219,6 +219,7 @@ def valid_pedigrees() -> dict[str, pl.DataFrame]:
 def broken_pedigrees() -> dict[str, pl.DataFrame]:
     """Return small pedigrees that each break one parent, MZ or order invariant."""
     cases = {
+        "generation 1: no children": {"generation": [0, 0, 0, 0, 2, 2, 2, 2]},
         "an MZ pair differs in sex": {"twin": [-1, -1, -1, -1, -1, -1, 7, 6], "sex": [0, 0, 1, 1, 0, 0, 0, 1]},
         "an MZ pair has different parents": {"twin": [-1, -1, -1, -1, -1, 6, 5, -1], "sex": [0, 0, 1, 1, 0, 1, 1, 1]},
         "co-twins do not have consecutive ids": ONE_COUPLE
@@ -242,7 +243,19 @@ def check_surjection_edges(rng: np.random.Generator) -> list[tuple[str, bool]]:
     # exact P(left = 2 | 4) for ZTP(2^-535) and ZTP(2^-540) halves: weights 2^-1080 / 6, 2^-1075 / 4, 2^-1070 / 6
     w = np.array([2.0**-10 / 6, 2.0**-5 / 4, 1 / 6])
     p_two = float(stats.binomtest(int(np.sum(split == 2)), len(split), w[1] / w.sum()).pvalue)
+    sums, halves = np.arange(2, 400), cell_pmf(399, 2.0, None)
+    whole, chunked = (split_sums(np.random.default_rng(5), sums, halves, halves, max_cells=c) for c in (1 << 20, 7))
+    # the capped z's exact mean and SD under min(Bin(101, q), 50) at p_mz = 0.9, where the cap binds
+    q, x = mz_rate(0.9), np.arange(51)
+    law = np.append(stats.binom.pmf(x[:-1], 101, q), stats.binom.sf(49, 101, q))
+    z = np.array([binomial_pit(int(v), 101, q, np.random.default_rng(0), cap=50)[1] for v in x])
+    z_mean, z_sd = float(law @ z), float(np.sqrt(law @ z**2))
     return [
+        ("split_sums in chunks of 7 products draws what one chunk does", bool(np.array_equal(whole, chunked))),
+        (
+            f"mz_pairs z under the capped law: mean {z_mean:.2g}, SD {z_sd:.6f}",
+            abs(z_mean) < 1e-9 and abs(z_sd - 1) < 1e-9,
+        ),
         ("n = K gives all ones", bool(np.all(surjection_draws(rng, 3, np.ones(3), 2) == 1))),
         *(
             (

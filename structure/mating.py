@@ -168,14 +168,17 @@ def generations(ped: pl.DataFrame) -> list[Generation]:
     out = []
     for g in range(1, int(gen.max()) + 1):
         kids = np.flatnonzero(gen == g)
+        if len(kids) == 0:
+            raise ValueError(f"generation {g}: no children")
         prev = np.flatnonzero(gen == g - 1)
         for label, parents, want in (("mother", mother[kids], 0), ("father", father[kids], 1)):
             if np.any(parents < 0) or np.any(gen[parents] != g - 1) or np.any(sex[parents] != want):
                 raise ValueError(f"generation {g}: a {label} is not a generation-{g - 1} individual of that sex")
-        if np.any(np.diff(mother[kids]) < 0):
+        mother_steps = np.diff(mother[kids])
+        if np.any(mother_steps < 0):
             raise ValueError(f"generation {g}: mothers are not in id order")
         keys, counts = np.unique(np.stack([mother[kids], father[kids]]), axis=1, return_counts=True)
-        runs = 1 + np.count_nonzero(np.diff(mother[kids]) | np.diff(father[kids]))
+        runs = 1 + np.count_nonzero(mother_steps | np.diff(father[kids]))
         if runs != len(counts):
             raise ValueError(f"generation {g}: a couple's children are not one block of consecutive ids")
         first = check_twins(g, kids, gen, sex, twin)
@@ -240,27 +243,34 @@ def cell_mean(lam: np.ndarray, shape: float | None) -> np.ndarray:
     return lam / -np.expm1(log_p_zero)
 
 
-def split_sums(rng: np.random.Generator, s: np.ndarray, left: Pmf, right: Pmf) -> np.ndarray:
+def split_sums(rng: np.random.Generator, s: np.ndarray, left: Pmf, right: Pmf, max_cells: int = 1 << 20) -> np.ndarray:
     """Draw each left-half sum a given the node's sum s, from P(a | s) proportional to left(a) right(s - a).
 
     The products are formed in logs and scaled to a row maximum of 1, so a
-    row of tiny products neither underflows nor rounds its target to 0.
+    row of tiny products neither underflows nor rounds its target to 0. Rows
+    go in chunks of at most max_cells products; the uniforms are drawn in row
+    order either way, so the chunking does not change the draws.
     """
     (o_l, lp_l), (o_r, lp_r) = left, right
     lo = np.maximum(o_l, s - (o_r + len(lp_r) - 1))
     hi = np.minimum(o_l + len(lp_l) - 1, s - o_r)
     if not np.all(lo <= hi):
         raise ValueError("a node's sum lies outside its support")
-    a = lo[:, None] + np.arange(int((hi - lo).max()) + 1)
-    ok = a <= hi[:, None]
-    a = np.where(ok, a, lo[:, None])
-    log_p = np.where(ok, lp_l[a - o_l] + lp_r[s[:, None] - a - o_r], -np.inf)
-    top = log_p.max(axis=1, keepdims=True)
-    if not np.all(np.isfinite(top)):
-        raise ValueError("a node's sum lies outside its support")
-    cum = np.cumsum(np.exp(log_p - top), axis=1)  # each row's largest weight is 1, so its total is >= 1
-    target = (1 - rng.uniform(size=len(s))) * cum[:, -1]  # > 0, so the pick has positive weight
-    return lo + np.sum(cum < target[:, None], axis=1)
+    out = np.empty_like(s)
+    step = max(1, max_cells // (int((hi - lo).max()) + 1))
+    for i in range(0, len(s), step):
+        rows = slice(i, i + step)
+        a = lo[rows, None] + np.arange(int((hi[rows] - lo[rows]).max()) + 1)
+        ok = a <= hi[rows, None]
+        a = np.where(ok, a, lo[rows, None])
+        log_p = np.where(ok, lp_l[a - o_l] + lp_r[s[rows, None] - a - o_r], -np.inf)
+        top = log_p.max(axis=1, keepdims=True)
+        if not np.all(np.isfinite(top)):
+            raise ValueError("a node's sum lies outside its support")
+        cum = np.cumsum(np.exp(log_p - top), axis=1)  # each row's largest weight is 1, so its total is >= 1
+        target = (1 - rng.uniform(size=len(a))) * cum[:, -1]  # > 0, so the pick has positive weight
+        out[rows] = lo[rows] + np.sum(cum < target[:, None], axis=1)
+    return out
 
 
 def surjection_draws(
@@ -332,9 +342,10 @@ def surjection_draws(
 def twin_births(rng: np.random.Generator, births: np.ndarray, t: int) -> np.ndarray:
     """Count each couple's twin births: t of each row's births, uniformly without replacement (R5)."""
     m, k = births.shape
-    b = int(births[0].sum())
-    picked = rng.permuted(np.tile(np.arange(b), (m, 1)), axis=1)[:, :t] + b * np.arange(m)[:, None]
-    ends = np.cumsum(births, axis=1) + b * np.arange(m)[:, None]
+    b = int(births.sum()) // m if m else 0
+    offsets = b * np.arange(m)[:, None]
+    picked = np.array([rng.choice(b, t, replace=False) for _ in range(m)], dtype=np.int64).reshape(m, t) + offsets
+    ends = np.cumsum(births, axis=1) + offsets
     return np.bincount(np.searchsorted(ends.ravel(), picked.ravel(), side="right"), minlength=m * k).reshape(m, k)
 
 
@@ -365,12 +376,18 @@ def mz_rate(p_mz: float) -> float:
 
 
 def binomial_pit(x: int, n: int, p: float, rng: np.random.Generator, cap: int | None = None) -> tuple[float, float]:
-    """Return the randomised PIT of x under min(Bin(n, p), cap), and its z under the uncapped Bin(n, p)."""
+    """Return the randomised PIT of x under min(Bin(n, p), cap), and its z under that same law."""
     at_cap = cap is not None and x >= cap
     pmf = stats.binom.sf(x - 1, n, p) if at_cap else stats.binom.pmf(x, n, p)
     u = float(randomised_pit_discrete(stats.binom.cdf(x - 1, n, p), pmf, rng))
-    sd = np.sqrt(n * p * (1 - p))
-    return u, float((x - n * p) / sd) if sd > 0 else 0.0
+    if cap is None or cap >= n:
+        mean, sd = n * p, np.sqrt(n * p * (1 - p))
+    else:
+        values = np.arange(cap + 1)
+        probs = np.append(stats.binom.pmf(values[:-1], n, p), stats.binom.sf(cap - 1, n, p))
+        mean = float(probs @ values)
+        sd = float(np.sqrt(probs @ (values - mean) ** 2))
+    return u, float((x - mean) / sd) if sd > 0 else 0.0
 
 
 def rank_pit(obs: float, draws: np.ndarray, rng: np.random.Generator) -> tuple[float, float]:
