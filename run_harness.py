@@ -286,12 +286,15 @@ def check_matched(case: dict) -> None:
     sim, x = case["simulate"], case_spec(case)
     r, r2, traits = x["r"], x["r2"], x["traits"]
     c = x["C"]
-    want = {"N": x["N"], "G-ped": x["G"], "G-sim": x["G"], "p-mztwin": 0, "A1": 0.5, "C1": c, "E1": 0.5 - c}
+    want = {"N": x["N"], "G-ped": x["G"], "G-sim": x["G"], "mating-model": "standard", "mating-lambda": 0.5}
+    want |= {"p-mztwin": 0, "A1": 0.5, "C1": c, "E1": 0.5 - c}
     want |= {"A2": 0.5, "C2": 0, "E2": 0.5, "rA": 0, "rC": 0, "rE": 0, "assort1": r}
     if traits == 2:
         cross = r if r2 == r else math.sqrt(r * r2)  # rank 1 (am/run_xft.py)
         want |= {"assort2": r2, "assort-matrix": json.dumps([[r, cross], [cross, r2]])}
     bad = [f"{k}={sim.get(k)!r} (want {v!r})" for k, v in want.items() if sim.get(k) != v]
+    extra = set(sim) - set(want) - ({"assort2"} if traits == 1 else set())
+    bad += [f"{k} is not modelled by the xftsim configuration" for k in sorted(extra)]
     if traits == 1 and sim.get("assort2", 0) != 0:
         bad.append("assort2 must be 0 for a single-trait case")
     if traits == 1 and r2 != r:
@@ -346,6 +349,7 @@ def run_xftsim(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seed
 
 def run_xftsim_finite_m(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seeds: list[int]) -> list[dict]:
     """Layer 5 sentinel (INFO): xftsim Var(A) at the smallest M against the largest, at each r (ADR 0003, decision 5)."""
+    base_id = case["id"].split("~")[0]  # --replicate renames the case; the references keep the base id
     refs = {ref["label"]: ref["xftsim"] for ref in case["references"]}
     by_r: dict[float, dict[int, str]] = {}
     for label, x in refs.items():
@@ -353,7 +357,7 @@ def run_xftsim_finite_m(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Pa
     rows = []
     for _r, labels in sorted(by_r.items()):
         lo, hi = labels[min(labels)], labels[max(labels)]
-        a, b = (read_reference(f"{case['id']}~{lab}", manifest(f"{case['id']}~{lab}", refs[lab])) for lab in (lo, hi))
+        a, b = (read_reference(f"{base_id}~{lab}", manifest(f"{base_id}~{lab}", refs[lab])) for lab in (lo, hi))
         for g in range(1, refs[lo]["G"] + 1):
             stat = f"var_A_g{g}"
             score = welch(np.array([x[stat] for x in a]), np.array([x[stat] for x in b]))
@@ -435,6 +439,8 @@ def assign_status(rows: list[dict]) -> float:
             r["status"] = "FAIL" if r["exact_mismatches"] else "PASS"
         elif not scored(r):
             r["status"] = "INFO"
+        elif not all(np.isfinite(list(r["score"].p_values.values()))):
+            r["status"] = "ERROR"  # a NaN p-value would compare False against the threshold and pass
         else:
             r["status"] = "FAIL" if r["score"].p < threshold else "PASS"
     return threshold
@@ -593,7 +599,7 @@ def main() -> int:
             print_failure(exc)
     threshold = assign_status(rows)
     write_results(rows, threshold, errors, selection)
-    return 1 if errors or any(r["status"] == "FAIL" for r in rows) else 0
+    return 1 if errors or any(r["status"] in ("FAIL", "ERROR") for r in rows) else 0
 
 
 if __name__ == "__main__":
