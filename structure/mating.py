@@ -32,8 +32,8 @@ erased (ADR 0001 §3), so only generations g >= 1 are read.
 | alloc_sumsq | sum of c_k^2 | B births surjected onto the K couples, t twin births among them (R4, R5) |
 | alloc_multi_mother | mean c_k over couples of mothers with >= 2 couples | the same draws (R4, R5) |
 | n_couples | K | ZTP slots, trim, matings occupied by B births (R1, R2, R4) |
-| n_mothers_multi | mothers with >= 2 couples | the same draws (R1, R2) |
-| n_fathers_multi | fathers with >= 2 couples | the same draws (R1, R2) |
+| n_mothers_multi | mothers with >= 2 couples | the same draws (R1, R2, R4) |
+| n_fathers_multi | fathers with >= 2 couples | the same draws (R1, R2, R4) |
 
 Why each null is exact:
 
@@ -61,8 +61,9 @@ from the row's own randomness. So u_1..u_{G-1} are iid U(0, 1), and their
 Stouffer combination is one exactly uniform PIT per pedigree, scored over
 seeds by calibration.calibrate (ADR 0001 §2).
 
-Every exact claim assumes no duplicate couple survives the 5 swap passes;
-tools/residual_duplicates.py measures how rare that is. A surviving duplicate
+The allocation and partner-count nulls assume no duplicate couple survives
+the 5 swap passes; sex_males and mz_pairs do not depend on pairing.
+tools/residual_duplicates.py measures how rare a survivor is. A surviving duplicate
 is kept as a second mating next to the first, so it shows as one couple whose
 children came from two multinomial cells.
 

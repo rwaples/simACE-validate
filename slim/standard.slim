@@ -17,10 +17,10 @@
 // 3. Female slots in order, male slots shuffled, paired by position. A couple
 //    that occurs twice has its father swapped with a random other mating.
 //    One that survives the passes stays a second mating with the same parents.
-// 4. K ~ Binomial(N, PMZ / (1 + PMZ)) MZ pairs, at most N / 2, so PMZ is the
-//    rate per birth; the B = N - K births go to the nSlots matings by
+// 4. t ~ Binomial(N, PMZ / (1 + PMZ)) MZ pairs (nTwin), at most N / 2, so PMZ
+//    is the rate per birth; the B = N - t births go to the nSlots matings by
 //    Multinomial(B, 1/nSlots).
-// 5. K of the B births, uniformly without replacement, are twin births: two
+// 5. t of the B births, uniformly without replacement, are twin births: two
 //    co-twins with the same sex.
 // 6. Sex is Bernoulli(1/2) for founders and children.
 // 7. Each couple's children are created in birth order, couples in mother

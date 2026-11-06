@@ -4,8 +4,8 @@
 
 A duplicate that survives `pair_partners`' 5 swap passes merges two matings
 into one visible couple, which breaks the exactness of std_mating's
-partner-count, allocation and twin nulls (structure/mating.py). Parent sexes
-are Bernoulli(1/2), as in simACE.
+partner-count and allocation nulls (structure/mating.py); the sex and MZ-pair
+nulls do not depend on pairing. Parent sexes are Bernoulli(1/2), as in simACE.
 """
 
 from __future__ import annotations
