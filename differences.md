@@ -86,32 +86,30 @@ scales with exp(β L) and does not use `ndtri`; its prevalence
 (`info/prevalence`) is INFO because no target is derived for it, not
 because of this gap.
 
-Measured on the 50 scored seeds (9000 to 9049, run of 2026-11-05) by
-`pixi run python simace_ts/sweep_info.py`. Frailty onset and censoring move
-these quantities far from the liability-scale targets whatever the
-distribution of A (tetrachoric FS 0.077 against a liability correlation
-near 0.3), so no Gaussian target is available. The measure is instead each
-architecture's paired per-seed difference from c1m_a05, the architecture
-with the most causal sites; c1m_a05 is itself finite-locus, so this cannot
-show a departure that all architectures share.
+Measured on the 50 scored seeds (9000 to 9049) under simace 0.3.0 (run of
+2026-11-07) by `pixi run python simace_ts/sweep_info.py`. Frailty onset and
+censoring move these quantities far from the liability-scale targets
+whatever the distribution of A (tetrachoric FS 0.078 against a liability
+correlation near 0.3), so no Gaussian target is available. The measure is
+instead each architecture's paired per-seed difference from c1m_a05, the
+architecture with the most causal sites; c1m_a05 is itself finite-locus,
+so this cannot show a departure that all architectures share.
 
 Over the 15 computable statistics and 5 architectures (75 comparisons;
 `h2_observed_falconer` is empty with no MZ twins), no single comparison
-rejects: the largest |t| is 2.87 (`h2_observed_po`, c1k_a05, mean
-−0.0028), below the two-sided Bonferroni cutoff of 3.63. The largest
-absolute mean difference is 0.0045 (`tetrachoric_FO`, c10k_a05);
-single seeds differ by far more. But c1m_a05 sits above the other
-architecture in 65 of the 75 mean differences, 12 to 14 of 15 in each
-architecture; only the MHS rows and `h2_observed_cousins` break the
-pattern. The comparisons share c1m_a05 and the seeds' phenotypes, so they
-are correlated, and the sign count is not a test. It does not separate an
-unusually high c1m_a05 at these seeds from a real effect of the
-architecture, and with c100_a05 no further from c1m_a05 than c10k_a05 or
-c100k_a05 there is no sign of a departure that grows as the number of
-causal sites falls (the series is c100, c1k, c10k, c100k and c1m at alpha
-−0.5; c1k_a0 changes alpha instead). The cause is unresolved; a joint test
-across statistics, with c1m_a05 against the other architectures, would
-settle whether it is noise.
+rejects: the largest |t| is 2.76 (`tetrachoric_FO`, c100k_a05, mean
+−0.0055), below the two-sided Bonferroni cutoff of 3.63; that is also the
+largest absolute mean difference, and single seeds differ by far more.
+c1m_a05 sits above the other architecture in 51 of the 75 mean
+differences: 8, 7, 10 and 15 of 15 for c1k_a05, c100_a05, c10k_a05 and
+c100k_a05, and 11 of 15 for c1k_a0 (which changes alpha, not the number of
+sites). Under simace 0.2.0 (Parts of 1f8bd5d, the same seed numbers but
+other pedigrees) it was 65 of 75, 12 to 14 in each architecture. The
+comparisons share c1m_a05 and the seeds' phenotypes, so they are
+correlated, and a sign count is not a test; that the count fell on new
+data, and that the counts do not rise as the number of causal sites
+falls (c100k_a05 has the most), point to noise, but do not settle it. A joint test
+across statistics, with c1m_a05 against the other architectures, would.
 
 ## D4. The xftsim matched configuration (layer 5)
 
