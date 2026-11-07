@@ -22,10 +22,19 @@ pedigree was chosen on the liabilities. So, given the pedigree, simACE's A
 is not drawn by midparent plus Mendelian sampling, and the layer-1 oracle
 would have to condition on the pairing too. No tractable law does that.
 
-[xftsim](https://github.com/rborder/xftsim) (GPLv3; v0.3.1, commit
-`8a4cdf0`) is a forward-time simulator that shares no code with simACE. It
+[xftsim](https://github.com/border-lab/xftsim) (GPLv3; v0.3.1, commit
+`8a4cdf0` of 2026-07-22) is a forward-time simulator that shares no code with simACE. It
 has finite loci and its own AM regime, so it can serve as an empirical
 reference at the population level.
+
+Citation: Richard Border, *xftsim: eXtensible Forward Time SIMulator*,
+https://github.com/border-lab/xftsim (formerly `rborder/xftsim`, which
+redirects; `pixi.toml` installs from that URL), commit `8a4cdf0`, GPL-3.0.
+Author, licence and commit date are from the repository and its `setup.py`
+at that commit (checked 2026-11-06). xftsim has no paper or citation file:
+its README and docs ask for none, and Border et al. (2022), *Science*
+378:754–761, doi:10.1126/science.abo2059, the closest paper, does not name
+it (its simulations use the authors' own R code).
 
 The AM laws at the pinned versions:
 
@@ -104,7 +113,7 @@ within the measured MDDs, not equality.
    independent xftsim runs at a matched configuration. Neither side is
    conditioned on the other's pedigree. The infinitesimal Bulmer
    recursions are reported beside each row as INFO:
-   - `am/stats.py::bulmer` for one trait;
+   - `am/bulmer.py::bulmer` for one trait;
    - `bulmer2` for two traits. It is the multivariate form: mates' A
      cross-covariance is Σ_A Σ_y⁻¹ R_y Σ_y⁻¹ Σ_A.
 
@@ -146,15 +155,28 @@ within the measured MDDs, not equality.
        any target but needs LocalSolver, a commercial solver
        (`xftsim/mate.py:1026-1053` at `8a4cdf0`).
      - So `am/run_xft.py` adds `Rank1AssortativeMatingRegime`, written
-       against xftsim's `MatingRegime` interface. Each side pairs on the
+       against xftsim's `MatingRegime` interface (`get_potential_mates`,
+       `enumerate_assignment`). It was written clean-room on 2026-11-06,
+       from a spec of this law and of that interface alone, by an agent
+       that never read an xftsim regime's source; the first version had
+       followed LAM's `mate` step by step, which put GPL-derived code in
+       this MIT repo. Each side pairs on the
        score s = Z·S⁻¹v (Z the standardised traits, S their covariance on
        that side) at correlation ρ = √(q_f·q_m), with q = vᵀS⁻¹v. That
        pins all four mate correlations at v·vᵀ in every generation, as LAM
        re-solves its R for the realised ρ_w.
-     - At r1 = r2 it reproduces LAM's output exactly (103 statistics, one
-       seed, max |diff| 0.0). Meiosis, effects, the architecture and the
+     - The first version reproduced LAM's output exactly at r1 = r2 (103
+       statistics, one seed); the clean-room one draws its noise
+       differently, so the check is now statistical. Its 40 fresh seeds
+       (29000 to 29039) against the 100 seeds of the first version's
+       `am2_r0401` reference give 162 Welch rows with smallest p 0.0015
+       (`var_A_t2_g3`; Bonferroni cutoff 3.09·10⁻⁴), and 12 rows below
+       0.05 where 8.1 are expected. The low rows are trait 2's Var(A) at
+       g 2 to 4, where the old reference sat below the Bulmer recursion
+       (z −4.15 and −3.74 at g 2 and 3) and the new code does not (|z| ≤
+       2.26 at every g). Meiosis, effects, the architecture and the
        pedigree stay xftsim's; the pairing law of this case is ours.
-     - Pilot: 40 seeds per side (`am/pilot/rank1_summary.md`). simACE
+     - Pilot, run with the first version: 40 seeds per side (`am/pilot/rank1_summary.md`). simACE
        against xftsim gives 139 Welch rows, smallest p 0.0147. Against the
        Bulmer recursion with this R (`bulmer2`), the largest |z| is 2.45
        for simACE and 1.94 for xftsim.
@@ -428,8 +450,11 @@ and with `bulmer2`. At r = 0.4, g = 6:
   - the xftsim commit;
   - the `xftsim` env's lock entries;
   - the config;
-  - the hashes of `am/stats.py` and `am/run_xft.py` (the driver that builds
-    effects and seeds the RNGs);
+  - the hashes of `am/stats.py` (the statistics, and `flatten`),
+    `am/run_xft.py` (the driver that builds effects, seeds the RNGs and
+    pairs) and `am/reference.py` (each run's argv and thread settings);
+    the Bulmer predictions live in `am/bulmer.py`, outside the hashes,
+    since no sample is built from them;
   - `NUMBA_NUM_THREADS`;
   - the seed range.
 
@@ -474,7 +499,7 @@ and with `bulmer2`. At r = 0.4, g = 6:
     tightly as R allows.
 - **simACE pin: option (b), decided.** Layer 5 scored simace v0.2.0 at
   first (run of 2026-11-05). The pin moved to v0.3.0, which ships ADR 0032,
-  with the merge of main on 2026-11-06; the next full run scores v0.3.0.
+  with the merge of main on 2026-11-06, and the run of 2026-11-06 scores it.
   - At r = 0.8 its mean `r_mate_L` over g is 0.7987, against xftsim's
     0.7997. That gap is below the `r_mate_L` MDD at R = 100 (0.0030 at its
     smallest), so a FAIL is possible but not likely.
@@ -535,7 +560,10 @@ and with `bulmer2`. At r = 0.4, g = 6:
   - AM combined with C transmission (rwaples/simACE-validate#5).
 - xftsim's environment is Python 3.9 with numba 0.56.4 and numpy 1.23 (pixi
   env `xftsim`, no default feature). It is installed, never vendored (ADR
-  0001 §7).
+  0001 §7), and no xftsim code is copied: `Rank1AssortativeMatingRegime` is
+  our own, written clean-room against xftsim's API (decision 2). The env
+  holds only what the xftsim runs need (no ruff), since its lock entries are
+  hashed into every reference.
 
 ## Open items
 

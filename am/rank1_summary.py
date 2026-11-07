@@ -4,7 +4,7 @@ Reads the simACE and xftsim JSONL of `CELLS=rank1 bash am/pilot.sh` (committed a
 am/pilot/rank1_simace.jsonl and rank1_xft.jsonl), keeps the rank-1 records (r is
 the string "R1/R2"; every kept record must share r, g and h2) and prints, per statistic and generation, the simACE and xftsim means, the
 Welch p between them, and each tool's z against a two-trait Bulmer recursion
-with the general mate correlation matrix R (bulmer2 in am/stats.py).
+with the general mate correlation matrix R (bulmer2 in am/bulmer.py).
 
 Usage: python -m am.rank1_summary SIMACE_JSONL XFT_JSONL
 """
@@ -16,7 +16,7 @@ from pathlib import Path
 import numpy as np
 from scipy import stats
 
-from am.stats import bulmer2
+from am.bulmer import bulmer2
 
 COUNTS = ("n", "n_couples", "n_fs_pairs")  # family structure differs by design (differences.md D4)
 

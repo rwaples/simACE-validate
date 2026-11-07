@@ -5,7 +5,7 @@ Usage: python -m am.summarize PILOT_DIR   (reads simace.jsonl and xft.jsonl, pri
 Every number in the design note comes from this output. For each statistic,
 generation and r it prints:
 - the mean and SE over seeds for simACE and for xftsim (M = 1000);
-- the Bulmer/infinitesimal prediction (am/stats.py::bulmer), N -> infinity;
+- the Bulmer/infinitesimal prediction (am/bulmer.py::bulmer), N -> infinity;
 - a two-sample Welch t and KS p for simACE vs xftsim;
 - the minimum mean gap a Welch t over R seeds per side would detect with
   80% power at a harness-sized alpha/K.
@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 from scipy import stats as st
 
-from am.stats import bulmer2, predict1
+from am.bulmer import bulmer2, predict1
 
 S = 0.5  # C + E of the pilot trait
 V0 = 0.5

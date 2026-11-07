@@ -28,9 +28,10 @@ import polars as pl
 import yaml
 from scipy import stats
 
-from am.manifest import case_spec, derived, flatten, manifest, read_reference, schema
+from am.bulmer import bulmer2, predict1
+from am.manifest import case_spec, derived, manifest, read_reference, schema
 from am.simace_stats import pedigree_rows
-from am.stats import bulmer2, predict1
+from am.stats import flatten
 from calibration import Score, calibrate, mean_zero, randomised_pit, two_sample, welch
 from genedrop.drop import Genome
 from genedrop.layer2 import seed_stats

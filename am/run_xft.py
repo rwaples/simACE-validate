@@ -93,21 +93,21 @@ xft.config.print_durations_threshold = np.inf
 
 
 class Rank1AssortativeMatingRegime(xft.mate.MatingRegime):
-    """LinearAssortativeMatingRegime with a weighted score, pinning the mate correlation v v'.
+    """Assortative mating on two components towards the rank-1 mate correlation v v' (ADR 0003, decision 2).
 
-    v = (sqrt(R1), sqrt(R2)). Each side's score is s = Z w with w = S^-1 v (Z the
-    standardised traits, S their covariance on that side), so Cov(Z, s) = v.
-    Pairing the noisy scores sqrt(rho) s + sqrt(1 - rho) sd(s) e by rank gives
-    corr(s_f, s_m) = rho, hence corr(Z_f, Z_m) = rho v v' / sqrt(q_f q_m) with
-    q = v' S^-1 v; rho = sqrt(q_f q_m) pins it at v v'. At R1 = R2 it is LAM's law
-    (w proportional to (1, 1), rho LAM's R) and reproduces LAM's output exactly.
-    Mirrors LAM.mate except the score, and raises where LAM would clamp.
+    Built on xftsim's MatingRegime API: get_potential_mates gives the two sides, enumerate_assignment the
+    couples. Each generation, on each side: Z is the two components standardised, S its covariance, and the
+    score s = Z S^-1 v has Cov(Z, s) = v and Var(s) = q = v' S^-1 v. With rho = sqrt(q_f q_m), both sides'
+    noisy scores sqrt(rho) s + sqrt(1 - rho) SD(s) e, e ~ N(0, 1), are ranked and the k-th of one side
+    pairs with the k-th of the other, so corr(s_f, s_m) = rho and corr(Z_f, Z_m) = v v'. A rho outside
+    (0, 1) raises ValueError rather than being clamped. A larger side gives up a random excess.
     """
 
     def __init__(self, component_index, v, mates_per_female, offspring_per_pair):
-        """Mate on the two components of component_index towards the target v v'."""
+        """Mate on the two components of component_index; v = (sqrt(R1), sqrt(R2))."""
+        if component_index.k_total != 2:
+            raise ValueError("the rank-1 regime mates on exactly two components")
         super().__init__(
-            self,
             offspring_per_pair=xft.utils.ConstantCount(offspring_per_pair),
             mates_per_female=xft.utils.ConstantCount(mates_per_female),
             female_offspring_per_pair="balanced",
@@ -116,36 +116,37 @@ class Rank1AssortativeMatingRegime(xft.mate.MatingRegime):
             component_index=component_index,
             haplotypes=False,
         )
-        assert component_index.k_total == 2, "the rank-1 regime mates on two traits"
         self.component_index = component_index
-        self.v = np.asarray(v)
+        self.v = np.asarray(v, dtype=np.float64)
+
+    def _scores(self, x):
+        """Score Z S^-1 v of an n x 2 side, and its variance q."""
+        z = (x - x.mean(axis=0)) / x.std(axis=0)
+        s = z @ np.linalg.solve(np.cov(z, rowvar=False, ddof=0), self.v)
+        return s, float(np.var(s))
 
     def mate(self, haplotypes=None, phenotypes=None, control=None):
-        """Pair females and males on their weighted scores."""
-        female_indices, male_indices = self.get_potential_mates(haplotypes, phenotypes)
-        sample_indexer = phenotypes.xft.get_sample_indexer()
-        female_indexer = sample_indexer[female_indices]
-        male_indexer = sample_indexer[male_indices]
-        n_new = np.min([female_indexer.n, male_indexer.n])
-        female_indexer = female_indexer.at_most(n_new)
-        male_indexer = male_indexer.at_most(n_new)
-        zf = xft.utils.standardize_array(phenotypes.xft[female_indexer, self.component_index].data)
-        zm = xft.utils.standardize_array(phenotypes.xft[male_indexer, self.component_index].data)
-        n_pairs = zm.shape[0]
-        wf = np.linalg.solve(np.cov(zf, rowvar=False), self.v)
-        wm = np.linalg.solve(np.cov(zm, rowvar=False), self.v)
-        rho = np.sqrt((self.v @ wf) * (self.v @ wm))
+        """Pair the two sides by rank of their noisy scores and return xftsim's MateAssignment."""
+        females, males = self.get_potential_mates(haplotypes, phenotypes)
+        k = min(len(females), len(males))
+        if len(females) > k:
+            females = np.random.permutation(females)[:k]
+        if len(males) > k:
+            males = np.random.permutation(males)[:k]
+        y = np.asarray(phenotypes.xft[None, self.component_index].data, dtype=np.float64)
+        row = {label: i for i, label in enumerate(phenotypes.sample.values)}
+        s_f, q_f = self._scores(y[[row[label] for label in females]])
+        s_m, q_m = self._scores(y[[row[label] for label in males]])
+        rho = np.sqrt(q_f * q_m)
         if not 0 < rho < 1:
-            raise ValueError(f"rank-1 target infeasible at this generation: rho {rho}")
-        sf, sm = zf @ wf, zm @ wm
-        score_f = sf * np.sqrt(rho) + np.sqrt(1 - rho) * np.random.normal(0, np.std(sf), n_pairs)
-        score_m = sm * np.sqrt(rho) + np.sqrt(1 - rho) * np.random.normal(0, np.std(sm), n_pairs)
-        return self.enumerate_assignment(
-            female_indices=female_indices[np.argsort(score_f)[:n_new]],
-            male_indices=male_indices[np.argsort(score_m)[:n_new]],
-            haplotypes=haplotypes,
-            phenotypes=phenotypes,
-        )
+            raise ValueError(f"rank-1 target infeasible this generation: rho = sqrt(q_f q_m) = {rho:.4f}")
+
+        def noisy(s, q):
+            return np.sqrt(rho) * s + np.sqrt((1 - rho) * q) * np.random.normal(size=len(s))
+
+        pairs_f = females[np.argsort(noisy(s_f, q_f))]
+        pairs_m = males[np.argsort(noisy(s_m, q_m))]
+        return self.enumerate_assignment(pairs_f, pairs_m, haplotypes, phenotypes)
 
 
 t0 = time.perf_counter()

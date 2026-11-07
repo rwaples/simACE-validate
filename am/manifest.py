@@ -91,8 +91,10 @@ def manifest(name: str, xftsim: dict) -> dict:
         "spec": full_spec(xftsim),
         "xftsim_commit": commit,
         "xftsim_lock_sha256": lock,
+        # The code that builds a sample: the run, its statistics, and the driver (argv, threads, flatten).
         "stats_sha256": sha256_file(ROOT / "am" / "stats.py"),
         "run_xft_sha256": sha256_file(ROOT / "am" / "run_xft.py"),
+        "reference_sha256": sha256_file(ROOT / "am" / "reference.py"),
         "numba_threads": NUMBA_THREADS,
     }
 
@@ -100,13 +102,6 @@ def manifest(name: str, xftsim: dict) -> dict:
 def reference_path(name: str) -> Path:
     """Where the reference sample `name` lives."""
     return REFERENCE_DIR / f"{name}.jsonl"
-
-
-def flatten(rows: list[dict]) -> dict[str, float]:
-    """One run's per-generation rows as {stat_g<g>: value}; generation 0 (founders) is dropped."""
-    return {
-        f"{k}_g{r['generation']}": v for r in rows if r["generation"] > 0 for k, v in r.items() if k != "generation"
-    }
 
 
 def read_reference(name: str, expected: dict) -> list[dict[str, float]]:

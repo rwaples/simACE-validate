@@ -33,11 +33,11 @@ from am.manifest import (
     XFT_MUTATIONS,
     case_spec,
     derived,
-    flatten,
     manifest,
     r_arg,
     reference_path,
 )
+from am.stats import flatten
 
 ENV = {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMBA_NUM_THREADS": NUMBA_THREADS}
 

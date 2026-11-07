@@ -18,8 +18,8 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 
+from am.bulmer import predict1
 from am.simace_stats import pedigree_rows
-from am.stats import predict1
 
 first, n_seeds = int(sys.argv[1]), int(sys.argv[2])
 work = Path(sys.argv[3])

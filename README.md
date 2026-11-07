@@ -7,7 +7,7 @@ simulates against code simACE does not share:
 - [msprime](https://tskit.dev/msprime/) gene-drop
 - [ped-sim](https://github.com/williamslab/ped-sim)
 - [SLiM](https://messerlab.org/slim/)
-- [xftsim](https://github.com/rborder/xftsim), for assortative mating
+- [xftsim](https://github.com/border-lab/xftsim), for assortative mating
 
 The latest results are in [`results/results.md`](results/results.md), and
 the harness's measured power is in [`results/power.md`](results/power.md)
@@ -239,10 +239,10 @@ outputs on GenomeDK, a few seconds each:
 0003](docs/adr/0003-xftsim-am-layer.md)). Under assortative mating (AM),
 simACE's pedigree is chosen on the liabilities, so no layer-1 law exists.
 Instead, simACE's population moments are compared with those of
-[xftsim](https://github.com/rborder/xftsim), a finite-locus forward
-simulator that shares no code with simACE. xftsim is pinned to commit
-`8a4cdf0` in its own pixi environment (Python 3.9) and is called, never
-vendored (GPLv3).
+[xftsim](https://github.com/border-lab/xftsim), a finite-locus forward
+simulator by Richard Border that shares no code with simACE. xftsim is
+pinned to commit `8a4cdf0` in its own pixi environment (Python 3.9) and is
+called, never vendored or copied (GPLv3); ADR 0003 gives the citation.
 
 The two simulators run at a matched configuration:
 - A 0.5, C 0, E 0.5 per trait (C 0.2, E 0.3 in `amc_r05`), with
