@@ -106,10 +106,33 @@ c100k_a05, and 11 of 15 for c1k_a0 (which changes alpha, not the number of
 sites). Under simace 0.2.0 (Parts of 1f8bd5d, the same seed numbers but
 other pedigrees) it was 65 of 75, 12 to 14 in each architecture. The
 comparisons share c1m_a05 and the seeds' phenotypes, so they are
-correlated, and a sign count is not a test; that the count fell on new
-data, and that the counts do not rise as the number of causal sites
-falls (c100k_a05 has the most), point to noise, but do not settle it. A joint test
-across statistics, with c1m_a05 against the other architectures, would.
+correlated, and a sign count is not a test.
+
+The joint test (`joint_test` in the same script) asks the question jointly.
+Per seed and statistic it contrasts one architecture with the mean of the
+other five, sums the 15 contrasts' squared t across seeds, and refers that
+to the permutation null in which, within each seed, any architecture may
+play the reference (20,000 draws). The script runs it with each
+architecture as the reference. Under simace 0.3.0, c1m_a05 gives 7.98,
+p = 0.80. The 0.2.0 Parts give 34.33, p = 0.044, run with
+`pixi run python simace_ts/sweep_info.py --parts-dir DIR --accept-part-simace`
+on `git archive 1f8bd5d simace_ts/parts/simace_ts_p2` extracted into DIR.
+So the 0.2.0 pattern did not recur on the 0.3.0 pedigrees. That is one new
+draw of 50 seeds, and a non-rejection, not a demonstration that the
+architectures agree.
+
+Two limits. A rejection says only that the architectures are not
+exchangeable: one outlying architecture shifts every other reference's
+contrast too, so the line for each reference has to be read together.
+And the contrast with the mean of the other five dilutes a gap between the
+reference and a single architecture to a fifth, which only the pairwise
+table shows. That table has one lead under 0.3.0: c100k_a05 is below
+c1m_a05 in all 15 statistics, and as the reference it gives the smallest
+joint p, 0.069 (sum 30.96). Under 0.2.0 it was below c1m_a05 in 13 of 15,
+like every architecture, and as the reference gave p = 0.95. Neither lead
+holds in both seed blocks, and no architecture-dependent departure is
+detected at 50 seeds. A departure that all architectures share remains
+unmeasured, since none of them is Gaussian.
 
 ## D4. The xftsim matched configuration (layer 5)
 
