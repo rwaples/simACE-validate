@@ -1,8 +1,8 @@
 # Status of non-PASS rows
 
-Run of 2026-11-06 against simace 0.3.0 (v0.3.0).
+Run of 2026-11-07 against simace 0.3.0 (v0.3.0), commit 352539d.
 
-**Totals:** ERROR 1, INFO 748, PASS 937. alpha/K = 3.7e-05 (K = 1353). The ERROR is simace_ts_p2 (G5): its committed Parts were built under simace 0.2.0.
+**Totals:** INFO 869, PASS 970. alpha/K = 3.67e-05 (K = 1364).
 
 Status vocabulary:
 - **Open:** needs a decision or a fix.
@@ -24,7 +24,7 @@ Status vocabulary:
 | G3 | genedrop_base `innov_var_g*` | Partial run of 2026-11-04: PASS (g3 mean −0.0078, t −1.39); `d1_innov_var_g3` INFO (21 seeds, mean +0.106, t +1.62) | Closed | none. The rows now score only children whose recorded parents both have F = 0, where the null is exact (rwaples/simACE#77, `genedrop/layer2.py`) | 2026-11-04 |
 | G4 | every calibrated row (layers 1 and 3b): the chi-square test | PASS, but its Pearson reference is asymptotic. Codex simulated the exact multinomial null at R = 100, 10 bins, alpha/K = 0.05/587: rejection 0.000115 (95% CI 0.000108 to 0.000122) against a nominal 0.0000852 | Open | Give the chi-square an exact multinomial or Monte Carlo reference. That rescores every case, so it is a separate change | 2026-10-22 |
 | I1 | genedrop `spread_*` | INFO | Info | none. Under simace v0.3.0's per-birth MZ model every deep-case seed has MZ pairs (n 50, was 4), so deep_constant's four MZ rows are now scored and PASS; deep_infinitesimal's stay INFO under D1 | 2026-11-06 |
-| G5 | layer 4, simace_ts_p2 (simACE-ts, rwaples/simACE-validate#2) | Partial run of 2026-11-07 under simace 0.3.0 (`--only simace_ts_p2`, 50 seeds 9000 to 9049; output in `.work/results/`, not committed): the 11 scored rows PASS (largest absolute t 2.06, `lc_FS`, p 0.0447; alpha/K 0.00455 at K = 11) and the 22 exact rows PASS with 0 mismatches (largest difference 7.2e-14); the sweep's 22 exact rows have 0 mismatches over 5 architectures (largest 7.4e-14). At a full run's alpha/K of 5.91e-5 (K = 846, ADR 0002 item 10) the minimum detectable gap is 0.0016 (`dz_L`) to 0.0067 (`po_g9_slope`) (`simace_ts/sweep_info.py --mde-k 846`). The 0.2.0 Parts (1f8bd5d) also passed | Open | Score it in a full run, where K covers every case. This layer's oracle consumes simACE's pedigree and feeds simACE's own stages (README, layer 4) | 2026-11-07 |
+| G5 | layer 4, simace_ts_p2 (simACE-ts, rwaples/simACE-validate#2) | PASS in the full run of 2026-11-07 (352539d, simace 0.3.0, 50 seeds 9000 to 9049, Parts of 785f87a): the 11 scored rows PASS (largest absolute t 2.06, `lc_FS`, p 0.0447; alpha/K 3.67e-05 at K = 1364) and the 22 exact rows PASS with 0 mismatches (largest difference 7.2e-14); the sweep's 22 exact rows have 0 mismatches over 5 architectures (largest 7.4e-14). Minimum detectable gap at that alpha/K: 0.0016 (`dz_L`) to 0.0069 (`po_g9_slope`) (results/results.md). The 0.2.0 Parts (1f8bd5d) also passed, in a partial run | Closed | none. Rerun the 50 seeds on GenomeDK when the simace pin moves (README, layer 4). This layer's oracle consumes simACE's pedigree and feeds simACE's own stages | 2026-11-07 |
 | D3 | simace_ts_p2 `info/tetrachoric_*`, `info/affected_corr_*`, `info/h2_observed_*` | INFO. Against c1m_a05 no single comparison rejects (simace 0.3.0: largest absolute paired t 2.76 of 75, Bonferroni cutoff 3.63). c1m_a05 sits above the other architecture in 51 of the 75 mean differences, down from 65 under 0.2.0 (differences.md D3) | Open | Run a joint test across statistics of c1m_a05 against the other architectures, to settle whether the pattern is noise | 2026-11-07 |
 | G6 | layer-2 cross-check on the layer-4 pedigree (check 4 of #2) | not checked | Open | Run genedrop/drop.py on the same N = 35,951 pedigree and compare its IBD and A correlations with the tskit drop's, as INFO. Its cost at this size is unmeasured | 2026-11-05 |
 
