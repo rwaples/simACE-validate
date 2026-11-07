@@ -8,9 +8,9 @@ is the SD ratio simACE / gene-drop over seeds. Layer 4: a scored row is like lay
 realised truth); an exact row has no p-value and is FAIL when any entry mismatches, with center the
 largest difference and effect the number of mismatching (seed, architecture) entries.
 
-**Totals:** ERROR 1, INFO 748, PASS 937
+**Totals:** INFO 869, PASS 970
 
-simace 0.3.0 (v0.3.0); alpha/K = 3.7e-05.
+simace 0.3.0 (v0.3.0); alpha/K = 3.67e-05.
 
 | Case | Layer | Statistic | n | Center | Effect | p | Status | Id |
 |---|---|---|---|---|---|---|---|---|
@@ -625,13 +625,13 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.7e-05.
 | wf_structure | 3 | n_MHS_g4 | 100 | -1.53 | -0.35 | KS 0.908, t 0.725 | PASS |  |
 | wf_structure | 3 | n_PHS_g4 | 100 | 3.76 | +0.88 | KS 0.47, t 0.377 | PASS |  |
 | wf_structure | 3 | n_sib_mated_g4 | 100 | 0.26 | +0.95 | KS 0.583, t 0.342 | PASS |  |
-| std_mating | 3 | sex_males | 100 | 0.5236 | +0.05 | KS 0.676, chi2 0.72 | PASS |  |
-| std_mating | 3 | mz_pairs | 100 | 0.5203 | +0.03 | KS 0.948, chi2 0.898 | PASS |  |
-| std_mating | 3 | alloc_sumsq | 100 | 0.439 | -0.12 | KS 0.0279, chi2 0.213 | PASS |  |
-| std_mating | 3 | alloc_multi_mother | 100 | 0.5342 | +0.07 | KS 0.253, chi2 0.304 | PASS |  |
-| std_mating | 3 | n_couples | 100 | 0.4757 | -0.04 | KS 0.25, chi2 0.304 | PASS |  |
-| std_mating | 3 | n_mothers_multi | 100 | 0.5106 | +0.03 | KS 0.441, chi2 0.76 | PASS |  |
-| std_mating | 3 | n_fathers_multi | 100 | 0.4641 | -0.04 | KS 0.163, chi2 0.202 | PASS |  |
+| std_mating | 3 | sex_males | 100 | 0.5234 | +0.05 | KS 0.667, chi2 0.76 | PASS |  |
+| std_mating | 3 | mz_pairs | 100 | 0.5194 | +0.03 | KS 0.869, chi2 0.817 | PASS |  |
+| std_mating | 3 | alloc_sumsq | 100 | 0.4411 | -0.12 | KS 0.00846, chi2 0.0062 | PASS |  |
+| std_mating | 3 | alloc_multi_mother | 100 | 0.5365 | +0.07 | KS 0.471, chi2 0.911 | PASS |  |
+| std_mating | 3 | n_couples | 100 | 0.4679 | -0.05 | KS 0.49, chi2 0.575 | PASS |  |
+| std_mating | 3 | n_mothers_multi | 100 | 0.5113 | +0.03 | KS 0.255, chi2 0.596 | PASS |  |
+| std_mating | 3 | n_fathers_multi | 100 | 0.4665 | -0.05 | KS 0.293, chi2 0.658 | PASS |  |
 | std_structure | 3 | frac_female_g1 | 100 | 0.0055 | +1.71 | KS 0.47, t 0.0891 | PASS |  |
 | std_structure | 3 | n_mothers_g1 | 100 | 0.79 | +0.93 | KS 0.583, t 0.356 | PASS |  |
 | std_structure | 3 | n_fathers_g1 | 100 | 1.2 | +1.29 | KS 0.111, t 0.199 | PASS |  |
@@ -687,6 +687,160 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.7e-05.
 | std_structure | 3 | n_fathers_multi_g4 | 100 | -0.73 | -1.02 | KS 0.702, t 0.309 | PASS |  |
 | std_structure | 3 | n_mz_pairs_g4 | 100 | 0.07 | +0.15 | KS 1, t 0.877 | PASS |  |
 | std_structure | 3 | alloc_sumsq_g4 | 100 | 1.44 | +0.20 | KS 0.908, t 0.843 | PASS |  |
+| simace_ts_p2 | 4 | lc_FS | 50 | 0.0009873 | +2.06 | t 0.0447 | PASS |  |
+| simace_ts_p2 | 4 | lc_MHS | 50 | 0.0007388 | +0.75 | t 0.458 | PASS |  |
+| simace_ts_p2 | 4 | lc_PHS | 50 | 7.688e-06 | +0.01 | t 0.993 | PASS |  |
+| simace_ts_p2 | 4 | lc_MO | 50 | -0.0002273 | -0.45 | t 0.655 | PASS |  |
+| simace_ts_p2 | 4 | lc_FO | 50 | -0.0003562 | -0.64 | t 0.527 | PASS |  |
+| simace_ts_p2 | 4 | po_g8_slope | 50 | -0.001655 | -1.66 | t 0.104 | PASS |  |
+| simace_ts_p2 | 4 | po_g8_r | 50 | -0.001135 | -1.66 | t 0.104 | PASS |  |
+| simace_ts_p2 | 4 | po_g9_slope | 50 | 0.001234 | +0.96 | t 0.342 | PASS |  |
+| simace_ts_p2 | 4 | po_g9_r | 50 | 0.0005858 | +0.66 | t 0.515 | PASS |  |
+| simace_ts_p2 | 4 | dz_L | 50 | 0.0003955 | +1.32 | t 0.194 | PASS |  |
+| simace_ts_p2 | 4 | po_L_slope | 50 | 0.0001792 | +0.41 | t 0.683 | PASS |  |
+| simace_ts_p2 | 4 | exact/n_pairs_FS | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/lc_FS_value | 50 | 1.11e-16 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/n_pairs_MHS | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/lc_MHS_value | 50 | 1.11e-16 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/n_pairs_PHS | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/lc_PHS_value | 50 | 9.714e-17 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/n_pairs_MO | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/lc_MO_value | 50 | 8.327e-17 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/n_pairs_FO | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/lc_FO_value | 50 | 5.551e-17 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_g8_n | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_g8_slope_value | 50 | 1.205e-14 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_g8_r_value | 50 | 4.718e-15 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_g9_n | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_g9_slope_value | 50 | 1.088e-14 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_g9_r_value | 50 | 4.607e-15 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/dz_A_corr | 50 | 1.665e-16 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/dz_L_corr_value | 50 | 1.11e-16 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_A_slope | 50 | 7.172e-14 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_A_r2 | 50 | 5.49e-14 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/po_L_slope_value | 50 | 2.043e-14 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact/var_A_g0 | 50 | 0 | +0.00 |  | PASS |  |
+| simace_ts_p2 | 4 | exact_sweep/n_pairs_FS | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/lc_FS_value | 50 | 1.11e-16 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/n_pairs_MHS | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/lc_MHS_value | 50 | 1.11e-16 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/n_pairs_PHS | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/lc_PHS_value | 50 | 6.939e-17 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/n_pairs_MO | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/lc_MO_value | 50 | 8.327e-17 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/n_pairs_FO | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/lc_FO_value | 50 | 8.327e-17 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_g8_n | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_g8_slope_value | 50 | 1.316e-14 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_g8_r_value | 50 | 6.328e-15 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_g9_n | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_g9_slope_value | 50 | 1.46e-14 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_g9_r_value | 50 | 6.939e-15 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/dz_A_corr | 50 | 2.22e-16 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/dz_L_corr_value | 50 | 1.11e-16 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_A_slope | 50 | 6.772e-14 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_A_r2 | 50 | 7.422e-14 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/po_L_slope_value | 50 | 4.791e-14 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | exact_sweep/var_A_g0 | 50 | 0 | +0.00 |  | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/lc_FS | 50 | 0.0001111 | +0.22 | t 0.829 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/lc_MHS | 50 | 0.0001763 | +0.20 | t 0.844 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/lc_PHS | 50 | 0.001264 | +1.43 | t 0.158 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/lc_MO | 50 | 0.0005781 | +1.13 | t 0.263 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/lc_FO | 50 | -0.001092 | -2.07 | t 0.0441 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/po_g8_slope | 50 | -0.0006789 | -0.60 | t 0.548 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/po_g8_r | 50 | -0.0004196 | -0.56 | t 0.577 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/po_g9_slope | 50 | 0.0002697 | +0.24 | t 0.814 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/po_g9_r | 50 | -0.00014 | -0.17 | t 0.865 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/dz_L | 50 | -0.0001064 | -0.34 | t 0.733 | INFO |  |
+| simace_ts_p2 | 4 | c100_a05/po_L_slope | 50 | 0.0002117 | +0.53 | t 0.599 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/lc_FS | 50 | -5.755e-05 | -0.13 | t 0.9 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/lc_MHS | 50 | 0.0002208 | +0.24 | t 0.81 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/lc_PHS | 50 | -0.001008 | -1.29 | t 0.202 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/lc_MO | 50 | 0.0001627 | +0.30 | t 0.768 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/lc_FO | 50 | 0.0001195 | +0.16 | t 0.871 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/po_g8_slope | 50 | -0.0009491 | -0.75 | t 0.457 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/po_g8_r | 50 | -0.0006174 | -0.72 | t 0.477 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/po_g9_slope | 50 | 0.00133 | +1.14 | t 0.262 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/po_g9_r | 50 | 0.0009084 | +1.06 | t 0.294 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/dz_L | 50 | -6.426e-05 | -0.21 | t 0.836 | INFO |  |
+| simace_ts_p2 | 4 | c10k_a05/po_L_slope | 50 | -0.0003114 | -0.83 | t 0.412 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/lc_FS | 50 | 0.001332 | +2.53 | t 0.0145 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/lc_MHS | 50 | 0.001586 | +1.90 | t 0.0632 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/lc_PHS | 50 | -0.000283 | -0.35 | t 0.728 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/lc_MO | 50 | 0.0007496 | +1.36 | t 0.181 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/lc_FO | 50 | -0.0002764 | -0.42 | t 0.68 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/po_g8_slope | 50 | -0.001581 | -1.14 | t 0.259 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/po_g8_r | 50 | -0.0008121 | -0.90 | t 0.371 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/po_g9_slope | 50 | 0.002359 | +1.91 | t 0.0621 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/po_g9_r | 50 | 0.001463 | +1.99 | t 0.0519 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/dz_L | 50 | 0.0008324 | +2.82 | t 0.00688 | INFO |  |
+| simace_ts_p2 | 4 | c100k_a05/po_L_slope | 50 | 0.0006791 | +1.81 | t 0.0758 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/lc_FS | 50 | 0.0006697 | +1.19 | t 0.239 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/lc_MHS | 50 | 0.001274 | +1.34 | t 0.187 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/lc_PHS | 50 | -0.0003669 | -0.40 | t 0.694 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/lc_MO | 50 | 0.0003371 | +0.53 | t 0.601 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/lc_FO | 50 | -5.064e-05 | -0.09 | t 0.931 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/po_g8_slope | 50 | -0.0003355 | -0.30 | t 0.765 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/po_g8_r | 50 | -7.839e-05 | -0.10 | t 0.923 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/po_g9_slope | 50 | 0.0009534 | +0.78 | t 0.439 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/po_g9_r | 50 | 0.0006207 | +0.79 | t 0.431 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/dz_L | 50 | -0.0001115 | -0.46 | t 0.65 | INFO |  |
+| simace_ts_p2 | 4 | c1m_a05/po_L_slope | 50 | 0.0001491 | +0.38 | t 0.702 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/lc_FS | 50 | 0.0003917 | +0.73 | t 0.47 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/lc_MHS | 50 | -5.813e-05 | -0.07 | t 0.946 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/lc_PHS | 50 | -0.0005607 | -0.59 | t 0.557 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/lc_MO | 50 | -0.0001908 | -0.35 | t 0.73 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/lc_FO | 50 | -0.0004324 | -0.82 | t 0.418 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/po_g8_slope | 50 | -0.001182 | -1.02 | t 0.312 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/po_g8_r | 50 | -0.0008213 | -1.14 | t 0.259 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/po_g9_slope | 50 | 0.0006167 | +0.57 | t 0.571 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/po_g9_r | 50 | 0.0001375 | +0.20 | t 0.845 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/dz_L | 50 | 0.0001489 | +0.43 | t 0.668 | INFO |  |
+| simace_ts_p2 | 4 | c1k_a0/po_L_slope | 50 | 0.0001574 | +0.37 | t 0.71 | INFO |  |
+| simace_ts_p2 | 4 | info/tetrachoric_FS | 50 | 0.07825 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/affected_corr_FS | 50 | 0.02855 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_FS_minus_2phi | 50 | -0.0002626 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_FS_g7_minus_2phi | 50 | -0.001317 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_FS_g8_minus_2phi | 50 | 0.0004061 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_FS_g9_minus_2phi | 50 | 9.602e-05 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/tetrachoric_MHS | 50 | 0.05004 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/affected_corr_MHS | 50 | 0.01782 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_MHS_minus_2phi | 50 | 0.001036 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_MHS_g7_minus_2phi | 50 | 7.479e-05 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_MHS_g8_minus_2phi | 50 | 0.0001876 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_MHS_g9_minus_2phi | 50 | 0.002533 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/tetrachoric_PHS | 50 | 0.0261 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/affected_corr_PHS | 50 | 0.009186 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_PHS_minus_2phi | 50 | -0.001301 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_PHS_g7_minus_2phi | 50 | -0.004487 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_PHS_g8_minus_2phi | 50 | -0.001768 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_PHS_g9_minus_2phi | 50 | 0.002119 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/tetrachoric_MO | 50 | 0.05195 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/affected_corr_MO | 50 | 0.01857 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_MO_minus_2phi | 50 | 0.0003544 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_MO_g8_minus_2phi | 50 | 0.0004078 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_MO_g9_minus_2phi | 50 | 0.0003139 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/tetrachoric_FO | 50 | 0.05337 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/affected_corr_FO | 50 | 0.01909 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_FO_minus_2phi | 50 | 0.0005228 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_FO_g8_minus_2phi | 50 | 0.0008213 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_rA_FO_g9_minus_2phi | 50 | 0.0002306 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/prevalence | 50 | 0.09996 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/h2_observed_falconer | 0 | nan | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/h2_observed_sibs | 50 | 0.05709 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/h2_observed_po | 50 | 0.03766 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/h2_observed_hs | 50 | 0.054 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/h2_observed_cousins | 50 | 0.03648 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g0_over_g0 | 50 | 1 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g1_over_g0 | 50 | 0.999 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g2_over_g0 | 50 | 0.9975 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g3_over_g0 | 50 | 0.9984 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g4_over_g0 | 50 | 0.9978 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g5_over_g0 | 50 | 0.9985 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g6_over_g0 | 50 | 0.9966 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g7_over_g0 | 50 | 0.9989 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g8_over_g0 | 50 | 0.9988 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | info/gd_raw_var_g9_over_g0 | 50 | 0.9986 | +nan |  | INFO |  |
 | am_r0 | 5 | var_A_g1 | 100 | -6.141e-05 | -0.05 | t 0.959 | PASS |  |
 | am_r0 | 5 | var_A_g2 | 100 | 0.0001631 | +0.13 | t 0.897 | PASS |  |
 | am_r0 | 5 | var_A_g3 | 100 | -0.000356 | -0.26 | t 0.797 | PASS |  |
@@ -1699,4 +1853,23 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.7e-05.
 | am_finite_m | 5 | m250_r08-m4000_r08:var_A_g4 | 100 | -0.0004949 | -0.28 | t 0.779 | INFO |  |
 | am_finite_m | 5 | m250_r08-m4000_r08:var_A_g5 | 100 | -0.003444 | -1.82 | t 0.0699 | INFO |  |
 | am_finite_m | 5 | m250_r08-m4000_r08:var_A_g6 | 100 | -0.004542 | -2.22 | t 0.0278 | INFO |  |
-| simace_ts_p2 | 4 | ValueError: simace_ts_p2 seed 9000: stale Part (simace 0.2.0 (this run has 0.3.0)); rerun it on GenomeDK | | | | | ERROR | |
+
+## Layer 4: minimum detectable gap
+
+The smallest mean gap (simACE minus its realised truth) each scored row rejects at alpha/K with
+80% power, from its per-seed SD (two-sided t). A measured power study needs repeated full sets of
+seeds, which is out of reach (ADR 0002 item 10).
+
+| Case | Statistic | n | Per-seed SD | Minimum detectable gap |
+|---|---|---|---|---|
+| simace_ts_p2 | lc_FS | 50 | 0.003389 | 0.002583 |
+| simace_ts_p2 | lc_MHS | 50 | 0.006977 | 0.005318 |
+| simace_ts_p2 | lc_PHS | 50 | 0.005829 | 0.004443 |
+| simace_ts_p2 | lc_MO | 50 | 0.00358 | 0.002729 |
+| simace_ts_p2 | lc_FO | 50 | 0.003953 | 0.003013 |
+| simace_ts_p2 | po_g8_slope | 50 | 0.007067 | 0.005386 |
+| simace_ts_p2 | po_g8_r | 50 | 0.004843 | 0.003691 |
+| simace_ts_p2 | po_g9_slope | 50 | 0.009094 | 0.006931 |
+| simace_ts_p2 | po_g9_r | 50 | 0.00632 | 0.004817 |
+| simace_ts_p2 | dz_L | 50 | 0.002123 | 0.001618 |
+| simace_ts_p2 | po_L_slope | 50 | 0.003088 | 0.002353 |
