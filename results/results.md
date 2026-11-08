@@ -8,9 +8,9 @@ is the SD ratio simACE / gene-drop over seeds. Layer 4: a scored row is like lay
 realised truth); an exact row has no p-value and is FAIL when any entry mismatches, with center the
 largest difference and effect the number of mismatching (seed, architecture) entries.
 
-**Totals:** INFO 914, PASS 970
+**Totals:** INFO 914, PASS 972
 
-simace 0.3.0 (v0.3.0); alpha/K = 3.67e-05.
+simace 0.3.0 (v0.3.0); alpha/K = 3.65e-05.
 
 | Case | Layer | Statistic | n | Center | Effect | p | Status | Id |
 |---|---|---|---|---|---|---|---|---|
@@ -625,13 +625,15 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.67e-05.
 | wf_structure | 3 | n_MHS_g4 | 100 | -1.53 | -0.35 | KS 0.908, t 0.725 | PASS |  |
 | wf_structure | 3 | n_PHS_g4 | 100 | 3.76 | +0.88 | KS 0.47, t 0.377 | PASS |  |
 | wf_structure | 3 | n_sib_mated_g4 | 100 | 0.26 | +0.95 | KS 0.583, t 0.342 | PASS |  |
-| std_mating | 3 | sex_males | 100 | 0.5234 | +0.05 | KS 0.667, chi2 0.773 | PASS |  |
-| std_mating | 3 | mz_pairs | 100 | 0.5194 | +0.03 | KS 0.869, chi2 0.828 | PASS |  |
-| std_mating | 3 | alloc_sumsq | 100 | 0.4411 | -0.12 | KS 0.00846, chi2 0.0065 | PASS |  |
-| std_mating | 3 | alloc_multi_mother | 100 | 0.5365 | +0.07 | KS 0.471, chi2 0.92 | PASS |  |
-| std_mating | 3 | n_couples | 100 | 0.4679 | -0.05 | KS 0.49, chi2 0.587 | PASS |  |
-| std_mating | 3 | n_mothers_multi | 100 | 0.5113 | +0.03 | KS 0.255, chi2 0.608 | PASS |  |
-| std_mating | 3 | n_fathers_multi | 100 | 0.4665 | -0.05 | KS 0.293, chi2 0.67 | PASS |  |
+| std_mating | 3 | sex_males | 100 | 0.5236 | +0.05 | KS 0.629, chi2 0.893 | PASS |  |
+| std_mating | 3 | mz_pairs | 100 | 0.5186 | +0.03 | KS 0.78, chi2 0.691 | PASS |  |
+| std_mating | 3 | alloc_sumsq | 100 | 0.4422 | -0.11 | KS 0.00741, chi2 0.00397 | PASS |  |
+| std_mating | 3 | alloc_multi_mother | 100 | 0.5348 | +0.07 | KS 0.312, chi2 0.691 | PASS |  |
+| std_mating | 3 | twin_couples | 100 | 0.4676 | -0.04 | KS 0.592, chi2 0.691 | PASS |  |
+| std_mating | 3 | twin_birth_size | 100 | 0.4788 | -0.02 | KS 0.425, chi2 0.41 | PASS |  |
+| std_mating | 3 | n_couples | 100 | 0.4693 | -0.05 | KS 0.374, chi2 0.254 | PASS |  |
+| std_mating | 3 | n_mothers_multi | 100 | 0.5104 | +0.03 | KS 0.408, chi2 0.41 | PASS |  |
+| std_mating | 3 | n_fathers_multi | 100 | 0.4667 | -0.05 | KS 0.216, chi2 0.505 | PASS |  |
 | std_structure | 3 | frac_female_g1 | 100 | 0.0055 | +1.71 | KS 0.47, t 0.0891 | PASS |  |
 | std_structure | 3 | n_mothers_g1 | 100 | 0.79 | +0.93 | KS 0.583, t 0.356 | PASS |  |
 | std_structure | 3 | n_fathers_g1 | 100 | 1.2 | +1.29 | KS 0.111, t 0.199 | PASS |  |
@@ -1909,12 +1911,12 @@ seeds, which is out of reach (ADR 0002 item 10).
 |---|---|---|---|---|
 | simace_ts_p2 | lc_FS | 50 | 0.003389 | 0.002583 |
 | simace_ts_p2 | lc_MHS | 50 | 0.006977 | 0.005318 |
-| simace_ts_p2 | lc_PHS | 50 | 0.005829 | 0.004443 |
+| simace_ts_p2 | lc_PHS | 50 | 0.005829 | 0.004444 |
 | simace_ts_p2 | lc_MO | 50 | 0.00358 | 0.002729 |
-| simace_ts_p2 | lc_FO | 50 | 0.003953 | 0.003013 |
-| simace_ts_p2 | po_g8_slope | 50 | 0.007067 | 0.005386 |
-| simace_ts_p2 | po_g8_r | 50 | 0.004843 | 0.003691 |
-| simace_ts_p2 | po_g9_slope | 50 | 0.009094 | 0.006931 |
+| simace_ts_p2 | lc_FO | 50 | 0.003953 | 0.003014 |
+| simace_ts_p2 | po_g8_slope | 50 | 0.007067 | 0.005387 |
+| simace_ts_p2 | po_g8_r | 50 | 0.004843 | 0.003692 |
+| simace_ts_p2 | po_g9_slope | 50 | 0.009094 | 0.006932 |
 | simace_ts_p2 | po_g9_r | 50 | 0.00632 | 0.004817 |
 | simace_ts_p2 | dz_L | 50 | 0.002123 | 0.001618 |
-| simace_ts_p2 | po_L_slope | 50 | 0.003088 | 0.002353 |
+| simace_ts_p2 | po_L_slope | 50 | 0.003088 | 0.002354 |
