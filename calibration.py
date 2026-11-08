@@ -60,32 +60,51 @@ def randomised_pit_discrete(
 
 
 @cache
-def _sum_sq_tail(R: int, bins: int) -> np.ndarray:
-    """Return P(S >= s) for s = 0 .. R^2, where S is the sum of squared counts of multinomial(R, 1/bins).
+def chi2_null_tail(R: int, bins: int) -> np.ndarray:
+    """Return P(S >= s) for s = 0 .. R^2, read-only, where S is the sum of squared counts of multinomial(R, 1/bins).
 
-    A DP over bins: g[n, s] sums prod (1/bins)^c / c! over the counts so far,
-    with total n and sum of squares s; P(S = s) = R! g[R, s].
+    A DP over bins in probabilities: g[m, s] is the probability that m of the
+    R draws are left for the later bins and the earlier bins' squared counts
+    sum to s. A bin with b bins still open takes c ~ Binomial(m, 1/b), and the
+    last bin takes the remaining m. Every entry is a probability, at least
+    bins^-R, so it stays a normal float while R * log10(bins) <= 300.
     """
+    if R < 1 or R * math.log10(bins) > 300:
+        raise ValueError(f"exact chi-square null needs 1 <= R and R * log10(bins) <= 300, got R = {R}, bins = {bins}")
     s_max = R * R
-    w = [(1.0 / bins) ** c / math.factorial(c) for c in range(R + 1)]
+    m = np.arange(R + 1)
     g = np.zeros((R + 1, s_max + 1))
-    g[0, 0] = 1.0
-    for _ in range(bins):
+    g[R, 0] = 1.0
+    for open_bins in range(bins, 1, -1):
         new = np.zeros_like(g)
         for c in range(R + 1):
-            new[c:, c * c :] += w[c] * g[: R + 1 - c, : s_max + 1 - c * c]
+            pmf = stats.binom.pmf(c, m[c:], 1.0 / open_bins)  # P(c of the m left fall in this bin)
+            new[: R + 1 - c, c * c :] += pmf[:, None] * g[c:, : s_max + 1 - c * c]
         g = new
-    pmf = math.factorial(R) * g[R]
-    return np.minimum(np.cumsum(pmf[::-1])[::-1], 1.0)
+    pmf_s = np.zeros(s_max + 1)
+    for left in range(R + 1):
+        pmf_s[left * left :] += g[left, : s_max + 1 - left * left]
+    tail = np.minimum(np.cumsum(pmf_s[::-1])[::-1], 1.0)
+    tail.flags.writeable = False
+    return tail
 
 
 def chi2_exact_sf(counts: np.ndarray) -> float:
     """Return the exact p-value of the Pearson equal-bin chi-square of counts under multinomial(sum, 1/bins).
 
     The statistic is (bins / R) * sum(counts^2) - R, a function of the sum of
-    squares alone, so its upper tail is that of the sum of squares.
+    squares alone, so its upper tail is that of the sum of squares. With no
+    counts (R = 0) the statistic is undefined and the p-value is NaN, which
+    makes the row an ERROR.
     """
-    return float(_sum_sq_tail(int(counts.sum()), len(counts))[int(np.sum(counts**2))])
+    counts = np.asarray(counts, dtype=np.int64)
+    R = int(counts.sum())
+    if R == 0:
+        return float("nan")
+    s = int(np.dot(counts, counts))
+    if counts.min() < 0 or not R * R // len(counts) <= s <= R * R:
+        raise ValueError(f"not a vector of bin counts: {counts}")
+    return float(chi2_null_tail(R, len(counts))[s])
 
 
 def calibrate(u: np.ndarray, z: np.ndarray) -> Score:

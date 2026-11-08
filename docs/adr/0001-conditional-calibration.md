@@ -27,14 +27,19 @@ simACE does not share, and a verdict whose false-positive rate is known.
    *Amendment (2026-11-08, G4).* The chi-square's p-value comes from the
    exact null of Pearson's statistic under multinomial(R, 1/bins), not from
    the asymptotic chi2(bins − 1). The statistic is (bins/R)·Σc² − R, so its
-   law is that of the sum of squared counts, which a DP over the bins
-   computes exactly for any R (`calibration.chi2_exact_sf`). The p-value is
-   P(S ≥ s_obs), with no randomisation. At 10 bins and α/K = 3.67e-05, the
-   asymptotic reference rejected at 7.18e-05 (R = 50) and 5.66e-05
-   (R = 100), up to twice the nominal rate. The exact test's size, computed
-   from the null pmf, is 3.24e-05 (R = 50) and 3.46e-05 (R = 100). It is
-   conservative only because the statistic is discrete
-   (`tools/check_chi2_null.py`). Rejected alternatives:
+   law is that of the sum of squared counts. A DP over the bins, in
+   probabilities, computes that law exactly (`calibration.chi2_null_tail`).
+   It holds while R·log10(bins) ≤ 300, which is R ≤ 300 at 10 bins, and it
+   refuses a larger R. The p-value is P(S ≥ s_obs), with no randomisation.
+   With 10 bins and α/K = 3.67e-05, the exact null pmf gives these sizes,
+   P(p < α/K):
+   - The asymptotic reference: 7.17e-05 at R = 50 and 5.70e-05 at R = 100,
+     up to twice the nominal rate.
+   - The exact test: 3.24e-05 at R = 50 and 3.46e-05 at R = 100. It is
+     conservative only because the statistic is discrete.
+
+   `tools/check_chi2_null.py` prints these sizes, and also the DP against
+   enumeration and a simulation of both. Rejected alternatives:
    - A randomised exact p-value. Its size would be exactly α, but it adds a
      jitter stream per row, and F1 showed how much borderline rows move
      with jitter.
