@@ -23,6 +23,7 @@ missing in any seed raises; a missing INFO value is NaN.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from importlib import metadata
@@ -36,6 +37,9 @@ OUTPUT_KEYS = ("id", "simulate", "cohort", "architectures")  # what a seed's out
 CHROMOSOMES = tuple(range(1, 23))
 PAIR_CLASSES = ("FS", "MHS", "PHS", "MO", "FO")
 PART_VERSION = 1  # bump with any change to part.py's truth formulas or statistics; older Parts are then stale
+G6 = ROOT / "simace_ts" / "g6"
+G6_VERSION = 1  # bump with any change to g6.py's statistics; older G6 files are then stale
+G6_TOL = 1e-12  # g6.py and part.py compute the tskit A correlation over the same pairs in the same order
 
 
 def po_generations(case: dict) -> list[int]:
@@ -150,3 +154,63 @@ def case_rows(case: dict, parts: list[dict]) -> CaseRows:
         info_gaps={f"{arch}/{stat}": gaps(arch, stat) for arch in names[1:] for stat in schema},
         info_values={stat: np.array([info_value(p, stat) for p in parts]) for stat in info_names},
     )
+
+
+def load_g6(case: dict, parts: list[dict], g6_dir: Path = G6, parts_dir: Path = PARTS) -> dict[str, np.ndarray]:
+    """Return the G6 INFO values per seed (ADR 0002 item 11), or nothing when the case has no G6 directory.
+
+    Refuses (raises) a G6 file that is missing for a seed, or that was written by another ``G6_VERSION``,
+    by a checkout with uncommitted changes, or for another case, seed or simace; whose ``part_sha256`` is
+    not that of the committed Part; or whose tskit A correlations differ from the Part's
+    ``gd_rA_<class>_minus_2phi``. Also refuses seeds computed with different pair counts or genomes.
+    """
+    d = g6_dir / case["id"]
+    if not d.exists():
+        return {}
+    names = [a["name"] for a in case["architectures"]]
+
+    def differs(g6: float | None, part: float | None) -> bool:
+        return (g6 is None) != (part is None) or (g6 is not None and abs(g6 - part) > G6_TOL)
+
+    records = []
+    for p in parts:
+        s = p["manifest"]["seed"]
+        path = d / f"seed{s}.json"
+        if not path.exists():
+            raise FileNotFoundError(f"{case['id']}: G6 file missing for seed {s}")
+        g = json.loads(path.read_text())
+        part_sha = hashlib.sha256((parts_dir / case["id"] / f"seed{s}.json").read_bytes()).hexdigest()
+        problems = []
+        if g.get("g6_version") != G6_VERSION:
+            problems.append(f"g6_version {g.get('g6_version')} (this run has {G6_VERSION})")
+        if g["g6_by"].endswith("-dirty"):
+            problems.append("computed from uncommitted code")
+        if g["case"] != case["id"] or g["seed"] != s or g["simace"] != p["manifest"]["simace"]:
+            problems.append("case, seed or simace differs from the Part's")
+        if g.get("part_sha256") != part_sha:
+            problems.append("part_sha256 is not the committed Part's")
+        problems += [
+            f"{arch}/{k} tskit A correlation is not the Part's"
+            for arch in names
+            for k in PAIR_CLASSES
+            if differs(g["rA"][arch][k]["ts"], p["architectures"][arch]["info"][f"gd_rA_{k}_minus_2phi"])
+        ]
+        if problems:
+            raise ValueError(f"{case['id']} seed {s}: stale G6 file ({', '.join(problems)}); rerun g6.py")
+        records.append(g)
+    settings = {json.dumps([g["pairs_per_class"], g["genome"]], sort_keys=True) for g in records}
+    if len(settings) > 1:
+        raise ValueError(f"{case['id']}: G6 files differ in pairs_per_class or genome: {sorted(settings)}")
+
+    def gap(rA: dict) -> float:
+        return np.nan if rA["l2"] is None or rA["ts"] is None else rA["l2"] - rA["ts"]
+
+    out = {}
+    for k in PAIR_CLASSES:
+        out[f"ibd_l2_{k}"] = np.array([g["ibd"][k]["ibd_l2"]["mean"] for g in records])
+        out[f"ibd_ts_{k}"] = np.array([g["ibd"][k]["ibd_ts"]["mean"] for g in records])
+        out[f"two_phi_minus_nominal_{k}"] = np.array([g["ibd"][k]["two_phi_minus_nominal"] for g in records])
+        for arch in names:
+            prefix = "" if arch == names[0] else f"{arch}/"
+            out[f"{prefix}rA_l2_minus_ts_{k}"] = np.array([gap(g["rA"][arch][k]) for g in records])
+    return out

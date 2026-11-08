@@ -204,8 +204,11 @@ Each seed gives three kinds of row:
   no p-value and are not in K.
 - **INFO:** quantities that assume Gaussian liability by simACE's design
   ([D3](differences.md)), the gene-drop A correlation minus 2φ by class and
-  generation, and the architecture sweep (100 to 1M causal sites, α = 0 or
-  −0.5).
+  generation, the architecture sweep (100 to 1M causal sites, α = 0 or
+  −0.5), and the layer-2 cross-check (G6, `g6/` rows; ADR 0002 item 11): the
+  IBD of layer 2's drop and of the tskit layer's drop, each against the
+  recorded-pedigree 2φ of a sample of pairs, and layer 2's A correlations
+  minus the tskit layer's.
 
 The case has no MZ twins (the pipeline drops co-twins as separate
 offspring, so it refuses them), no ascertainment, no C transmission and no
@@ -223,9 +226,21 @@ pixi run simace-ts --seed 9000 --data ~/data/humanity_sim --work ~/simace_ts_wor
 mkdir -p simace_ts/parts/simace_ts_p2
 for d in $(ssh gdk 'ls -d ~/simace_ts_work/scored/simace_ts_p2/seed*'); do
   s=$(basename "$d"); rsync -a "gdk:$d/part.json" "simace_ts/parts/simace_ts_p2/$s.json"; done
+# G6, after the seeds: one job per seed (4 CPUs, 40 GB, 6 h), written to the seed directory as g6.json
+pixi run python simace_ts/g6.py ~/simace_ts_work/scored/simace_ts_p2/seed9000 --data ~/data/humanity_sim --threads 4
+mkdir -p simace_ts/g6/simace_ts_p2
+for d in $(ssh gdk 'ls -d ~/simace_ts_work/scored/simace_ts_p2/seed*'); do
+  s=$(basename "$d"); rsync -a "gdk:$d/g6.json" "simace_ts/g6/simace_ts_p2/$s.json"; done
 pixi run harness --only simace_ts_p2
 pixi run test-pipeline                    # tests of tskit_pipeline/ and simace_ts/
 ```
+
+A G6 file is refused when a seed has none, when it comes from another
+`G6_VERSION` or from uncommitted code, when its `part_sha256` is not the
+committed Part's or its tskit A correlations differ from the Part's by more
+than 1e-12, or when seeds differ in pairs per class or genome. A rebuilt Part
+therefore needs G6 rerun. A refusal is one `g6` ERROR row; the case's scored
+rows are kept.
 
 The harness never simulates this case. A seed without a Part, or a Part
 whose case, simace, data pins or chromosomes differ from this run's, makes

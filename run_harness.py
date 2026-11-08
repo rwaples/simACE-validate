@@ -36,7 +36,7 @@ from calibration import Score, calibrate, mean_zero, randomised_pit, two_sample,
 from genedrop.drop import Genome
 from genedrop.layer2 import seed_stats
 from genedrop.pedsim import msprime_ibd, pedsim_ibd
-from simace_ts.score import case_rows, load_parts
+from simace_ts.score import case_rows, load_g6, load_parts
 from structure.mating import REPLACES_SIMACE, SLIM_MUTATIONS, mating_law, mating_stats
 from structure.stats import run_slim, structure_stats
 
@@ -406,6 +406,13 @@ def run_simace_ts(case: dict) -> list[dict]:
         rows.append(
             row(case, f"info/{stat}", Score(n=len(finite), center=center, effect=np.nan, p_values={}), info=True)
         )
+    try:  # the layer-2 cross-check (ADR 0002 item 11); a bad G6 file must not cost the scored rows
+        g6 = load_g6(case, parts)
+    except (OSError, ValueError, KeyError) as exc:
+        r = row(case, f"g6: {failure(exc)}", Score(n=len(parts), center=np.nan, effect=np.nan, p_values={}), info=True)
+        r["error"] = True
+        return [*rows, r]
+    rows += [row(case, f"g6/{stat}", mean_zero(v), info=True) for stat, v in g6.items()]
     return rows
 
 
@@ -436,7 +443,9 @@ def assign_status(rows: list[dict]) -> float:
     K = sum(len(r["score"].p_values) for r in rows if scored(r))
     threshold = ALPHA / max(K, 1)
     for r in rows:
-        if "exact_mismatches" in r:
+        if "error" in r:
+            r["status"] = "ERROR"
+        elif "exact_mismatches" in r:
             r["status"] = "FAIL" if r["exact_mismatches"] else "PASS"
         elif not scored(r):
             r["status"] = "INFO"

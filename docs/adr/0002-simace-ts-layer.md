@@ -78,7 +78,7 @@ pedigree, which is out of reach.
      and generation (check 1), and the gene-drop variance by generation
      before the rescale (LD decay and drift).
    - the architecture sweep (check 3) and the layer-2 cross-check on the
-     same pedigree (check 4).
+     same pedigree (check 4, item 11).
 6. **Case.** `p_mztwin` = 0. The pipeline drops co-twins as separate
    offspring, so it refuses a pedigree with twins. The case also uses
    pass-through ascertainment, no C transmission (`Ctm-*` = 0) and no
@@ -128,6 +128,61 @@ pedigree, which is out of reach.
     36.0 GB. At α/K = 5.91e-5 (K = 846), R = 50 detects a mean gap of
     0.74 per-seed SDs at 80% power, against 1.01 at R = 30 and 0.51 at
     R = 99. The pilot's gaps were not used to choose R beyond that spread.
+11. **Layer-2 cross-check (check 4) and its kinship.** `simace_ts/g6.py`
+    runs per seed, after the seed's Part, on the pedigree simACE recorded.
+    It draws 2,000 pairs per direct-link class from the analysis sample and
+    reports, as INFO:
+    - the IBD fraction of layer 2's drop (`genedrop/drop.py`: 22 unlinked
+      chromosomes of the mean HapMapII map length, to 1/64 Morgan) minus
+      the pairs' recorded-pedigree 2φ (`g6/ibd_l2_<class>`);
+    - the IBD fraction of the tskit layer's own drop minus the same 2φ
+      (`g6/ibd_ts_<class>`). The drop is rerun from the seed's
+      `pedigree_tables.trees` with the seed and map `run_seed.py` gave each
+      chromosome, before the founder graft, so its IBD lies within the
+      pedigree;
+    - 2φ minus the outbred nominal value (`g6/two_phi_minus_nominal_*`):
+      for a parent and child, 2φ = (1 + F_parent)/2 + φ(mother, father);
+    - per architecture, layer 2's A correlation minus the tskit layer's over
+      the Part's pairs (`g6/rA_l2_minus_ts_*`). This one has no derived
+      null: the tskit A is centred and rescaled per generation, comes from
+      a fixed founder panel with real allele frequencies and linkage, and a
+      correlation is a ratio. Its tskit half is computed over the pairs in
+      `part.py`'s order and must match the Part's
+      `gd_rA_<class>_minus_2phi` to 1e-12; the G6 file also records the
+      sha256 of the seed's `part.json`, which ties it to the Part.
+
+    The two IBD rows have expectation 0 for each engine. They can show an
+    error in how either drop maps pedigree rows to msprime individuals and
+    nodes, or in layer 2's pedigree translation, or in the kinship. They
+    cannot show a wrong parent link that simACE recorded, since both engines
+    read the same links, nor an error in simACE's own A, which this layer
+    replaces, nor an error that both drops share through msprime's
+    `fixed_pedigree`. A mean IBD is also nearly blind to the recombination
+    map, which moves the spread and the tract lengths instead.
+
+    The 2φ comes from pedigree-graph (`PedigreeGraph.pair_kinship`). This
+    is an exception to the rule that oracles share no code with simACE or
+    pedigree-graph (`oracles/pedigree.R`, `structure/stats.py`). The rule
+    exists because simACE builds its relationship pairs and kinship with
+    pedigree-graph, so a bug there would move simACE's value and a truth
+    built from pedigree-graph alike, and the two would cancel. Here neither
+    side is a value simACE computed: the comparison is msprime's IBD
+    against pedigree-graph's kinship, both on the pedigree simACE recorded,
+    and msprime shares no code with pedigree-graph. A kinship bug therefore
+    shows as a gap instead of hiding one. pedigree-graph's kinship is
+    checked against an R oracle in pedigree-graph-validate. Because the
+    kinship is not independent of pedigree-graph, a gap alone does not say
+    whether a drop or pedigree-graph is wrong. kinship2, which layer 2
+    uses, cannot run here: `oracles/pairs.R` builds the full kinship
+    matrix, about 1 TB at 359,510 rows.
+
+    **Pilot 2026-11-07** (seeds 9000 to 9002, layer 2's drop only, 2 CPUs):
+    5,150 to 5,205 s per seed, peak RSS 1.2 GB. Against the outbred nominal
+    2φ, the MO and FO IBD gaps were +1.3e-4 to +2.6e-4 (t 2.1 to 7.3) and
+    the sib gaps within noise (SE 0.00058 to 0.00087 at 2,000 pairs, too
+    large to see a shift of order 1e-4), which is why the truth is the
+    recorded-pedigree 2φ. An independent Codex review of the pilot shaped
+    this item.
 
 ## Data
 

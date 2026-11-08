@@ -217,6 +217,18 @@ def test_exact_mismatch_in_sweep_is_info_only(harness_parts):
     assert status["exact_sweep/n_pairs_FS"] == "INFO"
 
 
+def test_a_bad_g6_file_is_one_error_row_and_keeps_the_scored_rows(harness_parts, monkeypatch):
+    def missing(case, parts):
+        raise FileNotFoundError("ts_test: G6 file missing for seed 103")
+
+    monkeypatch.setattr(run_harness, "load_g6", missing)
+    rows = run_harness.run_simace_ts(CASE)
+    assert run_harness.assign_status(rows) == pytest.approx(0.05 / len(SCHEMA))
+    status = {r["stat"]: r["status"] for r in rows}
+    assert status["lc_FS"] == "PASS"
+    assert status["g6: FileNotFoundError: ts_test: G6 file missing for seed 103"] == "ERROR"
+
+
 def test_run_case_does_not_simulate_a_simace_ts_case(harness_parts, monkeypatch):
     monkeypatch.setattr(run_harness, "simulate", lambda *a: pytest.fail("simace_ts must not simulate"))
     assert run_harness.run_case(CASE)
