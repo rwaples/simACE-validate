@@ -12,8 +12,11 @@
    case's p_mz and at p_mz = 0.9, where couples carry several MZ pairs and
    the N // 2 cap on t binds. This is a consistency check of the
    derivations, not evidence about simACE (the harness is).
-3. The MZ and order invariants raise on hand-broken pedigrees and accept
-   valid ones, including a couple with two MZ pairs.
+3. twin_births against the enumerated multivariate hypergeometric law,
+   and twins_by_couple's draws respect the births.
+4. The MZ and order invariants raise on hand-broken pedigrees and accept
+   valid ones, including a couple with two MZ pairs, and read each
+   couple's MZ pairs right.
 Exits 1 if a test p-value is below 0.001 or an invariant check is wrong.
 """
 
@@ -32,6 +35,7 @@ from simace.simulation.simulate import _mating_standard
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from structure.mating import (
     DIRICHLET_SHAPE,
+    PLACEMENT_ROWS,
     allocation_draws,
     binomial_pit,
     cell_pmf,
@@ -39,10 +43,14 @@ from structure.mating import (
     mz_rate,
     n_multi,
     observed_allocation,
+    observed_placement,
     partner_draws,
+    placement_draws,
     rank_pit,
     split_sums,
     surjection_draws,
+    twin_births,
+    twins_by_couple,
     ztp,
 )
 
@@ -92,6 +100,44 @@ def check_surjection(rng: np.random.Generator) -> list[tuple[str, float]]:
             )
         )
     return out
+
+
+PLACEMENT_CASES = [(np.array([1, 2, 3]), 3), (np.array([2, 2, 1, 4]), 4), (np.array([5, 1, 2]), 6)]
+
+
+def check_placement(rng: np.random.Generator) -> list[tuple[str, float]]:
+    """Chi-square of twin_births' per-couple counts against the enumerated multivariate hypergeometric law."""
+    out = []
+    for b, t in PLACEMENT_CASES:
+        cells = [x for x in itertools.product(*(range(v + 1) for v in b)) if sum(x) == t]
+        exact = np.array([math.prod(math.comb(v, xi) for v, xi in zip(b, x, strict=True)) for x in cells])
+        exp = exact / math.comb(int(b.sum()), t) * 100_000
+        draws = twin_births(rng, np.repeat(b[None], 100_000, axis=0), t)
+        index = {x: i for i, x in enumerate(cells)}
+        obs = np.bincount([index[tuple(r)] for r in draws.tolist()], minlength=len(cells))
+        out.append(
+            (
+                f"twin_births b={b.tolist()} t={t} (chi-square, {len(cells)} cells, min expected {exp.min():.0f})",
+                float(stats.chisquare(obs, exp).pvalue),
+            )
+        )
+    return out
+
+
+def check_twins_by_couple(rng: np.random.Generator) -> list[tuple[str, bool]]:
+    """Return (name, passed): twins_by_couple places t twin births, none on a couple beyond its births."""
+    b = np.array([1, 1, 5, 2])
+    x = twins_by_couple(rng, b, 6, 10_000)
+    # one pick lands on a uniform couple: couple 0 with probability 1/4, against 1/9 by births
+    hits = int(twins_by_couple(rng, b, 1, 10_000)[:, 0].sum())
+    p_couple, p_birth = (float(stats.binomtest(hits, 10_000, p).pvalue) for p in (1 / 4, 1 / 9))
+    return [
+        ("twins_by_couple places t twin births within the births", bool(np.all(x.sum(axis=1) == 6) and np.all(x <= b))),
+        (
+            f"twins_by_couple's one pick: binomial p = {p_couple:.3g} at 1/4, {p_birth:.3g} at 1/9 by births",
+            p_couple >= P_MIN and p_birth < P_MIN,
+        ),
+    ]
 
 
 def rejection_surjection(rng: np.random.Generator, n: int, w: np.ndarray, m: int) -> np.ndarray:
@@ -181,6 +227,10 @@ def check_nulls(rng: np.random.Generator, n: int, p_mz: float, reps: int = 300) 
         pits.setdefault("alloc_sumsq", []).append(rank_pit(obs_sumsq, sumsq, rng)[0])
         if not np.isnan(obs_multi):
             pits.setdefault("alloc_multi_mother", []).append(rank_pit(obs_multi, mean_multi, rng)[0])
+        if gen.n_mz:
+            placement = placement_draws(rng, gen, 199, None)
+            for j, (row, obs) in enumerate(zip(PLACEMENT_ROWS, observed_placement(gen), strict=True)):
+                pits.setdefault(row, []).append(rank_pit(obs, placement[:, j], rng)[0])
         partners = partner_draws(rng, gen, 0.5, 199)
         observed = (len(gen.counts), n_multi(gen.couple_mother), n_multi(gen.couple_father))
         for j, row in enumerate(("n_couples", "n_mothers_multi", "n_fathers_multi")):
@@ -203,6 +253,10 @@ VALID = {
 
 # generation 1 of each: ids 4-7, all children of couple (0, 2)
 ONE_COUPLE = {"mother": [-1, -1, -1, -1, 0, 0, 0, 0], "father": [-1, -1, -1, -1, 2, 2, 2, 2]}
+
+
+# each valid pedigree's MZ pairs per couple in generation 1
+VALID_TWINS = {"one MZ pair": [1, 0], "a couple with two MZ pairs": [2], "an MZ pair after a singleton": [1]}
 
 
 def valid_pedigrees() -> dict[str, pl.DataFrame]:
@@ -285,19 +339,22 @@ def main() -> int:
     failed = False
     for name, ped in valid_pedigrees().items():
         try:
-            generations(ped)
+            (gen,) = generations(ped)
         except ValueError as exc:
             print(f"FAIL valid pedigree '{name}' raises: {exc}")
             failed = True
         else:
-            print(f"ok   valid pedigree '{name}' passes")
+            ok = gen.twins.tolist() == VALID_TWINS[name]
+            failed |= not ok
+            print(f"{'ok  ' if ok else 'FAIL'} valid pedigree '{name}' passes, MZ pairs by couple {gen.twins.tolist()}")
     checks = [
         *check_surjection(rng),
         *check_surjection_large(rng),
+        *check_placement(rng),
         *check_nulls(rng, 500, 0.02),
         *check_nulls(rng, 101, 0.9),
     ]
-    for name, ok in check_surjection_edges(rng):
+    for name, ok in [*check_surjection_edges(rng), *check_twins_by_couple(rng)]:
         failed |= not ok
         print(f"{'ok  ' if ok else 'FAIL'} {name}")
     for name, p in checks:

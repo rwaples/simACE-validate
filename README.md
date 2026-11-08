@@ -133,6 +133,10 @@ on as much as that rule allows:
   couples and the MZ pairs: the N − (MZ pairs) births by a multinomial
   conditioned on every couple having a birth, which does not depend on λ,
   then the twin births uniform among the births
+- where the MZ pairs fall, given each couple's births (its children less
+  its MZ pairs, all seen): couples with ≥ 1 MZ pair, and Σ b_k x_k over
+  couples (births times MZ pairs), each against the twin births drawn
+  uniformly among the births, multivariate hypergeometric
 - couples, and mothers and fathers with ≥ 2 partners, given the parents'
   sexes and the MZ pairs: ZTP(λ) slots, trimmed to the smaller sex's
   total, then the matings the births occupy

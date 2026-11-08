@@ -31,6 +31,8 @@ erased (ADR 0001 §3), so only generations g >= 1 are read.
 | mz_pairs | MZ pairs t_g | Bin(N, p_mz / (1 + p_mz)) capped at N // 2, exact (R4) |
 | alloc_sumsq | sum of c_k^2 | B births surjected onto the K couples, t twin births among them (R4, R5) |
 | alloc_multi_mother | mean c_k over couples of mothers with >= 2 couples | the same draws (R4, R5) |
+| twin_couples | couples with >= 1 MZ pair | t twin births among each couple's births b_k (R5) |
+| twin_birth_size | sum of b_k x_k, x_k the couple's MZ pairs | the same draws (R5) |
 | n_couples | K | ZTP slots, trim, matings occupied by B births (R1, R2, R4) |
 | n_mothers_multi | mothers with >= 2 couples | the same draws (R1, R2, R4) |
 | n_fathers_multi | fathers with >= 2 couples | the same draws (R1, R2, R4) |
@@ -47,6 +49,13 @@ Why each null is exact:
   `surjection_draws` samples it exactly by halving. Twin births are a
   uniform t-subset of the B births, so given the births a couple's twin births are multivariate
   hypergeometric, and c_k = b_k + (its twin births).
+- Every MZ pair is identified, so each couple's MZ pairs x_k and births
+  b_k = c_k - x_k are seen, and the placement rows condition on them. R5
+  makes x multivariate hypergeometric given b and t, whatever drew b.
+  twin_couples is low when twins cluster in a couple and twin_birth_size
+  is low when they fall on couples regardless of their births; a rule
+  with at most one MZ pair per couple raises twin_couples. Neither row has
+  a value in a generation with t = 0.
 - A person's couples are their occupied slots, and a mating is occupied when
   it has a birth (twin births fall on births). The duplicate swap exchanges
   fathers between matings, so it keeps every person's slot count, and who
@@ -102,6 +111,7 @@ MUTATIONS = {
         f"allocation null with Dirichlet({DIRICHLET_SHAPE:g})-multinomial births, conditioned on no empty couple"
     ),
     "alloc_by_mother": "allocation null with couple weights 1/(mother's couples)",
+    "twins_by_couple": "placement null with each twin birth on a uniform couple with a free birth, not a uniform birth",
 }
 
 # std_structure (oracle slim_standard): (effect, standard.slim defines replaced).
@@ -113,6 +123,8 @@ SLIM_MUTATIONS: dict[str, tuple[str, dict[str, float]]] = {
 
 # Mutations whose runner never reads simACE's pedigrees, so run_case skips simulating them.
 REPLACES_SIMACE = {"mating_law": {"null_slim"}, "slim_standard": {"null"}}
+
+PLACEMENT_ROWS = ("twin_couples", "twin_birth_size")  # the columns of placement_draws
 
 
 @dataclass(frozen=True)
@@ -128,6 +140,7 @@ class Generation:
     couple_mother: np.ndarray
     couple_father: np.ndarray
     mother_couples: np.ndarray  # per couple: how many couples its mother has
+    twins: np.ndarray  # per couple: MZ pairs, x_k
 
 
 def n_multi(owners: np.ndarray) -> int:
@@ -177,7 +190,9 @@ def generations(ped: pl.DataFrame) -> list[Generation]:
         mother_steps = np.diff(mother[kids])
         if np.any(mother_steps < 0):
             raise ValueError(f"generation {g}: mothers are not in id order")
-        keys, counts = np.unique(np.stack([mother[kids], father[kids]]), axis=1, return_counts=True)
+        keys, couple, counts = np.unique(
+            np.stack([mother[kids], father[kids]]), axis=1, return_inverse=True, return_counts=True
+        )
         runs = 1 + np.count_nonzero(mother_steps | np.diff(father[kids]))
         if runs != len(counts):
             raise ValueError(f"generation {g}: a couple's children are not one block of consecutive ids")
@@ -196,6 +211,7 @@ def generations(ped: pl.DataFrame) -> list[Generation]:
                 couple_mother=keys[0],
                 couple_father=keys[1],
                 mother_couples=occurrences(keys[0]),
+                twins=np.bincount(np.ravel(couple)[np.searchsorted(kids, first)], minlength=len(counts)),
             )
         )
     return out
@@ -355,6 +371,38 @@ def twin_births(rng: np.random.Generator, births: np.ndarray, t: int) -> np.ndar
     return np.bincount(np.searchsorted(ends.ravel(), picked.ravel(), side="right"), minlength=m * k).reshape(m, k)
 
 
+def twins_by_couple(rng: np.random.Generator, births: np.ndarray, t: int, m: int) -> np.ndarray:
+    """Count each couple's twin births when each of t picks a uniform couple with a birth not yet a twin birth."""
+    free = np.repeat(births[None], m, axis=0)
+    out = np.zeros_like(free)
+    rows = np.arange(m)
+    for _ in range(t):
+        k = np.argmax(np.where(free > 0, rng.uniform(size=free.shape), -1.0), axis=1)
+        out[rows, k] += 1
+        free[rows, k] -= 1
+    return out
+
+
+def placement_stats(twins: np.ndarray, births: np.ndarray) -> np.ndarray:
+    """Return (couples with >= 1 MZ pair, sum b_k x_k) of twin-birth counts x on the last axis."""
+    return np.stack([(twins > 0).sum(axis=-1), twins @ births], axis=-1)
+
+
+def placement_draws(rng: np.random.Generator, gen: Generation, m: int, mutation: str | None) -> np.ndarray:
+    """Return m null draws of placement_stats given the couples' births b (R5), shape (m, 2)."""
+    births = gen.counts - gen.twins
+    if mutation == "twins_by_couple":
+        x = twins_by_couple(rng, births, gen.n_mz, m)
+    else:
+        x = twin_births(rng, np.repeat(births[None], m, axis=0), gen.n_mz)
+    return placement_stats(x, births)
+
+
+def observed_placement(gen: Generation) -> np.ndarray:
+    """Return the observed placement_stats."""
+    return placement_stats(gen.twins, gen.counts - gen.twins)
+
+
 def trimmed_slots(rng: np.random.Generator, owners: np.ndarray, target: int) -> np.ndarray:
     """Keep a uniform random subset of target slots, in order (R2)."""
     if len(owners) == target:
@@ -472,6 +520,10 @@ def mating_law(
         obs_sumsq, obs_multi = observed_allocation(gen)
         ranked("alloc_sumsq", obs_sumsq, sumsq)
         ranked("alloc_multi_mother", obs_multi, mean_multi)
+        if gen.n_mz:  # with no MZ pair the placement rows have no value
+            placement = placement_draws(rng, gen, m + 1, mutation).astype(float)
+            for j, (row, obs) in enumerate(zip(PLACEMENT_ROWS, observed_placement(gen), strict=True)):
+                ranked(row, obs, placement[:, j])
         partners = partner_draws(rng, gen, lam_null, m + 1)
         observed = (len(gen.counts), n_multi(gen.couple_mother), n_multi(gen.couple_father))
         for j, row in enumerate(("n_couples", "n_mothers_multi", "n_fathers_multi")):
