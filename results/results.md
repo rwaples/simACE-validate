@@ -8,7 +8,7 @@ is the SD ratio simACE / gene-drop over seeds. Layer 4: a scored row is like lay
 realised truth); an exact row has no p-value and is FAIL when any entry mismatches, with center the
 largest difference and effect the number of mismatching (seed, architecture) entries.
 
-**Totals:** INFO 869, PASS 970
+**Totals:** INFO 914, PASS 970
 
 simace 0.3.0 (v0.3.0); alpha/K = 3.67e-05.
 
@@ -841,6 +841,51 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.67e-05.
 | simace_ts_p2 | 4 | info/gd_raw_var_g7_over_g0 | 50 | 0.9989 | +nan |  | INFO |  |
 | simace_ts_p2 | 4 | info/gd_raw_var_g8_over_g0 | 50 | 0.9988 | +nan |  | INFO |  |
 | simace_ts_p2 | 4 | info/gd_raw_var_g9_over_g0 | 50 | 0.9986 | +nan |  | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_l2_FS | 50 | 0.0001309 | +1.21 | t 0.231 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_ts_FS | 50 | -6.88e-05 | -0.60 | t 0.548 | INFO |  |
+| simace_ts_p2 | 4 | g6/two_phi_minus_nominal_FS | 50 | 0.0001787 | +17.12 | t 2.56e-22 | INFO |  |
+| simace_ts_p2 | 4 | g6/rA_l2_minus_ts_FS | 50 | 0.0007429 | +0.94 | t 0.351 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100_a05/rA_l2_minus_ts_FS | 50 | 0.001239 | +1.14 | t 0.26 | INFO |  |
+| simace_ts_p2 | 4 | g6/c10k_a05/rA_l2_minus_ts_FS | 50 | 0.000945 | +1.01 | t 0.316 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100k_a05/rA_l2_minus_ts_FS | 50 | 0.000879 | +1.14 | t 0.258 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1m_a05/rA_l2_minus_ts_FS | 50 | -0.0002366 | -0.23 | t 0.82 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1k_a0/rA_l2_minus_ts_FS | 50 | 0.001479 | +1.53 | t 0.132 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_l2_MHS | 50 | 2.437e-05 | +0.32 | t 0.753 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_ts_MHS | 50 | 1.951e-05 | +0.20 | t 0.842 | INFO |  |
+| simace_ts_p2 | 4 | g6/two_phi_minus_nominal_MHS | 50 | 0.0002027 | +31.66 | t 2.78e-34 | INFO |  |
+| simace_ts_p2 | 4 | g6/rA_l2_minus_ts_MHS | 50 | 0.0005903 | +0.43 | t 0.668 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100_a05/rA_l2_minus_ts_MHS | 50 | 0.002182 | +1.37 | t 0.178 | INFO |  |
+| simace_ts_p2 | 4 | g6/c10k_a05/rA_l2_minus_ts_MHS | 50 | 0.002185 | +1.17 | t 0.249 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100k_a05/rA_l2_minus_ts_MHS | 50 | 0.001906 | +1.24 | t 0.221 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1m_a05/rA_l2_minus_ts_MHS | 50 | 0.001992 | +1.24 | t 0.221 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1k_a0/rA_l2_minus_ts_MHS | 50 | 0.004174 | +2.30 | t 0.0255 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_l2_PHS | 50 | 2.273e-05 | +0.27 | t 0.788 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_ts_PHS | 50 | 0.0001079 | +1.28 | t 0.207 | INFO |  |
+| simace_ts_p2 | 4 | g6/two_phi_minus_nominal_PHS | 50 | 0.0002049 | +30.69 | t 1.19e-33 | INFO |  |
+| simace_ts_p2 | 4 | g6/rA_l2_minus_ts_PHS | 50 | 0.000907 | +0.49 | t 0.625 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100_a05/rA_l2_minus_ts_PHS | 50 | 0.001335 | +0.86 | t 0.394 | INFO |  |
+| simace_ts_p2 | 4 | g6/c10k_a05/rA_l2_minus_ts_PHS | 50 | -0.0001884 | -0.10 | t 0.921 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100k_a05/rA_l2_minus_ts_PHS | 50 | 0.0007163 | +0.43 | t 0.667 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1m_a05/rA_l2_minus_ts_PHS | 50 | 0.0008856 | +0.54 | t 0.589 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1k_a0/rA_l2_minus_ts_PHS | 50 | -0.001333 | -0.83 | t 0.413 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_l2_MO | 50 | -9.205e-07 | -0.39 | t 0.699 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_ts_MO | 50 | -2.886e-06 | -1.03 | t 0.31 | INFO |  |
+| simace_ts_p2 | 4 | g6/two_phi_minus_nominal_MO | 50 | 0.0001871 | +19.22 | t 1.81e-24 | INFO |  |
+| simace_ts_p2 | 4 | g6/rA_l2_minus_ts_MO | 50 | 0.0002146 | +0.35 | t 0.728 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100_a05/rA_l2_minus_ts_MO | 50 | 0.001111 | +1.71 | t 0.094 | INFO |  |
+| simace_ts_p2 | 4 | g6/c10k_a05/rA_l2_minus_ts_MO | 50 | 0.0007629 | +1.17 | t 0.248 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100k_a05/rA_l2_minus_ts_MO | 50 | 0.0008786 | +1.51 | t 0.139 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1m_a05/rA_l2_minus_ts_MO | 50 | 0.0002358 | +0.37 | t 0.714 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1k_a0/rA_l2_minus_ts_MO | 50 | 0.001154 | +2.00 | t 0.0514 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_l2_FO | 50 | 4.578e-07 | +0.20 | t 0.843 | INFO |  |
+| simace_ts_p2 | 4 | g6/ibd_ts_FO | 50 | -6.659e-06 | -2.22 | t 0.0311 | INFO |  |
+| simace_ts_p2 | 4 | g6/two_phi_minus_nominal_FO | 50 | 0.0001906 | +19.06 | t 2.6e-24 | INFO |  |
+| simace_ts_p2 | 4 | g6/rA_l2_minus_ts_FO | 50 | -0.0002344 | -0.32 | t 0.749 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100_a05/rA_l2_minus_ts_FO | 50 | 0.001105 | +1.69 | t 0.0966 | INFO |  |
+| simace_ts_p2 | 4 | g6/c10k_a05/rA_l2_minus_ts_FO | 50 | 0.0002082 | +0.26 | t 0.799 | INFO |  |
+| simace_ts_p2 | 4 | g6/c100k_a05/rA_l2_minus_ts_FO | 50 | 0.0002112 | +0.31 | t 0.76 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1m_a05/rA_l2_minus_ts_FO | 50 | 0.0009079 | +1.20 | t 0.235 | INFO |  |
+| simace_ts_p2 | 4 | g6/c1k_a0/rA_l2_minus_ts_FO | 50 | 0.0005135 | +0.75 | t 0.456 | INFO |  |
 | am_r0 | 5 | var_A_g1 | 100 | -6.141e-05 | -0.05 | t 0.959 | PASS |  |
 | am_r0 | 5 | var_A_g2 | 100 | 0.0001631 | +0.13 | t 0.897 | PASS |  |
 | am_r0 | 5 | var_A_g3 | 100 | -0.000356 | -0.26 | t 0.797 | PASS |  |

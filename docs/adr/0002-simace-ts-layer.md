@@ -184,6 +184,13 @@ pedigree, which is out of reach.
     recorded-pedigree 2φ. An independent Codex review of the pilot shaped
     this item.
 
+    **Run 2026-11-08** (seeds 9000 to 9049, g6 files at 49a923c, 4 CPUs):
+    1:56:35 to 3:17:34 wall per seed, peak RSS 4.4 GB (seed 9000). Recorded
+    2φ exceeds nominal by +1.8e-4 to +2.0e-4 in every class (t 17 to 32);
+    against it, no IBD row of either engine departs from 0 (smallest p
+    0.031, `ibd_ts_FO`, of 10 rows) and no rA row stands out (smallest p
+    0.026 of 30).
+
 ## Data
 
 | Input | Pin |
