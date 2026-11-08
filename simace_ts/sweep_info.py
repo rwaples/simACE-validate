@@ -91,18 +91,22 @@ def joint_test(parts: list[dict], reference: str, draws: int, seed: int = 0) -> 
     """Return (statistic, permutation p, statistics used) of the joint test with ``reference`` as the reference.
 
     Uses only the statistics present in every seed and architecture. Raises ValueError when there are
-    fewer than two architectures or a t is not finite (a contrast with no variance across seeds), since
-    a NaN statistic would compare False against every draw and report the smallest possible p.
+    fewer than two architectures, no draws, no such statistic, or a t that is not finite (a contrast with
+    no variance across seeds): each would otherwise report a p of 1, or the smallest possible p for a NaN.
     """
     archs = list(parts[0]["architectures"])
     m = len(archs)
     if m < 2:
         raise ValueError(f"the joint test needs two or more architectures, got {archs}")
+    if draws < 1:
+        raise ValueError(f"the joint test needs one or more draws, got {draws}")
     names = [
         k
         for k in gaussian_names(parts, reference)
         if all(p["architectures"][a]["info"].get(k) is not None for p in parts for a in archs)
     ]
+    if not names:
+        raise ValueError(f"the joint test has no statistic present in every seed and architecture ({reference})")
     x = np.array([[[p["architectures"][a]["info"][k] for k in names] for a in archs] for p in parts])
     contrast = (x * m - x.sum(axis=1, keepdims=True)) / (m - 1)  # [seed, arch, stat]: arch minus the mean of the rest
 

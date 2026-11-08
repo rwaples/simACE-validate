@@ -86,3 +86,14 @@ def test_joint_test_refuses_a_single_architecture():
     parts = [{"architectures": {"ref": {"info": {"tetrachoric_X": float(v)}}}} for v in range(5)]
     with pytest.raises(ValueError, match="two or more"):
         joint_test(parts, "ref", draws=100)
+
+
+def test_joint_test_refuses_no_common_statistic_and_no_draws():
+    parts = _parts(np.random.default_rng(5), 10, {})
+    with pytest.raises(ValueError, match="one or more draws"):
+        joint_test(parts, "ref", draws=0)
+    for p in parts[:1]:
+        for k in ("tetrachoric_X", "tetrachoric_Y"):
+            p["architectures"]["b"]["info"][k] = None
+    with pytest.raises(ValueError, match="no statistic"):
+        joint_test(parts, "ref", draws=100)
