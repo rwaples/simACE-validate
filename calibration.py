@@ -7,8 +7,9 @@ simACE's value. If simACE samples from the oracle's law, the randomised PIT
     u = (n_less + V * (n_equal + 1)) / (M + 1),   V ~ U(0, 1)
 
 is exactly U(0, 1), ties included. Across seeds the u values are i.i.d., and
-two tests score them: Kolmogorov-Smirnov (exact) and a chi-square on equal
-bins.
+two tests score them: Kolmogorov-Smirnov (exact) and a Pearson chi-square on
+equal bins, referred to its exact multinomial null (``chi2_exact_sf``), not
+the asymptotic chi2(bins - 1), which is anti-conservative at alpha/K.
 
 Layer 2 (one gene-drop per pedigree). Each seed gives one difference whose
 expectation is 0 under the null, and a one-sample t-test scores the seeds.
@@ -20,7 +21,9 @@ PITs are combined per pedigree in structure/mating.py and scored like layer 1.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
+from functools import cache
 
 import numpy as np
 from scipy import stats
@@ -56,6 +59,35 @@ def randomised_pit_discrete(
     return cdf_below + rng.uniform(size=np.shape(pmf_at)) * pmf_at
 
 
+@cache
+def _sum_sq_tail(R: int, bins: int) -> np.ndarray:
+    """Return P(S >= s) for s = 0 .. R^2, where S is the sum of squared counts of multinomial(R, 1/bins).
+
+    A DP over bins: g[n, s] sums prod (1/bins)^c / c! over the counts so far,
+    with total n and sum of squares s; P(S = s) = R! g[R, s].
+    """
+    s_max = R * R
+    w = [(1.0 / bins) ** c / math.factorial(c) for c in range(R + 1)]
+    g = np.zeros((R + 1, s_max + 1))
+    g[0, 0] = 1.0
+    for _ in range(bins):
+        new = np.zeros_like(g)
+        for c in range(R + 1):
+            new[c:, c * c :] += w[c] * g[: R + 1 - c, : s_max + 1 - c * c]
+        g = new
+    pmf = math.factorial(R) * g[R]
+    return np.minimum(np.cumsum(pmf[::-1])[::-1], 1.0)
+
+
+def chi2_exact_sf(counts: np.ndarray) -> float:
+    """Return the exact p-value of the Pearson equal-bin chi-square of counts under multinomial(sum, 1/bins).
+
+    The statistic is (bins / R) * sum(counts^2) - R, a function of the sum of
+    squares alone, so its upper tail is that of the sum of squares.
+    """
+    return float(_sum_sq_tail(int(counts.sum()), len(counts))[int(np.sum(counts**2))])
+
+
 def calibrate(u: np.ndarray, z: np.ndarray) -> Score:
     """Score PIT values u over seeds; z is simACE's per-seed value in oracle SDs."""
     counts = np.histogram(u, bins=CHI2_BINS, range=(0.0, 1.0))[0]
@@ -65,7 +97,7 @@ def calibrate(u: np.ndarray, z: np.ndarray) -> Score:
         effect=float(z.mean()),
         p_values={
             "KS": float(stats.kstest(u, "uniform", method="exact").pvalue),
-            "chi2": float(stats.chisquare(counts).pvalue),
+            "chi2": chi2_exact_sf(counts),
         },
     )
 

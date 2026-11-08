@@ -1,6 +1,6 @@
 # ADR 0001: Checks are conditional calibrations, scored in one Bonferroni family
 
-**Status:** accepted; §2, §4 and §6 amended for layer 4 by ADR 0002; §1 and §2 amended for layer 5 by ADR 0003
+**Status:** accepted; §2, §4 and §6 amended for layer 4 by ADR 0002; §1 and §2 amended for layer 5 by ADR 0003; §2 amended on 2026-11-08 (status.md G4): the chi-square's exact reference
 **Date:** 2026-10-21
 
 ## Context
@@ -23,6 +23,24 @@ simACE does not share, and a verdict whose false-positive rate is known.
    the randomised PIT of its value among the draws is exactly U(0, 1)
    (calibration.py). Over R seeds, a KS test and a chi-square test on equal
    bins score each statistic.
+
+   *Amendment (2026-11-08, G4).* The chi-square's p-value comes from the
+   exact null of Pearson's statistic under multinomial(R, 1/bins), not from
+   the asymptotic chi2(bins − 1). The statistic is (bins/R)·Σc² − R, so its
+   law is that of the sum of squared counts, which a DP over the bins
+   computes exactly for any R (`calibration.chi2_exact_sf`). The p-value is
+   P(S ≥ s_obs), with no randomisation. At 10 bins and α/K = 3.67e-05, the
+   asymptotic reference rejected at 7.18e-05 (R = 50) and 5.66e-05
+   (R = 100), up to twice the nominal rate. The exact test's size, computed
+   from the null pmf, is 3.24e-05 (R = 50) and 3.46e-05 (R = 100). It is
+   conservative only because the statistic is discrete
+   (`tools/check_chi2_null.py`). Rejected alternatives:
+   - A randomised exact p-value. Its size would be exactly α, but it adds a
+     jitter stream per row, and F1 showed how much borderline rows move
+     with jitter.
+   - A seeded Monte Carlo reference. Its p-value at α/K has a relative
+     standard error of 0.165 with 1e6 draws and 0.052 with 1e7, where the
+     DP has none.
 3. **Recorded generation 0 is given, not drawn.** simACE records generation
    0 after one round of reproduction (simACE `simulate.py`, the
    `reproduce()` call before `_fill_pedigree_slice`), so its rows hide

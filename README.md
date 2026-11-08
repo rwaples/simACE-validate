@@ -78,8 +78,10 @@ The `ctm_analytic` case scores the C-transmission pedigrees against the
 analytic residual covariance instead ([D2](differences.md)).
 
 The randomised rank of simACE's value among the draws is uniform when
-simACE samples from the stated law. A KS test and a chi-square test score
-the ranks over the seeds. The deep-pedigree cases also run the
+simACE samples from the stated law. Two tests score the ranks over the
+seeds: an exact KS test, and a chi-square test on 10 equal bins referred to
+its exact multinomial null (ADR 0001 §2). The asymptotic chi-square
+reference rejects up to twice the nominal rate at the run's alpha/K (G4). The deep-pedigree cases also run the
 infinitesimal-model oracle, whose segregation variance shrinks with
 parental inbreeding ([D1](differences.md)). The inbreeding coefficients
 come from nadiv (`makeAinv`), installed by `pixi run build-nadiv`.
