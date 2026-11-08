@@ -14,560 +14,560 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.67e-05.
 
 | Case | Layer | Statistic | n | Center | Effect | p | Status | Id |
 |---|---|---|---|---|---|---|---|---|
-| rm_base | 1 | r_E1_MZ | 50 | 0.475 | -0.05 | KS 0.471, chi2 0.74 | PASS |  |
-| rm_base | 1 | r_L1_MZ | 50 | 0.5067 | +0.05 | KS 0.478, chi2 0.658 | PASS |  |
-| rm_base | 1 | r_A1_FS | 50 | 0.4622 | -0.13 | KS 0.77, chi2 0.74 | PASS |  |
-| rm_base | 1 | r_E1_FS | 50 | 0.4558 | -0.22 | KS 0.245, chi2 0.262 | PASS |  |
-| rm_base | 1 | r_L1_FS | 50 | 0.4464 | -0.22 | KS 0.0834, chi2 0.237 | PASS |  |
-| rm_base | 1 | r_A1_MHS | 50 | 0.5348 | +0.14 | KS 0.226, chi2 0.262 | PASS |  |
-| rm_base | 1 | r_E1_MHS | 50 | 0.4759 | -0.15 | KS 0.84, chi2 0.237 | PASS |  |
-| rm_base | 1 | r_L1_MHS | 50 | 0.5102 | +0.09 | KS 0.56, chi2 0.137 | PASS |  |
-| rm_base | 1 | r_A1_PHS | 50 | 0.4823 | -0.06 | KS 0.585, chi2 0.0757 | PASS |  |
-| rm_base | 1 | r_C1_PHS | 50 | 0.4933 | -0.06 | KS 0.97, chi2 0.419 | PASS |  |
-| rm_base | 1 | r_E1_PHS | 50 | 0.4763 | -0.08 | KS 0.764, chi2 0.35 | PASS |  |
-| rm_base | 1 | r_L1_PHS | 50 | 0.4938 | -0.04 | KS 0.855, chi2 0.534 | PASS |  |
-| rm_base | 1 | r_A1_MO | 50 | 0.4873 | +0.01 | KS 0.747, chi2 0.911 | PASS |  |
-| rm_base | 1 | r_C1_MO | 50 | 0.5227 | +0.07 | KS 0.765, chi2 0.699 | PASS |  |
-| rm_base | 1 | r_E1_MO | 50 | 0.4675 | -0.16 | KS 0.188, chi2 0.0966 | PASS |  |
-| rm_base | 1 | r_L1_MO | 50 | 0.4386 | -0.18 | KS 0.132, chi2 0.154 | PASS |  |
-| rm_base | 1 | r_A1_FO | 50 | 0.497 | -0.01 | KS 0.952, chi2 0.851 | PASS |  |
-| rm_base | 1 | r_C1_FO | 50 | 0.5067 | +0.00 | KS 0.775, chi2 0.213 | PASS |  |
-| rm_base | 1 | r_E1_FO | 50 | 0.4599 | -0.18 | KS 0.172, chi2 0.35 | PASS |  |
-| rm_base | 1 | r_L1_FO | 50 | 0.5405 | +0.09 | KS 0.149, chi2 0.192 | PASS |  |
-| rm_base | 1 | r_A1_1C | 50 | 0.5139 | +0.05 | KS 0.953, chi2 0.154 | PASS |  |
-| rm_base | 1 | r_C1_1C | 50 | 0.5211 | +0.05 | KS 0.745, chi2 0.779 | PASS |  |
-| rm_base | 1 | r_E1_1C | 50 | 0.4671 | -0.11 | KS 0.518, chi2 0.0669 | PASS |  |
-| rm_base | 1 | r_L1_1C | 50 | 0.5581 | +0.23 | KS 0.457, chi2 0.74 | PASS |  |
-| rm_base | 1 | var_A1_g1 | 50 | 0.5023 | +0.02 | KS 0.982, chi2 0.883 | PASS |  |
-| rm_base | 1 | var_C1_g1 | 50 | 0.4859 | -0.05 | KS 0.913, chi2 0.936 | PASS |  |
-| rm_base | 1 | var_L1_g1 | 50 | 0.5725 | +0.22 | KS 0.0661, chi2 0.0352 | PASS |  |
-| rm_base | 1 | var_A1_g2 | 50 | 0.4846 | +0.03 | KS 0.749, chi2 0.616 | PASS |  |
-| rm_base | 1 | var_C1_g2 | 50 | 0.5069 | +0.03 | KS 0.766, chi2 0.74 | PASS |  |
-| rm_base | 1 | var_L1_g2 | 50 | 0.4918 | -0.01 | KS 0.792, chi2 0.74 | PASS |  |
-| rm_base | 1 | var_A1_g3 | 50 | 0.4166 | -0.24 | KS 0.0899, chi2 0.319 | PASS |  |
-| rm_base | 1 | var_C1_g3 | 50 | 0.4658 | -0.13 | KS 0.391, chi2 0.779 | PASS |  |
-| rm_base | 1 | var_L1_g3 | 50 | 0.4485 | -0.21 | KS 0.33, chi2 0.851 | PASS |  |
-| rm_base | 1 | r_E2_MZ | 50 | 0.4422 | -0.17 | KS 0.0808, chi2 0.658 | PASS |  |
-| rm_base | 1 | r_L2_MZ | 50 | 0.4426 | -0.15 | KS 0.33, chi2 0.616 | PASS |  |
-| rm_base | 1 | r_A2_FS | 50 | 0.5365 | +0.10 | KS 0.22, chi2 0.575 | PASS |  |
-| rm_base | 1 | r_E2_FS | 50 | 0.5239 | +0.12 | KS 0.646, chi2 0.883 | PASS |  |
-| rm_base | 1 | r_L2_FS | 50 | 0.5111 | +0.08 | KS 0.505, chi2 0.122 | PASS |  |
-| rm_base | 1 | r_A2_MHS | 50 | 0.5221 | +0.12 | KS 0.577, chi2 0.883 | PASS |  |
-| rm_base | 1 | r_E2_MHS | 50 | 0.5519 | +0.15 | KS 0.203, chi2 0.575 | PASS |  |
-| rm_base | 1 | r_L2_MHS | 50 | 0.5124 | +0.08 | KS 0.654, chi2 0.575 | PASS |  |
-| rm_base | 1 | r_A2_PHS | 50 | 0.5402 | +0.17 | KS 0.684, chi2 0.983 | PASS |  |
-| rm_base | 1 | r_C2_PHS | 50 | 0.4701 | -0.06 | KS 0.721, chi2 0.983 | PASS |  |
-| rm_base | 1 | r_E2_PHS | 50 | 0.4561 | -0.13 | KS 0.0407, chi2 0.0179 | PASS |  |
-| rm_base | 1 | r_L2_PHS | 50 | 0.5583 | +0.17 | KS 0.216, chi2 0.456 | PASS |  |
-| rm_base | 1 | r_A2_MO | 50 | 0.5207 | +0.07 | KS 0.363, chi2 0.616 | PASS |  |
-| rm_base | 1 | r_C2_MO | 50 | 0.5274 | +0.13 | KS 0.57, chi2 0.575 | PASS |  |
-| rm_base | 1 | r_E2_MO | 50 | 0.5246 | +0.11 | KS 0.734, chi2 0.319 | PASS |  |
-| rm_base | 1 | r_L2_MO | 50 | 0.5502 | +0.17 | KS 0.693, chi2 0.956 | PASS |  |
-| rm_base | 1 | r_A2_FO | 50 | 0.5105 | +0.04 | KS 0.59, chi2 0.137 | PASS |  |
-| rm_base | 1 | r_C2_FO | 50 | 0.4649 | -0.13 | KS 0.667, chi2 0.494 | PASS |  |
-| rm_base | 1 | r_E2_FO | 50 | 0.5184 | +0.08 | KS 0.534, chi2 0.534 | PASS |  |
-| rm_base | 1 | r_L2_FO | 50 | 0.5062 | +0.04 | KS 0.904, chi2 0.779 | PASS |  |
-| rm_base | 1 | r_A2_1C | 50 | 0.5429 | +0.14 | KS 0.395, chi2 0.817 | PASS |  |
-| rm_base | 1 | r_C2_1C | 50 | 0.4684 | -0.10 | KS 0.706, chi2 0.996 | PASS |  |
-| rm_base | 1 | r_E2_1C | 50 | 0.4483 | -0.18 | KS 0.256, chi2 0.779 | PASS |  |
-| rm_base | 1 | r_L2_1C | 50 | 0.5247 | +0.07 | KS 0.559, chi2 0.319 | PASS |  |
-| rm_base | 1 | var_A2_g1 | 50 | 0.506 | +0.02 | KS 0.984, chi2 0.936 | PASS |  |
-| rm_base | 1 | var_C2_g1 | 50 | 0.5454 | +0.20 | KS 0.512, chi2 0.237 | PASS |  |
-| rm_base | 1 | var_L2_g1 | 50 | 0.5277 | +0.06 | KS 0.354, chi2 0.851 | PASS |  |
-| rm_base | 1 | var_A2_g2 | 50 | 0.4985 | +0.03 | KS 0.625, chi2 0.0457 | PASS |  |
-| rm_base | 1 | var_C2_g2 | 50 | 0.4559 | -0.12 | KS 0.123, chi2 0.0519 | PASS |  |
-| rm_base | 1 | var_L2_g2 | 50 | 0.5302 | +0.14 | KS 0.638, chi2 0.262 | PASS |  |
-| rm_base | 1 | var_A2_g3 | 50 | 0.5187 | +0.03 | KS 0.554, chi2 0.456 | PASS |  |
-| rm_base | 1 | var_C2_g3 | 50 | 0.4883 | -0.06 | KS 0.961, chi2 0.575 | PASS |  |
-| rm_base | 1 | var_L2_g3 | 50 | 0.4973 | +0.02 | KS 0.677, chi2 0.699 | PASS |  |
-| rm_base | 1 | r_A12_g1 | 50 | 0.5185 | +0.08 | KS 0.748, chi2 0.534 | PASS |  |
-| rm_base | 1 | r_C12_g1 | 50 | 0.5338 | +0.10 | KS 0.293, chi2 0.213 | PASS |  |
-| rm_base | 1 | r_E12_g1 | 50 | 0.5071 | +0.04 | KS 0.775, chi2 0.456 | PASS |  |
-| rm_base | 1 | r_L12_g1 | 50 | 0.5759 | +0.26 | KS 0.0413, chi2 0.0519 | PASS |  |
-| rm_base | 1 | r_A12_g2 | 50 | 0.5811 | +0.27 | KS 0.0409, chi2 0.237 | PASS |  |
-| rm_base | 1 | r_C12_g2 | 50 | 0.5101 | +0.03 | KS 0.983, chi2 0.851 | PASS |  |
-| rm_base | 1 | r_E12_g2 | 50 | 0.4429 | -0.22 | KS 0.227, chi2 0.616 | PASS |  |
-| rm_base | 1 | r_L12_g2 | 50 | 0.5175 | +0.04 | KS 0.197, chi2 0.419 | PASS |  |
-| rm_base | 1 | r_A12_g3 | 50 | 0.4986 | -0.03 | KS 0.898, chi2 0.851 | PASS |  |
-| rm_base | 1 | r_C12_g3 | 50 | 0.5031 | -0.01 | KS 0.939, chi2 0.972 | PASS |  |
-| rm_base | 1 | r_E12_g3 | 50 | 0.4613 | -0.11 | KS 0.388, chi2 0.911 | PASS |  |
-| rm_base | 1 | r_L12_g3 | 50 | 0.5079 | +0.04 | KS 0.9, chi2 0.35 | PASS |  |
-| deep_constant | 1 | r_E1_MZ | 50 | 0.4154 | -0.29 | KS 0.0539, chi2 0.575 | PASS |  |
-| deep_constant | 1 | r_L1_MZ | 50 | 0.4713 | -0.09 | KS 0.59, chi2 0.616 | PASS |  |
-| deep_constant | 1 | r_A1_FS | 50 | 0.5079 | +0.04 | KS 0.793, chi2 0.384 | PASS |  |
-| deep_constant | 1 | r_E1_FS | 50 | 0.5321 | +0.05 | KS 0.46, chi2 0.616 | PASS |  |
-| deep_constant | 1 | r_L1_FS | 50 | 0.4961 | +0.00 | KS 0.821, chi2 0.237 | PASS |  |
-| deep_constant | 1 | r_A1_MHS | 50 | 0.5174 | +0.03 | KS 0.363, chi2 0.172 | PASS |  |
-| deep_constant | 1 | r_E1_MHS | 50 | 0.4913 | -0.06 | KS 0.93, chi2 0.851 | PASS |  |
-| deep_constant | 1 | r_L1_MHS | 50 | 0.5108 | +0.03 | KS 0.906, chi2 0.956 | PASS |  |
-| deep_constant | 1 | r_A1_PHS | 50 | 0.5748 | +0.26 | KS 0.153, chi2 0.192 | PASS |  |
-| deep_constant | 1 | r_C1_PHS | 50 | 0.6008 | +0.35 | KS 0.00669, chi2 0.0352 | PASS |  |
-| deep_constant | 1 | r_E1_PHS | 50 | 0.519 | +0.15 | KS 0.473, chi2 0.29 | PASS |  |
-| deep_constant | 1 | r_L1_PHS | 50 | 0.5974 | +0.35 | KS 0.0882, chi2 0.059 | PASS |  |
-| deep_constant | 1 | r_A1_MO | 50 | 0.5108 | +0.03 | KS 0.346, chi2 0.494 | PASS |  |
-| deep_constant | 1 | r_C1_MO | 50 | 0.5091 | -0.00 | KS 0.683, chi2 0.851 | PASS |  |
-| deep_constant | 1 | r_E1_MO | 50 | 0.495 | +0.04 | KS 0.683, chi2 0.658 | PASS |  |
-| deep_constant | 1 | r_L1_MO | 50 | 0.5017 | -0.01 | KS 0.967, chi2 0.972 | PASS |  |
-| deep_constant | 1 | r_A1_FO | 50 | 0.5175 | +0.02 | KS 0.569, chi2 0.319 | PASS |  |
-| deep_constant | 1 | r_C1_FO | 50 | 0.488 | -0.09 | KS 0.93, chi2 0.658 | PASS |  |
-| deep_constant | 1 | r_E1_FO | 50 | 0.4766 | -0.11 | KS 0.394, chi2 0.658 | PASS |  |
-| deep_constant | 1 | r_L1_FO | 50 | 0.4979 | -0.05 | KS 0.972, chi2 0.74 | PASS |  |
-| deep_constant | 1 | r_A1_1C | 50 | 0.5334 | +0.15 | KS 0.809, chi2 0.956 | PASS |  |
-| deep_constant | 1 | r_C1_1C | 50 | 0.4878 | -0.03 | KS 0.272, chi2 0.384 | PASS |  |
-| deep_constant | 1 | r_E1_1C | 50 | 0.4822 | -0.05 | KS 0.712, chi2 0.658 | PASS |  |
-| deep_constant | 1 | r_L1_1C | 50 | 0.5108 | +0.03 | KS 0.895, chi2 0.956 | PASS |  |
-| deep_constant | 1 | var_A1_g1 | 50 | 0.4548 | -0.10 | KS 0.248, chi2 0.237 | PASS |  |
-| deep_constant | 1 | var_C1_g1 | 50 | 0.5282 | +0.16 | KS 0.34, chi2 0.494 | PASS |  |
-| deep_constant | 1 | var_L1_g1 | 50 | 0.4866 | -0.08 | KS 0.288, chi2 0.0269 | PASS |  |
-| deep_constant | 1 | var_A1_g2 | 50 | 0.5083 | +0.03 | KS 0.916, chi2 0.74 | PASS |  |
-| deep_constant | 1 | var_C1_g2 | 50 | 0.5073 | +0.07 | KS 0.93, chi2 0.779 | PASS |  |
-| deep_constant | 1 | var_L1_g2 | 50 | 0.5413 | +0.14 | KS 0.662, chi2 0.616 | PASS |  |
-| deep_constant | 1 | var_A1_g3 | 50 | 0.4852 | -0.01 | KS 0.679, chi2 0.575 | PASS |  |
-| deep_constant | 1 | var_C1_g3 | 50 | 0.4937 | -0.02 | KS 0.937, chi2 0.534 | PASS |  |
-| deep_constant | 1 | var_L1_g3 | 50 | 0.5169 | +0.08 | KS 0.868, chi2 0.616 | PASS |  |
-| deep_constant | 1 | var_A1_g4 | 50 | 0.492 | -0.04 | KS 0.96, chi2 0.658 | PASS |  |
-| deep_constant | 1 | var_C1_g4 | 50 | 0.4682 | -0.15 | KS 0.184, chi2 0.109 | PASS |  |
-| deep_constant | 1 | var_L1_g4 | 50 | 0.4537 | -0.12 | KS 0.248, chi2 0.883 | PASS |  |
-| deep_constant | 1 | var_A1_g5 | 50 | 0.441 | -0.12 | KS 0.243, chi2 0.616 | PASS |  |
-| deep_constant | 1 | var_C1_g5 | 50 | 0.4566 | -0.14 | KS 0.495, chi2 0.616 | PASS |  |
-| deep_constant | 1 | var_L1_g5 | 50 | 0.4751 | -0.09 | KS 0.383, chi2 0.137 | PASS |  |
-| deep_constant | 1 | var_A1_g6 | 50 | 0.4789 | -0.02 | KS 0.0336, chi2 0.0043 | PASS |  |
-| deep_constant | 1 | var_C1_g6 | 50 | 0.5565 | +0.20 | KS 0.194, chi2 0.658 | PASS |  |
-| deep_constant | 1 | var_L1_g6 | 50 | 0.477 | -0.05 | KS 0.581, chi2 0.494 | PASS |  |
-| deep_constant | 1 | var_A1_g7 | 50 | 0.5617 | +0.27 | KS 0.287, chi2 0.779 | PASS |  |
-| deep_constant | 1 | var_C1_g7 | 50 | 0.5125 | +0.01 | KS 0.785, chi2 0.456 | PASS |  |
-| deep_constant | 1 | var_L1_g7 | 50 | 0.5498 | +0.16 | KS 0.271, chi2 0.534 | PASS |  |
-| deep_constant | 1 | var_A1_g8 | 50 | 0.5245 | +0.13 | KS 0.278, chi2 0.319 | PASS |  |
-| deep_constant | 1 | var_C1_g8 | 50 | 0.5141 | +0.00 | KS 0.516, chi2 0.384 | PASS |  |
-| deep_constant | 1 | var_L1_g8 | 50 | 0.4977 | +0.02 | KS 0.949, chi2 0.172 | PASS |  |
-| deep_constant | 1 | var_A1_g9 | 50 | 0.5422 | +0.17 | KS 0.187, chi2 0.35 | PASS |  |
-| deep_constant | 1 | var_C1_g9 | 50 | 0.4911 | -0.06 | KS 0.907, chi2 0.699 | PASS |  |
-| deep_constant | 1 | var_L1_g9 | 50 | 0.5517 | +0.14 | KS 0.208, chi2 0.0519 | PASS |  |
-| deep_constant | 1 | var_A1_g10 | 50 | 0.4932 | -0.05 | KS 0.769, chi2 0.817 | PASS |  |
-| deep_constant | 1 | var_C1_g10 | 50 | 0.4638 | -0.11 | KS 0.309, chi2 0.154 | PASS |  |
-| deep_constant | 1 | var_L1_g10 | 50 | 0.4888 | -0.01 | KS 0.931, chi2 0.699 | PASS |  |
-| deep_constant | 1 | var_A1_g11 | 50 | 0.5658 | +0.19 | KS 0.27, chi2 0.883 | PASS |  |
-| deep_constant | 1 | var_C1_g11 | 50 | 0.5639 | +0.21 | KS 0.211, chi2 0.172 | PASS |  |
-| deep_constant | 1 | var_L1_g11 | 50 | 0.5934 | +0.35 | KS 0.0405, chi2 0.29 | PASS |  |
-| deep_constant | 1 | r_E2_MZ | 50 | 0.4576 | -0.08 | KS 0.409, chi2 0.419 | PASS |  |
-| deep_constant | 1 | r_L2_MZ | 50 | 0.4791 | -0.02 | KS 0.626, chi2 0.262 | PASS |  |
-| deep_constant | 1 | r_A2_FS | 50 | 0.4968 | +0.06 | KS 0.624, chi2 0.419 | PASS |  |
-| deep_constant | 1 | r_E2_FS | 50 | 0.4492 | -0.12 | KS 0.165, chi2 0.419 | PASS |  |
-| deep_constant | 1 | r_L2_FS | 50 | 0.4764 | -0.08 | KS 0.586, chi2 0.456 | PASS |  |
-| deep_constant | 1 | r_A2_MHS | 50 | 0.5383 | +0.11 | KS 0.293, chi2 0.35 | PASS |  |
-| deep_constant | 1 | r_E2_MHS | 50 | 0.5179 | +0.13 | KS 0.715, chi2 0.419 | PASS |  |
-| deep_constant | 1 | r_L2_MHS | 50 | 0.5458 | +0.17 | KS 0.299, chi2 0.29 | PASS |  |
-| deep_constant | 1 | r_A2_PHS | 50 | 0.5177 | +0.08 | KS 0.608, chi2 0.616 | PASS |  |
-| deep_constant | 1 | r_C2_PHS | 50 | 0.5697 | +0.21 | KS 0.0964, chi2 0.456 | PASS |  |
-| deep_constant | 1 | r_E2_PHS | 50 | 0.4797 | -0.07 | KS 0.383, chi2 0.192 | PASS |  |
-| deep_constant | 1 | r_L2_PHS | 50 | 0.424 | -0.25 | KS 0.104, chi2 0.384 | PASS |  |
-| deep_constant | 1 | r_A2_MO | 50 | 0.5095 | +0.03 | KS 0.567, chi2 0.262 | PASS |  |
-| deep_constant | 1 | r_C2_MO | 50 | 0.4537 | -0.26 | KS 0.147, chi2 0.0519 | PASS |  |
-| deep_constant | 1 | r_E2_MO | 50 | 0.4741 | -0.13 | KS 0.63, chi2 0.494 | PASS |  |
-| deep_constant | 1 | r_L2_MO | 50 | 0.4997 | -0.03 | KS 0.816, chi2 0.575 | PASS |  |
-| deep_constant | 1 | r_A2_FO | 50 | 0.5468 | +0.18 | KS 0.116, chi2 0.109 | PASS |  |
-| deep_constant | 1 | r_C2_FO | 50 | 0.5014 | -0.04 | KS 0.858, chi2 0.494 | PASS |  |
-| deep_constant | 1 | r_E2_FO | 50 | 0.5779 | +0.27 | KS 0.105, chi2 0.0669 | PASS |  |
-| deep_constant | 1 | r_L2_FO | 50 | 0.5066 | +0.03 | KS 0.993, chi2 0.996 | PASS |  |
-| deep_constant | 1 | r_A2_1C | 50 | 0.4932 | +0.02 | KS 0.958, chi2 0.494 | PASS |  |
-| deep_constant | 1 | r_C2_1C | 50 | 0.4409 | -0.27 | KS 0.0791, chi2 0.154 | PASS |  |
-| deep_constant | 1 | r_E2_1C | 50 | 0.4456 | -0.15 | KS 0.247, chi2 0.172 | PASS |  |
-| deep_constant | 1 | r_L2_1C | 50 | 0.5289 | +0.11 | KS 0.605, chi2 0.658 | PASS |  |
-| deep_constant | 1 | var_A2_g1 | 50 | 0.4944 | -0.06 | KS 0.79, chi2 0.494 | PASS |  |
-| deep_constant | 1 | var_C2_g1 | 50 | 0.4919 | -0.10 | KS 0.678, chi2 0.0457 | PASS |  |
-| deep_constant | 1 | var_L2_g1 | 50 | 0.4674 | -0.13 | KS 0.205, chi2 0.616 | PASS |  |
-| deep_constant | 1 | var_A2_g2 | 50 | 0.5411 | +0.13 | KS 0.348, chi2 0.658 | PASS |  |
-| deep_constant | 1 | var_C2_g2 | 50 | 0.4637 | -0.13 | KS 0.681, chi2 0.699 | PASS |  |
-| deep_constant | 1 | var_L2_g2 | 50 | 0.5373 | +0.15 | KS 0.482, chi2 0.419 | PASS |  |
-| deep_constant | 1 | var_A2_g3 | 50 | 0.5316 | +0.09 | KS 0.632, chi2 0.575 | PASS |  |
-| deep_constant | 1 | var_C2_g3 | 50 | 0.4751 | -0.07 | KS 0.28, chi2 0.154 | PASS |  |
-| deep_constant | 1 | var_L2_g3 | 50 | 0.5155 | +0.06 | KS 0.754, chi2 0.779 | PASS |  |
-| deep_constant | 1 | var_A2_g4 | 50 | 0.4932 | +0.00 | KS 0.272, chi2 0.29 | PASS |  |
-| deep_constant | 1 | var_C2_g4 | 50 | 0.5177 | +0.03 | KS 0.893, chi2 0.851 | PASS |  |
-| deep_constant | 1 | var_L2_g4 | 50 | 0.5318 | +0.11 | KS 0.486, chi2 0.456 | PASS |  |
-| deep_constant | 1 | var_A2_g5 | 50 | 0.4553 | -0.10 | KS 0.382, chi2 0.911 | PASS |  |
-| deep_constant | 1 | var_C2_g5 | 50 | 0.5335 | +0.12 | KS 0.745, chi2 0.911 | PASS |  |
-| deep_constant | 1 | var_L2_g5 | 50 | 0.4725 | -0.05 | KS 0.605, chi2 0.658 | PASS |  |
-| deep_constant | 1 | var_A2_g6 | 50 | 0.5346 | +0.16 | KS 0.342, chi2 0.616 | PASS |  |
-| deep_constant | 1 | var_C2_g6 | 50 | 0.5323 | +0.15 | KS 0.491, chi2 0.817 | PASS |  |
-| deep_constant | 1 | var_L2_g6 | 50 | 0.5118 | +0.04 | KS 0.39, chi2 0.319 | PASS |  |
-| deep_constant | 1 | var_A2_g7 | 50 | 0.5232 | +0.05 | KS 0.73, chi2 0.699 | PASS |  |
-| deep_constant | 1 | var_C2_g7 | 50 | 0.5256 | +0.04 | KS 0.504, chi2 0.972 | PASS |  |
-| deep_constant | 1 | var_L2_g7 | 50 | 0.4859 | -0.06 | KS 0.45, chi2 0.699 | PASS |  |
-| deep_constant | 1 | var_A2_g8 | 50 | 0.5092 | -0.02 | KS 0.67, chi2 0.29 | PASS |  |
-| deep_constant | 1 | var_C2_g8 | 50 | 0.545 | +0.13 | KS 0.249, chi2 0.779 | PASS |  |
-| deep_constant | 1 | var_L2_g8 | 50 | 0.4517 | -0.12 | KS 0.105, chi2 0.319 | PASS |  |
-| deep_constant | 1 | var_A2_g9 | 50 | 0.5092 | +0.08 | KS 0.933, chi2 0.456 | PASS |  |
-| deep_constant | 1 | var_C2_g9 | 50 | 0.5176 | +0.04 | KS 0.889, chi2 0.616 | PASS |  |
-| deep_constant | 1 | var_L2_g9 | 50 | 0.4799 | -0.11 | KS 0.264, chi2 0.29 | PASS |  |
-| deep_constant | 1 | var_A2_g10 | 50 | 0.5076 | +0.02 | KS 0.985, chi2 0.956 | PASS |  |
-| deep_constant | 1 | var_C2_g10 | 50 | 0.4753 | -0.11 | KS 0.487, chi2 0.494 | PASS |  |
-| deep_constant | 1 | var_L2_g10 | 50 | 0.4531 | -0.19 | KS 0.416, chi2 0.35 | PASS |  |
-| deep_constant | 1 | var_A2_g11 | 50 | 0.5103 | -0.05 | KS 0.623, chi2 0.319 | PASS |  |
-| deep_constant | 1 | var_C2_g11 | 50 | 0.4016 | -0.31 | KS 0.012, chi2 0.154 | PASS |  |
-| deep_constant | 1 | var_L2_g11 | 50 | 0.4813 | -0.11 | KS 0.849, chi2 0.154 | PASS |  |
-| deep_constant | 1 | r_A12_g1 | 50 | 0.4737 | -0.13 | KS 0.8, chi2 0.575 | PASS |  |
-| deep_constant | 1 | r_C12_g1 | 50 | 0.5178 | +0.09 | KS 0.486, chi2 0.575 | PASS |  |
-| deep_constant | 1 | r_E12_g1 | 50 | 0.5059 | +0.01 | KS 0.992, chi2 0.779 | PASS |  |
-| deep_constant | 1 | r_L12_g1 | 50 | 0.4673 | -0.15 | KS 0.119, chi2 0.0156 | PASS |  |
-| deep_constant | 1 | r_A12_g2 | 50 | 0.5038 | +0.03 | KS 0.885, chi2 0.575 | PASS |  |
-| deep_constant | 1 | r_C12_g2 | 50 | 0.4639 | -0.14 | KS 0.479, chi2 0.658 | PASS |  |
-| deep_constant | 1 | r_E12_g2 | 50 | 0.566 | +0.24 | KS 0.155, chi2 0.29 | PASS |  |
-| deep_constant | 1 | r_L12_g2 | 50 | 0.5475 | +0.12 | KS 0.0418, chi2 0.137 | PASS |  |
-| deep_constant | 1 | r_A12_g3 | 50 | 0.5383 | +0.15 | KS 0.602, chi2 0.237 | PASS |  |
-| deep_constant | 1 | r_C12_g3 | 50 | 0.417 | -0.22 | KS 0.0111, chi2 0.0519 | PASS |  |
-| deep_constant | 1 | r_E12_g3 | 50 | 0.4747 | -0.08 | KS 0.716, chi2 0.213 | PASS |  |
-| deep_constant | 1 | r_L12_g3 | 50 | 0.519 | +0.02 | KS 0.732, chi2 0.534 | PASS |  |
-| deep_constant | 1 | r_A12_g4 | 50 | 0.513 | +0.04 | KS 0.984, chi2 0.851 | PASS |  |
-| deep_constant | 1 | r_C12_g4 | 50 | 0.5134 | +0.03 | KS 0.89, chi2 0.534 | PASS |  |
-| deep_constant | 1 | r_E12_g4 | 50 | 0.4302 | -0.23 | KS 0.0579, chi2 0.29 | PASS |  |
-| deep_constant | 1 | r_L12_g4 | 50 | 0.5146 | +0.08 | KS 0.806, chi2 0.213 | PASS |  |
-| deep_constant | 1 | r_A12_g5 | 50 | 0.5383 | +0.09 | KS 0.428, chi2 0.851 | PASS |  |
-| deep_constant | 1 | r_C12_g5 | 50 | 0.5261 | +0.07 | KS 0.567, chi2 0.494 | PASS |  |
-| deep_constant | 1 | r_E12_g5 | 50 | 0.521 | +0.10 | KS 0.446, chi2 0.534 | PASS |  |
-| deep_constant | 1 | r_L12_g5 | 50 | 0.5672 | +0.21 | KS 0.227, chi2 0.262 | PASS |  |
-| deep_constant | 1 | r_A12_g6 | 50 | 0.5451 | +0.12 | KS 0.158, chi2 0.419 | PASS |  |
-| deep_constant | 1 | r_C12_g6 | 50 | 0.4755 | -0.05 | KS 0.64, chi2 0.779 | PASS |  |
-| deep_constant | 1 | r_E12_g6 | 50 | 0.5012 | -0.03 | KS 0.843, chi2 0.575 | PASS |  |
-| deep_constant | 1 | r_L12_g6 | 50 | 0.5314 | +0.08 | KS 0.377, chi2 0.154 | PASS |  |
-| deep_constant | 1 | r_A12_g7 | 50 | 0.5321 | +0.05 | KS 0.168, chi2 0.262 | PASS |  |
-| deep_constant | 1 | r_C12_g7 | 50 | 0.4716 | -0.07 | KS 0.514, chi2 0.0352 | PASS |  |
-| deep_constant | 1 | r_E12_g7 | 50 | 0.5713 | +0.23 | KS 0.0859, chi2 0.616 | PASS |  |
-| deep_constant | 1 | r_L12_g7 | 50 | 0.5455 | +0.16 | KS 0.212, chi2 0.262 | PASS |  |
-| deep_constant | 1 | r_A12_g8 | 50 | 0.5144 | +0.06 | KS 0.765, chi2 0.699 | PASS |  |
-| deep_constant | 1 | r_C12_g8 | 50 | 0.5719 | +0.21 | KS 0.0992, chi2 0.319 | PASS |  |
-| deep_constant | 1 | r_E12_g8 | 50 | 0.4803 | -0.07 | KS 0.856, chi2 0.851 | PASS |  |
-| deep_constant | 1 | r_L12_g8 | 50 | 0.5309 | +0.09 | KS 0.125, chi2 0.699 | PASS |  |
-| deep_constant | 1 | r_A12_g9 | 50 | 0.5008 | +0.01 | KS 0.776, chi2 0.109 | PASS |  |
-| deep_constant | 1 | r_C12_g9 | 50 | 0.519 | +0.03 | KS 0.694, chi2 0.658 | PASS |  |
-| deep_constant | 1 | r_E12_g9 | 50 | 0.4727 | -0.15 | KS 0.406, chi2 0.122 | PASS |  |
-| deep_constant | 1 | r_L12_g9 | 50 | 0.5302 | +0.06 | KS 0.456, chi2 0.534 | PASS |  |
-| deep_constant | 1 | r_A12_g10 | 50 | 0.4338 | -0.27 | KS 0.102, chi2 0.192 | PASS |  |
-| deep_constant | 1 | r_C12_g10 | 50 | 0.5829 | +0.32 | KS 0.0837, chi2 0.575 | PASS |  |
-| deep_constant | 1 | r_E12_g10 | 50 | 0.5461 | +0.18 | KS 0.156, chi2 0.213 | PASS |  |
-| deep_constant | 1 | r_L12_g10 | 50 | 0.4827 | -0.09 | KS 0.426, chi2 0.122 | PASS |  |
-| deep_constant | 1 | r_A12_g11 | 50 | 0.4825 | -0.08 | KS 0.61, chi2 0.213 | PASS |  |
-| deep_constant | 1 | r_C12_g11 | 50 | 0.4612 | -0.15 | KS 0.276, chi2 0.0136 | PASS |  |
-| deep_constant | 1 | r_E12_g11 | 50 | 0.4964 | -0.02 | KS 0.998, chi2 0.972 | PASS |  |
-| deep_constant | 1 | r_L12_g11 | 50 | 0.4692 | -0.13 | KS 0.0853, chi2 0.0966 | PASS |  |
-| deep_infinitesimal | 1 | r_E1_MZ | 50 | 0.4199 | -0.26 | KS 0.0239, chi2 0.192 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L1_MZ | 50 | 0.4869 | -0.05 | KS 0.654, chi2 0.699 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A1_FS | 50 | 0.4981 | -0.02 | KS 0.878, chi2 0.35 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E1_FS | 50 | 0.5294 | +0.06 | KS 0.565, chi2 0.936 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L1_FS | 50 | 0.4909 | -0.01 | KS 0.968, chi2 0.658 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A1_MHS | 50 | 0.522 | +0.05 | KS 0.336, chi2 0.0856 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E1_MHS | 50 | 0.4868 | -0.06 | KS 0.992, chi2 0.991 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L1_MHS | 50 | 0.5037 | +0.03 | KS 0.864, chi2 0.883 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A1_PHS | 50 | 0.563 | +0.24 | KS 0.115, chi2 0.35 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C1_PHS | 50 | 0.5999 | +0.36 | KS 0.0105, chi2 0.0269 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E1_PHS | 50 | 0.5135 | +0.16 | KS 0.607, chi2 0.534 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L1_PHS | 50 | 0.5988 | +0.34 | KS 0.0861, chi2 0.154 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A1_MO | 50 | 0.5035 | -0.00 | KS 0.331, chi2 0.419 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C1_MO | 50 | 0.5142 | +0.01 | KS 0.597, chi2 0.658 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E1_MO | 50 | 0.4976 | +0.06 | KS 0.729, chi2 0.29 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L1_MO | 50 | 0.515 | +0.04 | KS 0.865, chi2 0.494 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A1_FO | 50 | 0.5068 | -0.02 | KS 0.666, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C1_FO | 50 | 0.4812 | -0.09 | KS 0.974, chi2 0.699 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E1_FO | 50 | 0.4768 | -0.10 | KS 0.568, chi2 0.29 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L1_FO | 50 | 0.5047 | -0.01 | KS 0.814, chi2 0.575 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A1_1C | 50 | 0.5287 | +0.12 | KS 0.802, chi2 0.817 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C1_1C | 50 | 0.4989 | -0.01 | KS 0.514, chi2 0.059 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E1_1C | 50 | 0.4771 | -0.06 | KS 0.86, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L1_1C | 50 | 0.5053 | +0.02 | KS 0.796, chi2 0.213 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g1 | 50 | 0.4511 | -0.12 | KS 0.178, chi2 0.213 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g1 | 50 | 0.5225 | +0.15 | KS 0.558, chi2 0.29 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g1 | 50 | 0.4909 | -0.08 | KS 0.552, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g2 | 50 | 0.509 | +0.02 | KS 0.822, chi2 0.851 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g2 | 50 | 0.5111 | +0.10 | KS 0.867, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g2 | 50 | 0.5481 | +0.15 | KS 0.154, chi2 0.575 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g3 | 50 | 0.4895 | +0.01 | KS 0.66, chi2 0.534 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g3 | 50 | 0.4911 | -0.03 | KS 0.909, chi2 0.237 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g3 | 50 | 0.5102 | +0.09 | KS 0.467, chi2 0.172 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g4 | 50 | 0.5035 | -0.02 | KS 0.69, chi2 0.122 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g4 | 50 | 0.4767 | -0.14 | KS 0.113, chi2 0.122 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g4 | 50 | 0.46 | -0.12 | KS 0.553, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g5 | 50 | 0.4539 | -0.08 | KS 0.441, chi2 0.699 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g5 | 50 | 0.4569 | -0.14 | KS 0.494, chi2 0.35 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g5 | 50 | 0.4886 | -0.07 | KS 0.677, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g6 | 50 | 0.4953 | +0.07 | KS 0.0775, chi2 0.00237 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g6 | 50 | 0.5604 | +0.20 | KS 0.147, chi2 0.779 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g6 | 50 | 0.4878 | +0.01 | KS 0.719, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g7 | 50 | 0.5983 | +0.43 | KS 0.0265, chi2 0.154 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g7 | 50 | 0.514 | +0.03 | KS 0.634, chi2 0.779 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g7 | 50 | 0.57 | +0.23 | KS 0.0537, chi2 0.0757 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g8 | 50 | 0.5744 | +0.33 | KS 0.0854, chi2 0.0856 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g8 | 50 | 0.5031 | -0.03 | KS 0.646, chi2 0.534 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g8 | 50 | 0.532 | +0.12 | KS 0.674, chi2 0.851 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g9 | 50 | 0.6055 | +0.42 | KS 0.0176, chi2 0.192 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g9 | 50 | 0.4879 | -0.06 | KS 0.468, chi2 0.35 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g9 | 50 | 0.5793 | +0.26 | KS 0.102, chi2 0.494 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g10 | 50 | 0.5617 | +0.22 | KS 0.366, chi2 0.237 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g10 | 50 | 0.4667 | -0.09 | KS 0.385, chi2 0.0401 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g10 | 50 | 0.5267 | +0.17 | KS 0.627, chi2 0.237 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A1_g11 | 50 | 0.645 | +0.50 | KS 0.000992, chi2 0.0235 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C1_g11 | 50 | 0.5581 | +0.22 | KS 0.151, chi2 0.29 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L1_g11 | 50 | 0.6339 | +0.50 | KS 0.00141, chi2 0.0757 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E2_MZ | 50 | 0.4562 | -0.09 | KS 0.452, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L2_MZ | 50 | 0.4786 | -0.01 | KS 0.704, chi2 0.911 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A2_FS | 50 | 0.4782 | +0.01 | KS 0.311, chi2 0.658 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E2_FS | 50 | 0.4547 | -0.10 | KS 0.229, chi2 0.172 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L2_FS | 50 | 0.4769 | -0.07 | KS 0.576, chi2 0.137 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A2_MHS | 50 | 0.5297 | +0.09 | KS 0.648, chi2 0.384 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E2_MHS | 50 | 0.5149 | +0.12 | KS 0.714, chi2 0.237 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L2_MHS | 50 | 0.5373 | +0.16 | KS 0.588, chi2 0.35 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A2_PHS | 50 | 0.5122 | +0.07 | KS 0.412, chi2 0.419 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C2_PHS | 50 | 0.5661 | +0.20 | KS 0.0774, chi2 0.419 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E2_PHS | 50 | 0.4796 | -0.06 | KS 0.2, chi2 0.213 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L2_PHS | 50 | 0.4312 | -0.24 | KS 0.0525, chi2 0.059 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A2_MO | 50 | 0.4903 | -0.03 | KS 0.934, chi2 0.936 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C2_MO | 50 | 0.4527 | -0.24 | KS 0.204, chi2 0.172 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E2_MO | 50 | 0.4761 | -0.11 | KS 0.67, chi2 0.384 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L2_MO | 50 | 0.5123 | +0.03 | KS 0.783, chi2 0.883 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A2_FO | 50 | 0.5381 | +0.15 | KS 0.289, chi2 0.059 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C2_FO | 50 | 0.5031 | -0.01 | KS 0.896, chi2 0.817 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E2_FO | 50 | 0.5799 | +0.28 | KS 0.0862, chi2 0.109 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L2_FO | 50 | 0.5211 | +0.08 | KS 0.454, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A2_1C | 50 | 0.4848 | -0.01 | KS 0.763, chi2 0.936 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C2_1C | 50 | 0.4395 | -0.27 | KS 0.0724, chi2 0.0352 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E2_1C | 50 | 0.4392 | -0.15 | KS 0.171, chi2 0.494 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L2_1C | 50 | 0.5306 | +0.11 | KS 0.238, chi2 0.0235 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g1 | 50 | 0.4878 | -0.09 | KS 0.793, chi2 0.109 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g1 | 50 | 0.488 | -0.11 | KS 0.844, chi2 0.494 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g1 | 50 | 0.4657 | -0.14 | KS 0.561, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g2 | 50 | 0.5321 | +0.11 | KS 0.348, chi2 0.851 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g2 | 50 | 0.4727 | -0.11 | KS 0.854, chi2 0.956 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g2 | 50 | 0.5372 | +0.15 | KS 0.793, chi2 0.851 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g3 | 50 | 0.5332 | +0.10 | KS 0.366, chi2 0.851 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g3 | 50 | 0.4776 | -0.09 | KS 0.376, chi2 0.213 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g3 | 50 | 0.5137 | +0.05 | KS 0.295, chi2 0.851 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g4 | 50 | 0.5041 | +0.05 | KS 0.747, chi2 0.213 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g4 | 50 | 0.5129 | +0.04 | KS 0.916, chi2 0.956 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g4 | 50 | 0.5374 | +0.11 | KS 0.504, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g5 | 50 | 0.4763 | -0.05 | KS 0.677, chi2 0.616 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g5 | 50 | 0.526 | +0.13 | KS 0.617, chi2 0.262 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g5 | 50 | 0.4834 | -0.03 | KS 0.642, chi2 0.779 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g6 | 50 | 0.5647 | +0.25 | KS 0.169, chi2 0.883 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g6 | 50 | 0.5275 | +0.13 | KS 0.734, chi2 0.699 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g6 | 50 | 0.5198 | +0.10 | KS 0.421, chi2 0.779 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g7 | 50 | 0.5665 | +0.18 | KS 0.146, chi2 0.419 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g7 | 50 | 0.5314 | +0.05 | KS 0.774, chi2 0.936 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g7 | 50 | 0.5006 | +0.02 | KS 0.726, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g8 | 50 | 0.5611 | +0.14 | KS 0.226, chi2 0.29 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g8 | 50 | 0.5439 | +0.14 | KS 0.359, chi2 0.0966 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g8 | 50 | 0.475 | -0.03 | KS 0.242, chi2 0.319 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g9 | 50 | 0.5661 | +0.29 | KS 0.166, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g9 | 50 | 0.5219 | +0.05 | KS 0.921, chi2 0.972 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g9 | 50 | 0.5002 | -0.04 | KS 0.504, chi2 0.699 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g10 | 50 | 0.57 | +0.25 | KS 0.225, chi2 0.534 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g10 | 50 | 0.484 | -0.10 | KS 0.637, chi2 0.0757 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g10 | 50 | 0.4888 | -0.08 | KS 0.604, chi2 0.851 | INFO | D1 |
-| deep_infinitesimal | 1 | var_A2_g11 | 50 | 0.5888 | +0.23 | KS 0.0182, chi2 0.109 | INFO | D1 |
-| deep_infinitesimal | 1 | var_C2_g11 | 50 | 0.4074 | -0.31 | KS 0.0139, chi2 0.262 | INFO | D1 |
-| deep_infinitesimal | 1 | var_L2_g11 | 50 | 0.5144 | +0.03 | KS 0.687, chi2 0.319 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g1 | 50 | 0.4642 | -0.14 | KS 0.647, chi2 0.779 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g1 | 50 | 0.5257 | +0.10 | KS 0.489, chi2 0.956 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g1 | 50 | 0.5047 | +0.02 | KS 0.994, chi2 0.817 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g1 | 50 | 0.4666 | -0.15 | KS 0.12, chi2 0.109 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g2 | 50 | 0.5032 | +0.04 | KS 0.982, chi2 0.972 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g2 | 50 | 0.4631 | -0.13 | KS 0.576, chi2 0.419 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g2 | 50 | 0.5569 | +0.20 | KS 0.207, chi2 0.35 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g2 | 50 | 0.5462 | +0.09 | KS 0.0596, chi2 0.137 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g3 | 50 | 0.5306 | +0.11 | KS 0.517, chi2 0.534 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g3 | 50 | 0.417 | -0.23 | KS 0.0248, chi2 0.137 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g3 | 50 | 0.4709 | -0.08 | KS 0.525, chi2 0.494 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g3 | 50 | 0.5165 | +0.01 | KS 0.987, chi2 0.911 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g4 | 50 | 0.5011 | +0.02 | KS 0.986, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g4 | 50 | 0.5182 | +0.05 | KS 0.691, chi2 0.384 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g4 | 50 | 0.4308 | -0.21 | KS 0.0341, chi2 0.35 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g4 | 50 | 0.518 | +0.08 | KS 0.94, chi2 0.936 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g5 | 50 | 0.5275 | +0.05 | KS 0.335, chi2 0.699 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g5 | 50 | 0.5158 | +0.05 | KS 0.799, chi2 0.384 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g5 | 50 | 0.5192 | +0.10 | KS 0.732, chi2 0.936 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g5 | 50 | 0.5618 | +0.20 | KS 0.16, chi2 0.262 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g6 | 50 | 0.5278 | +0.10 | KS 0.177, chi2 0.0457 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g6 | 50 | 0.476 | -0.03 | KS 0.281, chi2 0.384 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g6 | 50 | 0.5075 | -0.05 | KS 0.684, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g6 | 50 | 0.5314 | +0.08 | KS 0.396, chi2 0.419 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g7 | 50 | 0.5295 | +0.05 | KS 0.26, chi2 0.384 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g7 | 50 | 0.4727 | -0.09 | KS 0.514, chi2 0.0401 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g7 | 50 | 0.5735 | +0.25 | KS 0.121, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g7 | 50 | 0.5528 | +0.18 | KS 0.238, chi2 0.456 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g8 | 50 | 0.5215 | +0.07 | KS 0.671, chi2 0.213 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g8 | 50 | 0.5632 | +0.20 | KS 0.126, chi2 0.575 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g8 | 50 | 0.4796 | -0.07 | KS 0.844, chi2 0.936 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g8 | 50 | 0.5317 | +0.08 | KS 0.258, chi2 0.262 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g9 | 50 | 0.5035 | +0.02 | KS 0.931, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g9 | 50 | 0.5181 | +0.01 | KS 0.57, chi2 0.883 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g9 | 50 | 0.4738 | -0.17 | KS 0.28, chi2 0.122 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g9 | 50 | 0.5326 | +0.08 | KS 0.44, chi2 0.319 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g10 | 50 | 0.4418 | -0.23 | KS 0.162, chi2 0.419 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g10 | 50 | 0.5806 | +0.33 | KS 0.137, chi2 0.74 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g10 | 50 | 0.5455 | +0.19 | KS 0.0995, chi2 0.0136 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g10 | 50 | 0.4906 | -0.05 | KS 0.71, chi2 0.658 | INFO | D1 |
-| deep_infinitesimal | 1 | r_A12_g11 | 50 | 0.4878 | -0.06 | KS 0.707, chi2 0.213 | INFO | D1 |
-| deep_infinitesimal | 1 | r_C12_g11 | 50 | 0.4568 | -0.15 | KS 0.348, chi2 0.109 | INFO | D1 |
-| deep_infinitesimal | 1 | r_E12_g11 | 50 | 0.4913 | -0.04 | KS 0.921, chi2 0.883 | INFO | D1 |
-| deep_infinitesimal | 1 | r_L12_g11 | 50 | 0.4712 | -0.12 | KS 0.117, chi2 0.0757 | INFO | D1 |
-| ctm_base | 1 | r_E1_MZ | 50 | 0.5346 | +0.09 | KS 0.477, chi2 0.779 | PASS |  |
-| ctm_base | 1 | r_L1_MZ | 50 | 0.5019 | -0.02 | KS 0.546, chi2 0.419 | PASS |  |
-| ctm_base | 1 | r_A1_FS | 50 | 0.5103 | +0.02 | KS 0.517, chi2 0.616 | PASS |  |
-| ctm_base | 1 | r_E1_FS | 50 | 0.4037 | -0.33 | KS 0.0718, chi2 0.213 | PASS |  |
-| ctm_base | 1 | r_L1_FS | 50 | 0.5058 | +0.04 | KS 0.482, chi2 0.494 | PASS |  |
-| ctm_base | 1 | r_A1_MHS | 50 | 0.5555 | +0.19 | KS 0.21, chi2 0.0856 | PASS |  |
-| ctm_base | 1 | r_C1_MHS | 50 | 0.5817 | +0.27 | KS 0.0254, chi2 0.059 | PASS |  |
-| ctm_base | 1 | r_E1_MHS | 50 | 0.5191 | +0.09 | KS 0.546, chi2 0.851 | PASS |  |
-| ctm_base | 1 | r_L1_MHS | 50 | 0.5888 | +0.27 | KS 0.0247, chi2 0.154 | PASS |  |
-| ctm_base | 1 | r_A1_PHS | 50 | 0.4693 | -0.10 | KS 0.536, chi2 0.779 | PASS |  |
-| ctm_base | 1 | r_C1_PHS | 50 | 0.5183 | +0.05 | KS 0.683, chi2 0.29 | PASS |  |
-| ctm_base | 1 | r_E1_PHS | 50 | 0.5603 | +0.24 | KS 0.112, chi2 0.192 | PASS |  |
-| ctm_base | 1 | r_L1_PHS | 50 | 0.4835 | -0.05 | KS 0.959, chi2 0.983 | PASS |  |
-| ctm_base | 1 | r_A1_MO | 50 | 0.5223 | +0.10 | KS 0.744, chi2 0.779 | PASS |  |
-| ctm_base | 1 | r_C1_MO | 50 | 0.5292 | +0.12 | KS 0.776, chi2 0.936 | PASS |  |
-| ctm_base | 1 | r_E1_MO | 50 | 0.5594 | +0.20 | KS 0.147, chi2 0.851 | PASS |  |
-| ctm_base | 1 | r_L1_MO | 50 | 0.5014 | +0.04 | KS 0.918, chi2 0.699 | PASS |  |
-| ctm_base | 1 | r_A1_FO | 50 | 0.5161 | +0.07 | KS 0.52, chi2 0.851 | PASS |  |
-| ctm_base | 1 | r_C1_FO | 50 | 0.5642 | +0.20 | KS 0.111, chi2 0.319 | PASS |  |
-| ctm_base | 1 | r_E1_FO | 50 | 0.5431 | +0.16 | KS 0.313, chi2 0.534 | PASS |  |
-| ctm_base | 1 | r_L1_FO | 50 | 0.5004 | +0.02 | KS 0.625, chi2 0.29 | PASS |  |
-| ctm_base | 1 | r_A1_1C | 50 | 0.5184 | +0.01 | KS 0.588, chi2 0.384 | PASS |  |
-| ctm_base | 1 | r_C1_1C | 50 | 0.4943 | -0.03 | KS 0.732, chi2 0.494 | PASS |  |
-| ctm_base | 1 | r_E1_1C | 50 | 0.5053 | -0.00 | KS 0.68, chi2 0.456 | PASS |  |
-| ctm_base | 1 | r_L1_1C | 50 | 0.4738 | -0.05 | KS 0.672, chi2 0.456 | PASS |  |
-| ctm_base | 1 | var_A1_g1 | 50 | 0.5124 | +0.04 | KS 0.422, chi2 0.237 | PASS |  |
-| ctm_base | 1 | var_C1_g1 | 50 | 0.4688 | -0.14 | KS 0.777, chi2 0.936 | PASS |  |
-| ctm_base | 1 | var_L1_g1 | 50 | 0.5708 | +0.21 | KS 0.084, chi2 0.658 | PASS |  |
-| ctm_base | 1 | var_A1_g2 | 50 | 0.525 | +0.08 | KS 0.768, chi2 0.883 | PASS |  |
-| ctm_base | 1 | var_C1_g2 | 50 | 0.5482 | +0.18 | KS 0.482, chi2 0.817 | PASS |  |
-| ctm_base | 1 | var_L1_g2 | 50 | 0.5293 | +0.09 | KS 0.39, chi2 0.419 | PASS |  |
-| ctm_base | 1 | var_A1_g3 | 50 | 0.5001 | -0.03 | KS 0.379, chi2 0.172 | PASS |  |
-| ctm_base | 1 | var_C1_g3 | 50 | 0.5258 | +0.06 | KS 0.164, chi2 0.192 | PASS |  |
-| ctm_base | 1 | var_L1_g3 | 50 | 0.4888 | -0.02 | KS 0.902, chi2 0.936 | PASS |  |
-| ctm_base | 1 | r_E2_MZ | 50 | 0.4909 | -0.15 | KS 0.774, chi2 0.456 | PASS |  |
-| ctm_base | 1 | r_L2_MZ | 50 | 0.4597 | -0.24 | KS 0.448, chi2 0.262 | PASS |  |
-| ctm_base | 1 | r_A2_FS | 50 | 0.499 | -0.03 | KS 0.861, chi2 0.817 | PASS |  |
-| ctm_base | 1 | r_E2_FS | 50 | 0.5649 | +0.17 | KS 0.137, chi2 0.319 | PASS |  |
-| ctm_base | 1 | r_L2_FS | 50 | 0.529 | +0.07 | KS 0.457, chi2 0.972 | PASS |  |
-| ctm_base | 1 | r_A2_MHS | 50 | 0.4963 | +0.02 | KS 0.564, chi2 0.658 | PASS |  |
-| ctm_base | 1 | r_C2_MHS | 50 | 0.5503 | +0.17 | KS 0.107, chi2 0.137 | PASS |  |
-| ctm_base | 1 | r_E2_MHS | 50 | 0.4815 | -0.11 | KS 0.404, chi2 0.35 | PASS |  |
-| ctm_base | 1 | r_L2_MHS | 50 | 0.5061 | +0.05 | KS 0.622, chi2 0.0966 | PASS |  |
-| ctm_base | 1 | r_A2_PHS | 50 | 0.49 | -0.01 | KS 0.796, chi2 0.911 | PASS |  |
-| ctm_base | 1 | r_C2_PHS | 50 | 0.5232 | +0.11 | KS 0.87, chi2 0.319 | PASS |  |
-| ctm_base | 1 | r_E2_PHS | 50 | 0.555 | +0.14 | KS 0.0129, chi2 0.0235 | PASS |  |
-| ctm_base | 1 | r_L2_PHS | 50 | 0.4994 | -0.02 | KS 0.606, chi2 0.74 | PASS |  |
-| ctm_base | 1 | r_A2_MO | 50 | 0.5216 | +0.08 | KS 0.832, chi2 0.74 | PASS |  |
-| ctm_base | 1 | r_C2_MO | 50 | 0.5125 | +0.06 | KS 0.832, chi2 0.851 | PASS |  |
-| ctm_base | 1 | r_E2_MO | 50 | 0.5321 | +0.10 | KS 0.795, chi2 0.575 | PASS |  |
-| ctm_base | 1 | r_L2_MO | 50 | 0.5257 | +0.12 | KS 0.931, chi2 0.956 | PASS |  |
-| ctm_base | 1 | r_A2_FO | 50 | 0.5572 | +0.19 | KS 0.343, chi2 0.883 | PASS |  |
-| ctm_base | 1 | r_C2_FO | 50 | 0.5022 | -0.01 | KS 0.985, chi2 0.911 | PASS |  |
-| ctm_base | 1 | r_E2_FO | 50 | 0.5009 | +0.03 | KS 0.59, chi2 0.616 | PASS |  |
-| ctm_base | 1 | r_L2_FO | 50 | 0.4863 | -0.04 | KS 0.758, chi2 0.616 | PASS |  |
-| ctm_base | 1 | r_A2_1C | 50 | 0.4843 | -0.06 | KS 0.458, chi2 0.122 | PASS |  |
-| ctm_base | 1 | r_C2_1C | 50 | 0.5758 | +0.26 | KS 0.0638, chi2 0.494 | PASS |  |
-| ctm_base | 1 | r_E2_1C | 50 | 0.5754 | +0.20 | KS 0.0614, chi2 0.534 | PASS |  |
-| ctm_base | 1 | r_L2_1C | 50 | 0.5176 | +0.08 | KS 0.815, chi2 0.851 | PASS |  |
-| ctm_base | 1 | var_A2_g1 | 50 | 0.5417 | +0.14 | KS 0.242, chi2 0.419 | PASS |  |
-| ctm_base | 1 | var_C2_g1 | 50 | 0.5335 | +0.07 | KS 0.515, chi2 0.74 | PASS |  |
-| ctm_base | 1 | var_L2_g1 | 50 | 0.5838 | +0.28 | KS 0.16, chi2 0.319 | PASS |  |
-| ctm_base | 1 | var_A2_g2 | 50 | 0.4976 | +0.01 | KS 0.76, chi2 0.494 | PASS |  |
-| ctm_base | 1 | var_C2_g2 | 50 | 0.4698 | -0.07 | KS 0.578, chi2 0.936 | PASS |  |
-| ctm_base | 1 | var_L2_g2 | 50 | 0.4245 | -0.23 | KS 0.0985, chi2 0.0757 | PASS |  |
-| ctm_base | 1 | var_A2_g3 | 50 | 0.5098 | -0.01 | KS 0.659, chi2 0.74 | PASS |  |
-| ctm_base | 1 | var_C2_g3 | 50 | 0.5121 | +0.06 | KS 0.706, chi2 0.494 | PASS |  |
-| ctm_base | 1 | var_L2_g3 | 50 | 0.5404 | +0.13 | KS 0.351, chi2 0.575 | PASS |  |
-| ctm_base | 1 | r_A12_g1 | 50 | 0.4599 | -0.14 | KS 0.672, chi2 0.616 | PASS |  |
-| ctm_base | 1 | r_C12_g1 | 50 | 0.4765 | -0.11 | KS 0.79, chi2 0.319 | PASS |  |
-| ctm_base | 1 | r_E12_g1 | 50 | 0.5298 | +0.11 | KS 0.523, chi2 0.262 | PASS |  |
-| ctm_base | 1 | r_L12_g1 | 50 | 0.5003 | +0.01 | KS 0.938, chi2 0.936 | PASS |  |
-| ctm_base | 1 | r_A12_g2 | 50 | 0.4491 | -0.17 | KS 0.398, chi2 0.817 | PASS |  |
-| ctm_base | 1 | r_C12_g2 | 50 | 0.4477 | -0.12 | KS 0.321, chi2 0.779 | PASS |  |
-| ctm_base | 1 | r_E12_g2 | 50 | 0.5299 | +0.10 | KS 0.596, chi2 0.883 | PASS |  |
-| ctm_base | 1 | r_L12_g2 | 50 | 0.4425 | -0.22 | KS 0.573, chi2 0.213 | PASS |  |
-| ctm_base | 1 | r_A12_g3 | 50 | 0.4266 | -0.28 | KS 0.166, chi2 0.319 | PASS |  |
-| ctm_base | 1 | r_C12_g3 | 50 | 0.5167 | +0.03 | KS 0.816, chi2 0.779 | PASS |  |
-| ctm_base | 1 | r_E12_g3 | 50 | 0.4575 | -0.13 | KS 0.361, chi2 0.419 | PASS |  |
-| ctm_base | 1 | r_L12_g3 | 50 | 0.5163 | +0.06 | KS 0.715, chi2 0.956 | PASS |  |
-| ctm_analytic | 1 | r_E1_MZ | 50 | 0.5391 | +0.11 | KS 0.158, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_L1_MZ | 50 | 0.5096 | -0.00 | KS 0.469, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_A1_FS | 50 | 0.4981 | +0.01 | KS 0.483, chi2 0.699 | INFO | D2 |
-| ctm_analytic | 1 | r_E1_FS | 50 | 0.4064 | -0.34 | KS 0.0426, chi2 0.192 | INFO | D2 |
-| ctm_analytic | 1 | r_L1_FS | 50 | 0.5131 | +0.04 | KS 0.612, chi2 0.616 | INFO | D2 |
-| ctm_analytic | 1 | r_A1_MHS | 50 | 0.5603 | +0.20 | KS 0.0845, chi2 0.192 | INFO | D2 |
-| ctm_analytic | 1 | r_C1_MHS | 50 | 0.5829 | +0.27 | KS 0.0681, chi2 0.0179 | INFO | D2 |
-| ctm_analytic | 1 | r_E1_MHS | 50 | 0.5265 | +0.10 | KS 0.382, chi2 0.74 | INFO | D2 |
-| ctm_analytic | 1 | r_L1_MHS | 50 | 0.591 | +0.29 | KS 0.00778, chi2 0.00498 | INFO | D2 |
-| ctm_analytic | 1 | r_A1_PHS | 50 | 0.4714 | -0.10 | KS 0.658, chi2 0.779 | INFO | D2 |
-| ctm_analytic | 1 | r_C1_PHS | 50 | 0.511 | +0.05 | KS 0.624, chi2 0.616 | INFO | D2 |
-| ctm_analytic | 1 | r_E1_PHS | 50 | 0.5698 | +0.26 | KS 0.122, chi2 0.384 | INFO | D2 |
-| ctm_analytic | 1 | r_L1_PHS | 50 | 0.4838 | -0.06 | KS 0.98, chi2 0.817 | INFO | D2 |
-| ctm_analytic | 1 | r_A1_MO | 50 | 0.5227 | +0.09 | KS 0.629, chi2 0.972 | INFO | D2 |
-| ctm_analytic | 1 | r_C1_MO | 50 | 0.522 | +0.09 | KS 0.813, chi2 0.779 | INFO | D2 |
-| ctm_analytic | 1 | r_E1_MO | 50 | 0.5574 | +0.20 | KS 0.185, chi2 0.817 | INFO | D2 |
-| ctm_analytic | 1 | r_L1_MO | 50 | 0.5041 | +0.04 | KS 0.948, chi2 0.534 | INFO | D2 |
-| ctm_analytic | 1 | r_A1_FO | 50 | 0.5143 | +0.06 | KS 0.714, chi2 0.35 | INFO | D2 |
-| ctm_analytic | 1 | r_C1_FO | 50 | 0.5591 | +0.18 | KS 0.278, chi2 0.911 | INFO | D2 |
-| ctm_analytic | 1 | r_E1_FO | 50 | 0.548 | +0.17 | KS 0.39, chi2 0.534 | INFO | D2 |
-| ctm_analytic | 1 | r_L1_FO | 50 | 0.4907 | +0.00 | KS 0.649, chi2 0.237 | INFO | D2 |
-| ctm_analytic | 1 | r_A1_1C | 50 | 0.5072 | -0.01 | KS 0.664, chi2 0.883 | INFO | D2 |
-| ctm_analytic | 1 | r_C1_1C | 50 | 0.4959 | -0.03 | KS 0.557, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_E1_1C | 50 | 0.507 | -0.02 | KS 0.472, chi2 0.384 | INFO | D2 |
-| ctm_analytic | 1 | r_L1_1C | 50 | 0.4701 | -0.06 | KS 0.506, chi2 0.494 | INFO | D2 |
-| ctm_analytic | 1 | var_A1_g1 | 50 | 0.512 | +0.05 | KS 0.373, chi2 0.699 | INFO | D2 |
-| ctm_analytic | 1 | var_C1_g1 | 50 | 0.4685 | -0.11 | KS 0.505, chi2 0.494 | INFO | D2 |
-| ctm_analytic | 1 | var_L1_g1 | 50 | 0.5721 | +0.22 | KS 0.18, chi2 0.534 | INFO | D2 |
-| ctm_analytic | 1 | var_A1_g2 | 50 | 0.523 | +0.08 | KS 0.818, chi2 0.883 | INFO | D2 |
-| ctm_analytic | 1 | var_C1_g2 | 50 | 0.555 | +0.18 | KS 0.414, chi2 0.29 | INFO | D2 |
-| ctm_analytic | 1 | var_L1_g2 | 50 | 0.5328 | +0.10 | KS 0.447, chi2 0.192 | INFO | D2 |
-| ctm_analytic | 1 | var_A1_g3 | 50 | 0.4905 | -0.05 | KS 0.39, chi2 0.0966 | INFO | D2 |
-| ctm_analytic | 1 | var_C1_g3 | 50 | 0.5304 | +0.08 | KS 0.0726, chi2 0.35 | INFO | D2 |
-| ctm_analytic | 1 | var_L1_g3 | 50 | 0.496 | -0.01 | KS 0.907, chi2 0.658 | INFO | D2 |
-| ctm_analytic | 1 | r_E2_MZ | 50 | 0.4842 | -0.18 | KS 0.654, chi2 0.29 | INFO | D2 |
-| ctm_analytic | 1 | r_L2_MZ | 50 | 0.4657 | -0.26 | KS 0.404, chi2 0.0457 | INFO | D2 |
-| ctm_analytic | 1 | r_A2_FS | 50 | 0.4939 | -0.06 | KS 0.915, chi2 0.779 | INFO | D2 |
-| ctm_analytic | 1 | r_E2_FS | 50 | 0.557 | +0.15 | KS 0.0417, chi2 0.0757 | INFO | D2 |
-| ctm_analytic | 1 | r_L2_FS | 50 | 0.5215 | +0.05 | KS 0.6, chi2 0.658 | INFO | D2 |
-| ctm_analytic | 1 | r_A2_MHS | 50 | 0.4902 | +0.01 | KS 0.477, chi2 0.29 | INFO | D2 |
-| ctm_analytic | 1 | r_C2_MHS | 50 | 0.5428 | +0.15 | KS 0.251, chi2 0.699 | INFO | D2 |
-| ctm_analytic | 1 | r_E2_MHS | 50 | 0.4894 | -0.08 | KS 0.553, chi2 0.456 | INFO | D2 |
-| ctm_analytic | 1 | r_L2_MHS | 50 | 0.502 | +0.05 | KS 0.677, chi2 0.456 | INFO | D2 |
-| ctm_analytic | 1 | r_A2_PHS | 50 | 0.5008 | +0.01 | KS 0.998, chi2 0.983 | INFO | D2 |
-| ctm_analytic | 1 | r_C2_PHS | 50 | 0.5315 | +0.14 | KS 0.754, chi2 0.456 | INFO | D2 |
-| ctm_analytic | 1 | r_E2_PHS | 50 | 0.5501 | +0.12 | KS 0.15, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_L2_PHS | 50 | 0.4937 | -0.02 | KS 0.75, chi2 0.154 | INFO | D2 |
-| ctm_analytic | 1 | r_A2_MO | 50 | 0.5199 | +0.08 | KS 0.889, chi2 0.658 | INFO | D2 |
-| ctm_analytic | 1 | r_C2_MO | 50 | 0.5066 | +0.04 | KS 0.851, chi2 0.699 | INFO | D2 |
-| ctm_analytic | 1 | r_E2_MO | 50 | 0.5284 | +0.10 | KS 0.596, chi2 0.456 | INFO | D2 |
-| ctm_analytic | 1 | r_L2_MO | 50 | 0.5237 | +0.11 | KS 0.812, chi2 0.74 | INFO | D2 |
-| ctm_analytic | 1 | r_A2_FO | 50 | 0.5586 | +0.18 | KS 0.199, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_C2_FO | 50 | 0.4933 | -0.03 | KS 0.876, chi2 0.494 | INFO | D2 |
-| ctm_analytic | 1 | r_E2_FO | 50 | 0.5014 | +0.02 | KS 0.619, chi2 0.851 | INFO | D2 |
-| ctm_analytic | 1 | r_L2_FO | 50 | 0.4914 | -0.03 | KS 0.349, chi2 0.699 | INFO | D2 |
-| ctm_analytic | 1 | r_A2_1C | 50 | 0.4881 | -0.07 | KS 0.307, chi2 0.0757 | INFO | D2 |
-| ctm_analytic | 1 | r_C2_1C | 50 | 0.576 | +0.25 | KS 0.0937, chi2 0.456 | INFO | D2 |
-| ctm_analytic | 1 | r_E2_1C | 50 | 0.573 | +0.19 | KS 0.0841, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_L2_1C | 50 | 0.5227 | +0.07 | KS 0.966, chi2 0.983 | INFO | D2 |
-| ctm_analytic | 1 | var_A2_g1 | 50 | 0.5457 | +0.14 | KS 0.267, chi2 0.29 | INFO | D2 |
-| ctm_analytic | 1 | var_C2_g1 | 50 | 0.5576 | +0.19 | KS 0.135, chi2 0.575 | INFO | D2 |
-| ctm_analytic | 1 | var_L2_g1 | 50 | 0.5849 | +0.30 | KS 0.0989, chi2 0.0856 | INFO | D2 |
-| ctm_analytic | 1 | var_A2_g2 | 50 | 0.4978 | -0.00 | KS 0.654, chi2 0.534 | INFO | D2 |
-| ctm_analytic | 1 | var_C2_g2 | 50 | 0.4896 | +0.01 | KS 0.576, chi2 0.616 | INFO | D2 |
-| ctm_analytic | 1 | var_L2_g2 | 50 | 0.4303 | -0.23 | KS 0.149, chi2 0.0401 | INFO | D2 |
-| ctm_analytic | 1 | var_A2_g3 | 50 | 0.5043 | -0.02 | KS 0.921, chi2 0.74 | INFO | D2 |
-| ctm_analytic | 1 | var_C2_g3 | 50 | 0.5133 | +0.08 | KS 0.71, chi2 0.883 | INFO | D2 |
-| ctm_analytic | 1 | var_L2_g3 | 50 | 0.5397 | +0.12 | KS 0.129, chi2 0.534 | INFO | D2 |
-| ctm_analytic | 1 | r_A12_g1 | 50 | 0.4599 | -0.14 | KS 0.375, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_C12_g1 | 50 | 0.4611 | -0.24 | KS 0.296, chi2 0.0269 | INFO | D2 |
-| ctm_analytic | 1 | r_E12_g1 | 50 | 0.5253 | +0.10 | KS 0.809, chi2 0.616 | INFO | D2 |
-| ctm_analytic | 1 | r_L12_g1 | 50 | 0.5005 | -0.01 | KS 0.928, chi2 0.699 | INFO | D2 |
-| ctm_analytic | 1 | r_A12_g2 | 50 | 0.4528 | -0.17 | KS 0.641, chi2 0.851 | INFO | D2 |
-| ctm_analytic | 1 | r_C12_g2 | 50 | 0.4423 | -0.15 | KS 0.081, chi2 0.575 | INFO | D2 |
-| ctm_analytic | 1 | r_E12_g2 | 50 | 0.5274 | +0.10 | KS 0.725, chi2 0.456 | INFO | D2 |
-| ctm_analytic | 1 | r_L12_g2 | 50 | 0.448 | -0.22 | KS 0.573, chi2 0.534 | INFO | D2 |
-| ctm_analytic | 1 | r_A12_g3 | 50 | 0.4295 | -0.27 | KS 0.0869, chi2 0.456 | INFO | D2 |
-| ctm_analytic | 1 | r_C12_g3 | 50 | 0.5144 | +0.01 | KS 0.616, chi2 0.419 | INFO | D2 |
-| ctm_analytic | 1 | r_E12_g3 | 50 | 0.463 | -0.13 | KS 0.708, chi2 0.883 | INFO | D2 |
-| ctm_analytic | 1 | r_L12_g3 | 50 | 0.5099 | +0.04 | KS 0.545, chi2 0.699 | INFO | D2 |
+| rm_base | 1 | r_E1_MZ | 50 | 0.475 | -0.05 | KS 0.471, chi2 0.765 | PASS |  |
+| rm_base | 1 | r_L1_MZ | 50 | 0.5067 | +0.05 | KS 0.478, chi2 0.684 | PASS |  |
+| rm_base | 1 | r_A1_FS | 50 | 0.4622 | -0.13 | KS 0.77, chi2 0.765 | PASS |  |
+| rm_base | 1 | r_E1_FS | 50 | 0.4558 | -0.22 | KS 0.245, chi2 0.272 | PASS |  |
+| rm_base | 1 | r_L1_FS | 50 | 0.4464 | -0.22 | KS 0.0834, chi2 0.246 | PASS |  |
+| rm_base | 1 | r_A1_MHS | 50 | 0.5348 | +0.14 | KS 0.226, chi2 0.272 | PASS |  |
+| rm_base | 1 | r_E1_MHS | 50 | 0.4759 | -0.15 | KS 0.84, chi2 0.246 | PASS |  |
+| rm_base | 1 | r_L1_MHS | 50 | 0.5102 | +0.09 | KS 0.56, chi2 0.141 | PASS |  |
+| rm_base | 1 | r_A1_PHS | 50 | 0.4823 | -0.06 | KS 0.585, chi2 0.0776 | PASS |  |
+| rm_base | 1 | r_C1_PHS | 50 | 0.4933 | -0.06 | KS 0.97, chi2 0.437 | PASS |  |
+| rm_base | 1 | r_E1_PHS | 50 | 0.4763 | -0.08 | KS 0.764, chi2 0.365 | PASS |  |
+| rm_base | 1 | r_L1_PHS | 50 | 0.4938 | -0.04 | KS 0.855, chi2 0.557 | PASS |  |
+| rm_base | 1 | r_A1_MO | 50 | 0.4873 | +0.01 | KS 0.747, chi2 0.928 | PASS |  |
+| rm_base | 1 | r_C1_MO | 50 | 0.5227 | +0.07 | KS 0.765, chi2 0.725 | PASS |  |
+| rm_base | 1 | r_E1_MO | 50 | 0.4675 | -0.16 | KS 0.188, chi2 0.099 | PASS |  |
+| rm_base | 1 | r_L1_MO | 50 | 0.4386 | -0.18 | KS 0.132, chi2 0.158 | PASS |  |
+| rm_base | 1 | r_A1_FO | 50 | 0.497 | -0.01 | KS 0.952, chi2 0.873 | PASS |  |
+| rm_base | 1 | r_C1_FO | 50 | 0.5067 | +0.00 | KS 0.775, chi2 0.221 | PASS |  |
+| rm_base | 1 | r_E1_FO | 50 | 0.4599 | -0.18 | KS 0.172, chi2 0.365 | PASS |  |
+| rm_base | 1 | r_L1_FO | 50 | 0.5405 | +0.09 | KS 0.149, chi2 0.198 | PASS |  |
+| rm_base | 1 | r_A1_1C | 50 | 0.5139 | +0.05 | KS 0.953, chi2 0.158 | PASS |  |
+| rm_base | 1 | r_C1_1C | 50 | 0.5211 | +0.05 | KS 0.745, chi2 0.804 | PASS |  |
+| rm_base | 1 | r_E1_1C | 50 | 0.4671 | -0.11 | KS 0.518, chi2 0.0686 | PASS |  |
+| rm_base | 1 | r_L1_1C | 50 | 0.5581 | +0.23 | KS 0.457, chi2 0.765 | PASS |  |
+| rm_base | 1 | var_A1_g1 | 50 | 0.5023 | +0.02 | KS 0.982, chi2 0.903 | PASS |  |
+| rm_base | 1 | var_C1_g1 | 50 | 0.4859 | -0.05 | KS 0.913, chi2 0.95 | PASS |  |
+| rm_base | 1 | var_L1_g1 | 50 | 0.5725 | +0.22 | KS 0.0661, chi2 0.0362 | PASS |  |
+| rm_base | 1 | var_A1_g2 | 50 | 0.4846 | +0.03 | KS 0.749, chi2 0.641 | PASS |  |
+| rm_base | 1 | var_C1_g2 | 50 | 0.5069 | +0.03 | KS 0.766, chi2 0.765 | PASS |  |
+| rm_base | 1 | var_L1_g2 | 50 | 0.4918 | -0.01 | KS 0.792, chi2 0.765 | PASS |  |
+| rm_base | 1 | var_A1_g3 | 50 | 0.4166 | -0.24 | KS 0.0899, chi2 0.332 | PASS |  |
+| rm_base | 1 | var_C1_g3 | 50 | 0.4658 | -0.13 | KS 0.391, chi2 0.804 | PASS |  |
+| rm_base | 1 | var_L1_g3 | 50 | 0.4485 | -0.21 | KS 0.33, chi2 0.873 | PASS |  |
+| rm_base | 1 | r_E2_MZ | 50 | 0.4422 | -0.17 | KS 0.0808, chi2 0.684 | PASS |  |
+| rm_base | 1 | r_L2_MZ | 50 | 0.4426 | -0.15 | KS 0.33, chi2 0.641 | PASS |  |
+| rm_base | 1 | r_A2_FS | 50 | 0.5365 | +0.10 | KS 0.22, chi2 0.599 | PASS |  |
+| rm_base | 1 | r_E2_FS | 50 | 0.5239 | +0.12 | KS 0.646, chi2 0.903 | PASS |  |
+| rm_base | 1 | r_L2_FS | 50 | 0.5111 | +0.08 | KS 0.505, chi2 0.126 | PASS |  |
+| rm_base | 1 | r_A2_MHS | 50 | 0.5221 | +0.12 | KS 0.577, chi2 0.903 | PASS |  |
+| rm_base | 1 | r_E2_MHS | 50 | 0.5519 | +0.15 | KS 0.203, chi2 0.599 | PASS |  |
+| rm_base | 1 | r_L2_MHS | 50 | 0.5124 | +0.08 | KS 0.654, chi2 0.599 | PASS |  |
+| rm_base | 1 | r_A2_PHS | 50 | 0.5402 | +0.17 | KS 0.684, chi2 0.989 | PASS |  |
+| rm_base | 1 | r_C2_PHS | 50 | 0.4701 | -0.06 | KS 0.721, chi2 0.989 | PASS |  |
+| rm_base | 1 | r_E2_PHS | 50 | 0.4561 | -0.13 | KS 0.0407, chi2 0.0188 | PASS |  |
+| rm_base | 1 | r_L2_PHS | 50 | 0.5583 | +0.17 | KS 0.216, chi2 0.475 | PASS |  |
+| rm_base | 1 | r_A2_MO | 50 | 0.5207 | +0.07 | KS 0.363, chi2 0.641 | PASS |  |
+| rm_base | 1 | r_C2_MO | 50 | 0.5274 | +0.13 | KS 0.57, chi2 0.599 | PASS |  |
+| rm_base | 1 | r_E2_MO | 50 | 0.5246 | +0.11 | KS 0.734, chi2 0.332 | PASS |  |
+| rm_base | 1 | r_L2_MO | 50 | 0.5502 | +0.17 | KS 0.693, chi2 0.967 | PASS |  |
+| rm_base | 1 | r_A2_FO | 50 | 0.5105 | +0.04 | KS 0.59, chi2 0.141 | PASS |  |
+| rm_base | 1 | r_C2_FO | 50 | 0.4649 | -0.13 | KS 0.667, chi2 0.515 | PASS |  |
+| rm_base | 1 | r_E2_FO | 50 | 0.5184 | +0.08 | KS 0.534, chi2 0.557 | PASS |  |
+| rm_base | 1 | r_L2_FO | 50 | 0.5062 | +0.04 | KS 0.904, chi2 0.804 | PASS |  |
+| rm_base | 1 | r_A2_1C | 50 | 0.5429 | +0.14 | KS 0.395, chi2 0.84 | PASS |  |
+| rm_base | 1 | r_C2_1C | 50 | 0.4684 | -0.10 | KS 0.706, chi2 0.998 | PASS |  |
+| rm_base | 1 | r_E2_1C | 50 | 0.4483 | -0.18 | KS 0.256, chi2 0.804 | PASS |  |
+| rm_base | 1 | r_L2_1C | 50 | 0.5247 | +0.07 | KS 0.559, chi2 0.332 | PASS |  |
+| rm_base | 1 | var_A2_g1 | 50 | 0.506 | +0.02 | KS 0.984, chi2 0.95 | PASS |  |
+| rm_base | 1 | var_C2_g1 | 50 | 0.5454 | +0.20 | KS 0.512, chi2 0.246 | PASS |  |
+| rm_base | 1 | var_L2_g1 | 50 | 0.5277 | +0.06 | KS 0.354, chi2 0.873 | PASS |  |
+| rm_base | 1 | var_A2_g2 | 50 | 0.4985 | +0.03 | KS 0.625, chi2 0.0469 | PASS |  |
+| rm_base | 1 | var_C2_g2 | 50 | 0.4559 | -0.12 | KS 0.123, chi2 0.0532 | PASS |  |
+| rm_base | 1 | var_L2_g2 | 50 | 0.5302 | +0.14 | KS 0.638, chi2 0.272 | PASS |  |
+| rm_base | 1 | var_A2_g3 | 50 | 0.5187 | +0.03 | KS 0.554, chi2 0.475 | PASS |  |
+| rm_base | 1 | var_C2_g3 | 50 | 0.4883 | -0.06 | KS 0.961, chi2 0.599 | PASS |  |
+| rm_base | 1 | var_L2_g3 | 50 | 0.4973 | +0.02 | KS 0.677, chi2 0.725 | PASS |  |
+| rm_base | 1 | r_A12_g1 | 50 | 0.5185 | +0.08 | KS 0.748, chi2 0.557 | PASS |  |
+| rm_base | 1 | r_C12_g1 | 50 | 0.5338 | +0.10 | KS 0.293, chi2 0.221 | PASS |  |
+| rm_base | 1 | r_E12_g1 | 50 | 0.5071 | +0.04 | KS 0.775, chi2 0.475 | PASS |  |
+| rm_base | 1 | r_L12_g1 | 50 | 0.5759 | +0.26 | KS 0.0413, chi2 0.0532 | PASS |  |
+| rm_base | 1 | r_A12_g2 | 50 | 0.5811 | +0.27 | KS 0.0409, chi2 0.246 | PASS |  |
+| rm_base | 1 | r_C12_g2 | 50 | 0.5101 | +0.03 | KS 0.983, chi2 0.873 | PASS |  |
+| rm_base | 1 | r_E12_g2 | 50 | 0.4429 | -0.22 | KS 0.227, chi2 0.641 | PASS |  |
+| rm_base | 1 | r_L12_g2 | 50 | 0.5175 | +0.04 | KS 0.197, chi2 0.437 | PASS |  |
+| rm_base | 1 | r_A12_g3 | 50 | 0.4986 | -0.03 | KS 0.898, chi2 0.873 | PASS |  |
+| rm_base | 1 | r_C12_g3 | 50 | 0.5031 | -0.01 | KS 0.939, chi2 0.98 | PASS |  |
+| rm_base | 1 | r_E12_g3 | 50 | 0.4613 | -0.11 | KS 0.388, chi2 0.928 | PASS |  |
+| rm_base | 1 | r_L12_g3 | 50 | 0.5079 | +0.04 | KS 0.9, chi2 0.365 | PASS |  |
+| deep_constant | 1 | r_E1_MZ | 50 | 0.4154 | -0.29 | KS 0.0539, chi2 0.599 | PASS |  |
+| deep_constant | 1 | r_L1_MZ | 50 | 0.4713 | -0.09 | KS 0.59, chi2 0.641 | PASS |  |
+| deep_constant | 1 | r_A1_FS | 50 | 0.5079 | +0.04 | KS 0.793, chi2 0.4 | PASS |  |
+| deep_constant | 1 | r_E1_FS | 50 | 0.5321 | +0.05 | KS 0.46, chi2 0.641 | PASS |  |
+| deep_constant | 1 | r_L1_FS | 50 | 0.4961 | +0.00 | KS 0.821, chi2 0.246 | PASS |  |
+| deep_constant | 1 | r_A1_MHS | 50 | 0.5174 | +0.03 | KS 0.363, chi2 0.178 | PASS |  |
+| deep_constant | 1 | r_E1_MHS | 50 | 0.4913 | -0.06 | KS 0.93, chi2 0.873 | PASS |  |
+| deep_constant | 1 | r_L1_MHS | 50 | 0.5108 | +0.03 | KS 0.906, chi2 0.967 | PASS |  |
+| deep_constant | 1 | r_A1_PHS | 50 | 0.5748 | +0.26 | KS 0.153, chi2 0.198 | PASS |  |
+| deep_constant | 1 | r_C1_PHS | 50 | 0.6008 | +0.35 | KS 0.00669, chi2 0.0362 | PASS |  |
+| deep_constant | 1 | r_E1_PHS | 50 | 0.519 | +0.15 | KS 0.473, chi2 0.301 | PASS |  |
+| deep_constant | 1 | r_L1_PHS | 50 | 0.5974 | +0.35 | KS 0.0882, chi2 0.0605 | PASS |  |
+| deep_constant | 1 | r_A1_MO | 50 | 0.5108 | +0.03 | KS 0.346, chi2 0.515 | PASS |  |
+| deep_constant | 1 | r_C1_MO | 50 | 0.5091 | -0.00 | KS 0.683, chi2 0.873 | PASS |  |
+| deep_constant | 1 | r_E1_MO | 50 | 0.495 | +0.04 | KS 0.683, chi2 0.684 | PASS |  |
+| deep_constant | 1 | r_L1_MO | 50 | 0.5017 | -0.01 | KS 0.967, chi2 0.98 | PASS |  |
+| deep_constant | 1 | r_A1_FO | 50 | 0.5175 | +0.02 | KS 0.569, chi2 0.332 | PASS |  |
+| deep_constant | 1 | r_C1_FO | 50 | 0.488 | -0.09 | KS 0.93, chi2 0.684 | PASS |  |
+| deep_constant | 1 | r_E1_FO | 50 | 0.4766 | -0.11 | KS 0.394, chi2 0.684 | PASS |  |
+| deep_constant | 1 | r_L1_FO | 50 | 0.4979 | -0.05 | KS 0.972, chi2 0.765 | PASS |  |
+| deep_constant | 1 | r_A1_1C | 50 | 0.5334 | +0.15 | KS 0.809, chi2 0.967 | PASS |  |
+| deep_constant | 1 | r_C1_1C | 50 | 0.4878 | -0.03 | KS 0.272, chi2 0.4 | PASS |  |
+| deep_constant | 1 | r_E1_1C | 50 | 0.4822 | -0.05 | KS 0.712, chi2 0.684 | PASS |  |
+| deep_constant | 1 | r_L1_1C | 50 | 0.5108 | +0.03 | KS 0.895, chi2 0.967 | PASS |  |
+| deep_constant | 1 | var_A1_g1 | 50 | 0.4548 | -0.10 | KS 0.248, chi2 0.246 | PASS |  |
+| deep_constant | 1 | var_C1_g1 | 50 | 0.5282 | +0.16 | KS 0.34, chi2 0.515 | PASS |  |
+| deep_constant | 1 | var_L1_g1 | 50 | 0.4866 | -0.08 | KS 0.288, chi2 0.0279 | PASS |  |
+| deep_constant | 1 | var_A1_g2 | 50 | 0.5083 | +0.03 | KS 0.916, chi2 0.765 | PASS |  |
+| deep_constant | 1 | var_C1_g2 | 50 | 0.5073 | +0.07 | KS 0.93, chi2 0.804 | PASS |  |
+| deep_constant | 1 | var_L1_g2 | 50 | 0.5413 | +0.14 | KS 0.662, chi2 0.641 | PASS |  |
+| deep_constant | 1 | var_A1_g3 | 50 | 0.4852 | -0.01 | KS 0.679, chi2 0.599 | PASS |  |
+| deep_constant | 1 | var_C1_g3 | 50 | 0.4937 | -0.02 | KS 0.937, chi2 0.557 | PASS |  |
+| deep_constant | 1 | var_L1_g3 | 50 | 0.5169 | +0.08 | KS 0.868, chi2 0.641 | PASS |  |
+| deep_constant | 1 | var_A1_g4 | 50 | 0.492 | -0.04 | KS 0.96, chi2 0.684 | PASS |  |
+| deep_constant | 1 | var_C1_g4 | 50 | 0.4682 | -0.15 | KS 0.184, chi2 0.112 | PASS |  |
+| deep_constant | 1 | var_L1_g4 | 50 | 0.4537 | -0.12 | KS 0.248, chi2 0.903 | PASS |  |
+| deep_constant | 1 | var_A1_g5 | 50 | 0.441 | -0.12 | KS 0.243, chi2 0.641 | PASS |  |
+| deep_constant | 1 | var_C1_g5 | 50 | 0.4566 | -0.14 | KS 0.495, chi2 0.641 | PASS |  |
+| deep_constant | 1 | var_L1_g5 | 50 | 0.4751 | -0.09 | KS 0.383, chi2 0.141 | PASS |  |
+| deep_constant | 1 | var_A1_g6 | 50 | 0.4789 | -0.02 | KS 0.0336, chi2 0.00483 | PASS |  |
+| deep_constant | 1 | var_C1_g6 | 50 | 0.5565 | +0.20 | KS 0.194, chi2 0.684 | PASS |  |
+| deep_constant | 1 | var_L1_g6 | 50 | 0.477 | -0.05 | KS 0.581, chi2 0.515 | PASS |  |
+| deep_constant | 1 | var_A1_g7 | 50 | 0.5617 | +0.27 | KS 0.287, chi2 0.804 | PASS |  |
+| deep_constant | 1 | var_C1_g7 | 50 | 0.5125 | +0.01 | KS 0.785, chi2 0.475 | PASS |  |
+| deep_constant | 1 | var_L1_g7 | 50 | 0.5498 | +0.16 | KS 0.271, chi2 0.557 | PASS |  |
+| deep_constant | 1 | var_A1_g8 | 50 | 0.5245 | +0.13 | KS 0.278, chi2 0.332 | PASS |  |
+| deep_constant | 1 | var_C1_g8 | 50 | 0.5141 | +0.00 | KS 0.516, chi2 0.4 | PASS |  |
+| deep_constant | 1 | var_L1_g8 | 50 | 0.4977 | +0.02 | KS 0.949, chi2 0.178 | PASS |  |
+| deep_constant | 1 | var_A1_g9 | 50 | 0.5422 | +0.17 | KS 0.187, chi2 0.365 | PASS |  |
+| deep_constant | 1 | var_C1_g9 | 50 | 0.4911 | -0.06 | KS 0.907, chi2 0.725 | PASS |  |
+| deep_constant | 1 | var_L1_g9 | 50 | 0.5517 | +0.14 | KS 0.208, chi2 0.0532 | PASS |  |
+| deep_constant | 1 | var_A1_g10 | 50 | 0.4932 | -0.05 | KS 0.769, chi2 0.84 | PASS |  |
+| deep_constant | 1 | var_C1_g10 | 50 | 0.4638 | -0.11 | KS 0.309, chi2 0.158 | PASS |  |
+| deep_constant | 1 | var_L1_g10 | 50 | 0.4888 | -0.01 | KS 0.931, chi2 0.725 | PASS |  |
+| deep_constant | 1 | var_A1_g11 | 50 | 0.5658 | +0.19 | KS 0.27, chi2 0.903 | PASS |  |
+| deep_constant | 1 | var_C1_g11 | 50 | 0.5639 | +0.21 | KS 0.211, chi2 0.178 | PASS |  |
+| deep_constant | 1 | var_L1_g11 | 50 | 0.5934 | +0.35 | KS 0.0405, chi2 0.301 | PASS |  |
+| deep_constant | 1 | r_E2_MZ | 50 | 0.4576 | -0.08 | KS 0.409, chi2 0.437 | PASS |  |
+| deep_constant | 1 | r_L2_MZ | 50 | 0.4791 | -0.02 | KS 0.626, chi2 0.272 | PASS |  |
+| deep_constant | 1 | r_A2_FS | 50 | 0.4968 | +0.06 | KS 0.624, chi2 0.437 | PASS |  |
+| deep_constant | 1 | r_E2_FS | 50 | 0.4492 | -0.12 | KS 0.165, chi2 0.437 | PASS |  |
+| deep_constant | 1 | r_L2_FS | 50 | 0.4764 | -0.08 | KS 0.586, chi2 0.475 | PASS |  |
+| deep_constant | 1 | r_A2_MHS | 50 | 0.5383 | +0.11 | KS 0.293, chi2 0.365 | PASS |  |
+| deep_constant | 1 | r_E2_MHS | 50 | 0.5179 | +0.13 | KS 0.715, chi2 0.437 | PASS |  |
+| deep_constant | 1 | r_L2_MHS | 50 | 0.5458 | +0.17 | KS 0.299, chi2 0.301 | PASS |  |
+| deep_constant | 1 | r_A2_PHS | 50 | 0.5177 | +0.08 | KS 0.608, chi2 0.641 | PASS |  |
+| deep_constant | 1 | r_C2_PHS | 50 | 0.5697 | +0.21 | KS 0.0964, chi2 0.475 | PASS |  |
+| deep_constant | 1 | r_E2_PHS | 50 | 0.4797 | -0.07 | KS 0.383, chi2 0.198 | PASS |  |
+| deep_constant | 1 | r_L2_PHS | 50 | 0.424 | -0.25 | KS 0.104, chi2 0.4 | PASS |  |
+| deep_constant | 1 | r_A2_MO | 50 | 0.5095 | +0.03 | KS 0.567, chi2 0.272 | PASS |  |
+| deep_constant | 1 | r_C2_MO | 50 | 0.4537 | -0.26 | KS 0.147, chi2 0.0532 | PASS |  |
+| deep_constant | 1 | r_E2_MO | 50 | 0.4741 | -0.13 | KS 0.63, chi2 0.515 | PASS |  |
+| deep_constant | 1 | r_L2_MO | 50 | 0.4997 | -0.03 | KS 0.816, chi2 0.599 | PASS |  |
+| deep_constant | 1 | r_A2_FO | 50 | 0.5468 | +0.18 | KS 0.116, chi2 0.112 | PASS |  |
+| deep_constant | 1 | r_C2_FO | 50 | 0.5014 | -0.04 | KS 0.858, chi2 0.515 | PASS |  |
+| deep_constant | 1 | r_E2_FO | 50 | 0.5779 | +0.27 | KS 0.105, chi2 0.0686 | PASS |  |
+| deep_constant | 1 | r_L2_FO | 50 | 0.5066 | +0.03 | KS 0.993, chi2 0.998 | PASS |  |
+| deep_constant | 1 | r_A2_1C | 50 | 0.4932 | +0.02 | KS 0.958, chi2 0.515 | PASS |  |
+| deep_constant | 1 | r_C2_1C | 50 | 0.4409 | -0.27 | KS 0.0791, chi2 0.158 | PASS |  |
+| deep_constant | 1 | r_E2_1C | 50 | 0.4456 | -0.15 | KS 0.247, chi2 0.178 | PASS |  |
+| deep_constant | 1 | r_L2_1C | 50 | 0.5289 | +0.11 | KS 0.605, chi2 0.684 | PASS |  |
+| deep_constant | 1 | var_A2_g1 | 50 | 0.4944 | -0.06 | KS 0.79, chi2 0.515 | PASS |  |
+| deep_constant | 1 | var_C2_g1 | 50 | 0.4919 | -0.10 | KS 0.678, chi2 0.0469 | PASS |  |
+| deep_constant | 1 | var_L2_g1 | 50 | 0.4674 | -0.13 | KS 0.205, chi2 0.641 | PASS |  |
+| deep_constant | 1 | var_A2_g2 | 50 | 0.5411 | +0.13 | KS 0.348, chi2 0.684 | PASS |  |
+| deep_constant | 1 | var_C2_g2 | 50 | 0.4637 | -0.13 | KS 0.681, chi2 0.725 | PASS |  |
+| deep_constant | 1 | var_L2_g2 | 50 | 0.5373 | +0.15 | KS 0.482, chi2 0.437 | PASS |  |
+| deep_constant | 1 | var_A2_g3 | 50 | 0.5316 | +0.09 | KS 0.632, chi2 0.599 | PASS |  |
+| deep_constant | 1 | var_C2_g3 | 50 | 0.4751 | -0.07 | KS 0.28, chi2 0.158 | PASS |  |
+| deep_constant | 1 | var_L2_g3 | 50 | 0.5155 | +0.06 | KS 0.754, chi2 0.804 | PASS |  |
+| deep_constant | 1 | var_A2_g4 | 50 | 0.4932 | +0.00 | KS 0.272, chi2 0.301 | PASS |  |
+| deep_constant | 1 | var_C2_g4 | 50 | 0.5177 | +0.03 | KS 0.893, chi2 0.873 | PASS |  |
+| deep_constant | 1 | var_L2_g4 | 50 | 0.5318 | +0.11 | KS 0.486, chi2 0.475 | PASS |  |
+| deep_constant | 1 | var_A2_g5 | 50 | 0.4553 | -0.10 | KS 0.382, chi2 0.928 | PASS |  |
+| deep_constant | 1 | var_C2_g5 | 50 | 0.5335 | +0.12 | KS 0.745, chi2 0.928 | PASS |  |
+| deep_constant | 1 | var_L2_g5 | 50 | 0.4725 | -0.05 | KS 0.605, chi2 0.684 | PASS |  |
+| deep_constant | 1 | var_A2_g6 | 50 | 0.5346 | +0.16 | KS 0.342, chi2 0.641 | PASS |  |
+| deep_constant | 1 | var_C2_g6 | 50 | 0.5323 | +0.15 | KS 0.491, chi2 0.84 | PASS |  |
+| deep_constant | 1 | var_L2_g6 | 50 | 0.5118 | +0.04 | KS 0.39, chi2 0.332 | PASS |  |
+| deep_constant | 1 | var_A2_g7 | 50 | 0.5232 | +0.05 | KS 0.73, chi2 0.725 | PASS |  |
+| deep_constant | 1 | var_C2_g7 | 50 | 0.5256 | +0.04 | KS 0.504, chi2 0.98 | PASS |  |
+| deep_constant | 1 | var_L2_g7 | 50 | 0.4859 | -0.06 | KS 0.45, chi2 0.725 | PASS |  |
+| deep_constant | 1 | var_A2_g8 | 50 | 0.5092 | -0.02 | KS 0.67, chi2 0.301 | PASS |  |
+| deep_constant | 1 | var_C2_g8 | 50 | 0.545 | +0.13 | KS 0.249, chi2 0.804 | PASS |  |
+| deep_constant | 1 | var_L2_g8 | 50 | 0.4517 | -0.12 | KS 0.105, chi2 0.332 | PASS |  |
+| deep_constant | 1 | var_A2_g9 | 50 | 0.5092 | +0.08 | KS 0.933, chi2 0.475 | PASS |  |
+| deep_constant | 1 | var_C2_g9 | 50 | 0.5176 | +0.04 | KS 0.889, chi2 0.641 | PASS |  |
+| deep_constant | 1 | var_L2_g9 | 50 | 0.4799 | -0.11 | KS 0.264, chi2 0.301 | PASS |  |
+| deep_constant | 1 | var_A2_g10 | 50 | 0.5076 | +0.02 | KS 0.985, chi2 0.967 | PASS |  |
+| deep_constant | 1 | var_C2_g10 | 50 | 0.4753 | -0.11 | KS 0.487, chi2 0.515 | PASS |  |
+| deep_constant | 1 | var_L2_g10 | 50 | 0.4531 | -0.19 | KS 0.416, chi2 0.365 | PASS |  |
+| deep_constant | 1 | var_A2_g11 | 50 | 0.5103 | -0.05 | KS 0.623, chi2 0.332 | PASS |  |
+| deep_constant | 1 | var_C2_g11 | 50 | 0.4016 | -0.31 | KS 0.012, chi2 0.158 | PASS |  |
+| deep_constant | 1 | var_L2_g11 | 50 | 0.4813 | -0.11 | KS 0.849, chi2 0.158 | PASS |  |
+| deep_constant | 1 | r_A12_g1 | 50 | 0.4737 | -0.13 | KS 0.8, chi2 0.599 | PASS |  |
+| deep_constant | 1 | r_C12_g1 | 50 | 0.5178 | +0.09 | KS 0.486, chi2 0.599 | PASS |  |
+| deep_constant | 1 | r_E12_g1 | 50 | 0.5059 | +0.01 | KS 0.992, chi2 0.804 | PASS |  |
+| deep_constant | 1 | r_L12_g1 | 50 | 0.4673 | -0.15 | KS 0.119, chi2 0.0164 | PASS |  |
+| deep_constant | 1 | r_A12_g2 | 50 | 0.5038 | +0.03 | KS 0.885, chi2 0.599 | PASS |  |
+| deep_constant | 1 | r_C12_g2 | 50 | 0.4639 | -0.14 | KS 0.479, chi2 0.684 | PASS |  |
+| deep_constant | 1 | r_E12_g2 | 50 | 0.566 | +0.24 | KS 0.155, chi2 0.301 | PASS |  |
+| deep_constant | 1 | r_L12_g2 | 50 | 0.5475 | +0.12 | KS 0.0418, chi2 0.141 | PASS |  |
+| deep_constant | 1 | r_A12_g3 | 50 | 0.5383 | +0.15 | KS 0.602, chi2 0.246 | PASS |  |
+| deep_constant | 1 | r_C12_g3 | 50 | 0.417 | -0.22 | KS 0.0111, chi2 0.0532 | PASS |  |
+| deep_constant | 1 | r_E12_g3 | 50 | 0.4747 | -0.08 | KS 0.716, chi2 0.221 | PASS |  |
+| deep_constant | 1 | r_L12_g3 | 50 | 0.519 | +0.02 | KS 0.732, chi2 0.557 | PASS |  |
+| deep_constant | 1 | r_A12_g4 | 50 | 0.513 | +0.04 | KS 0.984, chi2 0.873 | PASS |  |
+| deep_constant | 1 | r_C12_g4 | 50 | 0.5134 | +0.03 | KS 0.89, chi2 0.557 | PASS |  |
+| deep_constant | 1 | r_E12_g4 | 50 | 0.4302 | -0.23 | KS 0.0579, chi2 0.301 | PASS |  |
+| deep_constant | 1 | r_L12_g4 | 50 | 0.5146 | +0.08 | KS 0.806, chi2 0.221 | PASS |  |
+| deep_constant | 1 | r_A12_g5 | 50 | 0.5383 | +0.09 | KS 0.428, chi2 0.873 | PASS |  |
+| deep_constant | 1 | r_C12_g5 | 50 | 0.5261 | +0.07 | KS 0.567, chi2 0.515 | PASS |  |
+| deep_constant | 1 | r_E12_g5 | 50 | 0.521 | +0.10 | KS 0.446, chi2 0.557 | PASS |  |
+| deep_constant | 1 | r_L12_g5 | 50 | 0.5672 | +0.21 | KS 0.227, chi2 0.272 | PASS |  |
+| deep_constant | 1 | r_A12_g6 | 50 | 0.5451 | +0.12 | KS 0.158, chi2 0.437 | PASS |  |
+| deep_constant | 1 | r_C12_g6 | 50 | 0.4755 | -0.05 | KS 0.64, chi2 0.804 | PASS |  |
+| deep_constant | 1 | r_E12_g6 | 50 | 0.5012 | -0.03 | KS 0.843, chi2 0.599 | PASS |  |
+| deep_constant | 1 | r_L12_g6 | 50 | 0.5314 | +0.08 | KS 0.377, chi2 0.158 | PASS |  |
+| deep_constant | 1 | r_A12_g7 | 50 | 0.5321 | +0.05 | KS 0.168, chi2 0.272 | PASS |  |
+| deep_constant | 1 | r_C12_g7 | 50 | 0.4716 | -0.07 | KS 0.514, chi2 0.0362 | PASS |  |
+| deep_constant | 1 | r_E12_g7 | 50 | 0.5713 | +0.23 | KS 0.0859, chi2 0.641 | PASS |  |
+| deep_constant | 1 | r_L12_g7 | 50 | 0.5455 | +0.16 | KS 0.212, chi2 0.272 | PASS |  |
+| deep_constant | 1 | r_A12_g8 | 50 | 0.5144 | +0.06 | KS 0.765, chi2 0.725 | PASS |  |
+| deep_constant | 1 | r_C12_g8 | 50 | 0.5719 | +0.21 | KS 0.0992, chi2 0.332 | PASS |  |
+| deep_constant | 1 | r_E12_g8 | 50 | 0.4803 | -0.07 | KS 0.856, chi2 0.873 | PASS |  |
+| deep_constant | 1 | r_L12_g8 | 50 | 0.5309 | +0.09 | KS 0.125, chi2 0.725 | PASS |  |
+| deep_constant | 1 | r_A12_g9 | 50 | 0.5008 | +0.01 | KS 0.776, chi2 0.112 | PASS |  |
+| deep_constant | 1 | r_C12_g9 | 50 | 0.519 | +0.03 | KS 0.694, chi2 0.684 | PASS |  |
+| deep_constant | 1 | r_E12_g9 | 50 | 0.4727 | -0.15 | KS 0.406, chi2 0.126 | PASS |  |
+| deep_constant | 1 | r_L12_g9 | 50 | 0.5302 | +0.06 | KS 0.456, chi2 0.557 | PASS |  |
+| deep_constant | 1 | r_A12_g10 | 50 | 0.4338 | -0.27 | KS 0.102, chi2 0.198 | PASS |  |
+| deep_constant | 1 | r_C12_g10 | 50 | 0.5829 | +0.32 | KS 0.0837, chi2 0.599 | PASS |  |
+| deep_constant | 1 | r_E12_g10 | 50 | 0.5461 | +0.18 | KS 0.156, chi2 0.221 | PASS |  |
+| deep_constant | 1 | r_L12_g10 | 50 | 0.4827 | -0.09 | KS 0.426, chi2 0.126 | PASS |  |
+| deep_constant | 1 | r_A12_g11 | 50 | 0.4825 | -0.08 | KS 0.61, chi2 0.221 | PASS |  |
+| deep_constant | 1 | r_C12_g11 | 50 | 0.4612 | -0.15 | KS 0.276, chi2 0.0143 | PASS |  |
+| deep_constant | 1 | r_E12_g11 | 50 | 0.4964 | -0.02 | KS 0.998, chi2 0.98 | PASS |  |
+| deep_constant | 1 | r_L12_g11 | 50 | 0.4692 | -0.13 | KS 0.0853, chi2 0.099 | PASS |  |
+| deep_infinitesimal | 1 | r_E1_MZ | 50 | 0.4199 | -0.26 | KS 0.0239, chi2 0.198 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L1_MZ | 50 | 0.4869 | -0.05 | KS 0.654, chi2 0.725 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A1_FS | 50 | 0.4981 | -0.02 | KS 0.878, chi2 0.365 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E1_FS | 50 | 0.5294 | +0.06 | KS 0.565, chi2 0.95 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L1_FS | 50 | 0.4909 | -0.01 | KS 0.968, chi2 0.684 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A1_MHS | 50 | 0.522 | +0.05 | KS 0.336, chi2 0.0878 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E1_MHS | 50 | 0.4868 | -0.06 | KS 0.992, chi2 0.995 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L1_MHS | 50 | 0.5037 | +0.03 | KS 0.864, chi2 0.903 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A1_PHS | 50 | 0.563 | +0.24 | KS 0.115, chi2 0.365 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C1_PHS | 50 | 0.5999 | +0.36 | KS 0.0105, chi2 0.0279 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E1_PHS | 50 | 0.5135 | +0.16 | KS 0.607, chi2 0.557 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L1_PHS | 50 | 0.5988 | +0.34 | KS 0.0861, chi2 0.158 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A1_MO | 50 | 0.5035 | -0.00 | KS 0.331, chi2 0.437 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C1_MO | 50 | 0.5142 | +0.01 | KS 0.597, chi2 0.684 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E1_MO | 50 | 0.4976 | +0.06 | KS 0.729, chi2 0.301 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L1_MO | 50 | 0.515 | +0.04 | KS 0.865, chi2 0.515 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A1_FO | 50 | 0.5068 | -0.02 | KS 0.666, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C1_FO | 50 | 0.4812 | -0.09 | KS 0.974, chi2 0.725 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E1_FO | 50 | 0.4768 | -0.10 | KS 0.568, chi2 0.301 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L1_FO | 50 | 0.5047 | -0.01 | KS 0.814, chi2 0.599 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A1_1C | 50 | 0.5287 | +0.12 | KS 0.802, chi2 0.84 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C1_1C | 50 | 0.4989 | -0.01 | KS 0.514, chi2 0.0605 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E1_1C | 50 | 0.4771 | -0.06 | KS 0.86, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L1_1C | 50 | 0.5053 | +0.02 | KS 0.796, chi2 0.221 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g1 | 50 | 0.4511 | -0.12 | KS 0.178, chi2 0.221 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g1 | 50 | 0.5225 | +0.15 | KS 0.558, chi2 0.301 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g1 | 50 | 0.4909 | -0.08 | KS 0.552, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g2 | 50 | 0.509 | +0.02 | KS 0.822, chi2 0.873 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g2 | 50 | 0.5111 | +0.10 | KS 0.867, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g2 | 50 | 0.5481 | +0.15 | KS 0.154, chi2 0.599 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g3 | 50 | 0.4895 | +0.01 | KS 0.66, chi2 0.557 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g3 | 50 | 0.4911 | -0.03 | KS 0.909, chi2 0.246 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g3 | 50 | 0.5102 | +0.09 | KS 0.467, chi2 0.178 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g4 | 50 | 0.5035 | -0.02 | KS 0.69, chi2 0.126 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g4 | 50 | 0.4767 | -0.14 | KS 0.113, chi2 0.126 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g4 | 50 | 0.46 | -0.12 | KS 0.553, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g5 | 50 | 0.4539 | -0.08 | KS 0.441, chi2 0.725 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g5 | 50 | 0.4569 | -0.14 | KS 0.494, chi2 0.365 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g5 | 50 | 0.4886 | -0.07 | KS 0.677, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g6 | 50 | 0.4953 | +0.07 | KS 0.0775, chi2 0.00279 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g6 | 50 | 0.5604 | +0.20 | KS 0.147, chi2 0.804 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g6 | 50 | 0.4878 | +0.01 | KS 0.719, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g7 | 50 | 0.5983 | +0.43 | KS 0.0265, chi2 0.158 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g7 | 50 | 0.514 | +0.03 | KS 0.634, chi2 0.804 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g7 | 50 | 0.57 | +0.23 | KS 0.0537, chi2 0.0776 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g8 | 50 | 0.5744 | +0.33 | KS 0.0854, chi2 0.0878 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g8 | 50 | 0.5031 | -0.03 | KS 0.646, chi2 0.557 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g8 | 50 | 0.532 | +0.12 | KS 0.674, chi2 0.873 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g9 | 50 | 0.6055 | +0.42 | KS 0.0176, chi2 0.198 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g9 | 50 | 0.4879 | -0.06 | KS 0.468, chi2 0.365 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g9 | 50 | 0.5793 | +0.26 | KS 0.102, chi2 0.515 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g10 | 50 | 0.5617 | +0.22 | KS 0.366, chi2 0.246 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g10 | 50 | 0.4667 | -0.09 | KS 0.385, chi2 0.0413 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g10 | 50 | 0.5267 | +0.17 | KS 0.627, chi2 0.246 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A1_g11 | 50 | 0.645 | +0.50 | KS 0.000992, chi2 0.0244 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C1_g11 | 50 | 0.5581 | +0.22 | KS 0.151, chi2 0.301 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L1_g11 | 50 | 0.6339 | +0.50 | KS 0.00141, chi2 0.0776 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E2_MZ | 50 | 0.4562 | -0.09 | KS 0.452, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L2_MZ | 50 | 0.4786 | -0.01 | KS 0.704, chi2 0.928 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A2_FS | 50 | 0.4782 | +0.01 | KS 0.311, chi2 0.684 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E2_FS | 50 | 0.4547 | -0.10 | KS 0.229, chi2 0.178 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L2_FS | 50 | 0.4769 | -0.07 | KS 0.576, chi2 0.141 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A2_MHS | 50 | 0.5297 | +0.09 | KS 0.648, chi2 0.4 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E2_MHS | 50 | 0.5149 | +0.12 | KS 0.714, chi2 0.246 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L2_MHS | 50 | 0.5373 | +0.16 | KS 0.588, chi2 0.365 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A2_PHS | 50 | 0.5122 | +0.07 | KS 0.412, chi2 0.437 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C2_PHS | 50 | 0.5661 | +0.20 | KS 0.0774, chi2 0.437 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E2_PHS | 50 | 0.4796 | -0.06 | KS 0.2, chi2 0.221 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L2_PHS | 50 | 0.4312 | -0.24 | KS 0.0525, chi2 0.0605 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A2_MO | 50 | 0.4903 | -0.03 | KS 0.934, chi2 0.95 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C2_MO | 50 | 0.4527 | -0.24 | KS 0.204, chi2 0.178 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E2_MO | 50 | 0.4761 | -0.11 | KS 0.67, chi2 0.4 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L2_MO | 50 | 0.5123 | +0.03 | KS 0.783, chi2 0.903 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A2_FO | 50 | 0.5381 | +0.15 | KS 0.289, chi2 0.0605 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C2_FO | 50 | 0.5031 | -0.01 | KS 0.896, chi2 0.84 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E2_FO | 50 | 0.5799 | +0.28 | KS 0.0862, chi2 0.112 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L2_FO | 50 | 0.5211 | +0.08 | KS 0.454, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A2_1C | 50 | 0.4848 | -0.01 | KS 0.763, chi2 0.95 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C2_1C | 50 | 0.4395 | -0.27 | KS 0.0724, chi2 0.0362 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E2_1C | 50 | 0.4392 | -0.15 | KS 0.171, chi2 0.515 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L2_1C | 50 | 0.5306 | +0.11 | KS 0.238, chi2 0.0244 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g1 | 50 | 0.4878 | -0.09 | KS 0.793, chi2 0.112 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g1 | 50 | 0.488 | -0.11 | KS 0.844, chi2 0.515 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g1 | 50 | 0.4657 | -0.14 | KS 0.561, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g2 | 50 | 0.5321 | +0.11 | KS 0.348, chi2 0.873 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g2 | 50 | 0.4727 | -0.11 | KS 0.854, chi2 0.967 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g2 | 50 | 0.5372 | +0.15 | KS 0.793, chi2 0.873 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g3 | 50 | 0.5332 | +0.10 | KS 0.366, chi2 0.873 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g3 | 50 | 0.4776 | -0.09 | KS 0.376, chi2 0.221 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g3 | 50 | 0.5137 | +0.05 | KS 0.295, chi2 0.873 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g4 | 50 | 0.5041 | +0.05 | KS 0.747, chi2 0.221 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g4 | 50 | 0.5129 | +0.04 | KS 0.916, chi2 0.967 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g4 | 50 | 0.5374 | +0.11 | KS 0.504, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g5 | 50 | 0.4763 | -0.05 | KS 0.677, chi2 0.641 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g5 | 50 | 0.526 | +0.13 | KS 0.617, chi2 0.272 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g5 | 50 | 0.4834 | -0.03 | KS 0.642, chi2 0.804 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g6 | 50 | 0.5647 | +0.25 | KS 0.169, chi2 0.903 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g6 | 50 | 0.5275 | +0.13 | KS 0.734, chi2 0.725 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g6 | 50 | 0.5198 | +0.10 | KS 0.421, chi2 0.804 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g7 | 50 | 0.5665 | +0.18 | KS 0.146, chi2 0.437 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g7 | 50 | 0.5314 | +0.05 | KS 0.774, chi2 0.95 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g7 | 50 | 0.5006 | +0.02 | KS 0.726, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g8 | 50 | 0.5611 | +0.14 | KS 0.226, chi2 0.301 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g8 | 50 | 0.5439 | +0.14 | KS 0.359, chi2 0.099 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g8 | 50 | 0.475 | -0.03 | KS 0.242, chi2 0.332 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g9 | 50 | 0.5661 | +0.29 | KS 0.166, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g9 | 50 | 0.5219 | +0.05 | KS 0.921, chi2 0.98 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g9 | 50 | 0.5002 | -0.04 | KS 0.504, chi2 0.725 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g10 | 50 | 0.57 | +0.25 | KS 0.225, chi2 0.557 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g10 | 50 | 0.484 | -0.10 | KS 0.637, chi2 0.0776 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g10 | 50 | 0.4888 | -0.08 | KS 0.604, chi2 0.873 | INFO | D1 |
+| deep_infinitesimal | 1 | var_A2_g11 | 50 | 0.5888 | +0.23 | KS 0.0182, chi2 0.112 | INFO | D1 |
+| deep_infinitesimal | 1 | var_C2_g11 | 50 | 0.4074 | -0.31 | KS 0.0139, chi2 0.272 | INFO | D1 |
+| deep_infinitesimal | 1 | var_L2_g11 | 50 | 0.5144 | +0.03 | KS 0.687, chi2 0.332 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g1 | 50 | 0.4642 | -0.14 | KS 0.647, chi2 0.804 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g1 | 50 | 0.5257 | +0.10 | KS 0.489, chi2 0.967 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g1 | 50 | 0.5047 | +0.02 | KS 0.994, chi2 0.84 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g1 | 50 | 0.4666 | -0.15 | KS 0.12, chi2 0.112 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g2 | 50 | 0.5032 | +0.04 | KS 0.982, chi2 0.98 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g2 | 50 | 0.4631 | -0.13 | KS 0.576, chi2 0.437 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g2 | 50 | 0.5569 | +0.20 | KS 0.207, chi2 0.365 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g2 | 50 | 0.5462 | +0.09 | KS 0.0596, chi2 0.141 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g3 | 50 | 0.5306 | +0.11 | KS 0.517, chi2 0.557 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g3 | 50 | 0.417 | -0.23 | KS 0.0248, chi2 0.141 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g3 | 50 | 0.4709 | -0.08 | KS 0.525, chi2 0.515 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g3 | 50 | 0.5165 | +0.01 | KS 0.987, chi2 0.928 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g4 | 50 | 0.5011 | +0.02 | KS 0.986, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g4 | 50 | 0.5182 | +0.05 | KS 0.691, chi2 0.4 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g4 | 50 | 0.4308 | -0.21 | KS 0.0341, chi2 0.365 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g4 | 50 | 0.518 | +0.08 | KS 0.94, chi2 0.95 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g5 | 50 | 0.5275 | +0.05 | KS 0.335, chi2 0.725 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g5 | 50 | 0.5158 | +0.05 | KS 0.799, chi2 0.4 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g5 | 50 | 0.5192 | +0.10 | KS 0.732, chi2 0.95 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g5 | 50 | 0.5618 | +0.20 | KS 0.16, chi2 0.272 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g6 | 50 | 0.5278 | +0.10 | KS 0.177, chi2 0.0469 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g6 | 50 | 0.476 | -0.03 | KS 0.281, chi2 0.4 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g6 | 50 | 0.5075 | -0.05 | KS 0.684, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g6 | 50 | 0.5314 | +0.08 | KS 0.396, chi2 0.437 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g7 | 50 | 0.5295 | +0.05 | KS 0.26, chi2 0.4 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g7 | 50 | 0.4727 | -0.09 | KS 0.514, chi2 0.0413 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g7 | 50 | 0.5735 | +0.25 | KS 0.121, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g7 | 50 | 0.5528 | +0.18 | KS 0.238, chi2 0.475 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g8 | 50 | 0.5215 | +0.07 | KS 0.671, chi2 0.221 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g8 | 50 | 0.5632 | +0.20 | KS 0.126, chi2 0.599 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g8 | 50 | 0.4796 | -0.07 | KS 0.844, chi2 0.95 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g8 | 50 | 0.5317 | +0.08 | KS 0.258, chi2 0.272 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g9 | 50 | 0.5035 | +0.02 | KS 0.931, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g9 | 50 | 0.5181 | +0.01 | KS 0.57, chi2 0.903 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g9 | 50 | 0.4738 | -0.17 | KS 0.28, chi2 0.126 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g9 | 50 | 0.5326 | +0.08 | KS 0.44, chi2 0.332 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g10 | 50 | 0.4418 | -0.23 | KS 0.162, chi2 0.437 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g10 | 50 | 0.5806 | +0.33 | KS 0.137, chi2 0.765 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g10 | 50 | 0.5455 | +0.19 | KS 0.0995, chi2 0.0143 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g10 | 50 | 0.4906 | -0.05 | KS 0.71, chi2 0.684 | INFO | D1 |
+| deep_infinitesimal | 1 | r_A12_g11 | 50 | 0.4878 | -0.06 | KS 0.707, chi2 0.221 | INFO | D1 |
+| deep_infinitesimal | 1 | r_C12_g11 | 50 | 0.4568 | -0.15 | KS 0.348, chi2 0.112 | INFO | D1 |
+| deep_infinitesimal | 1 | r_E12_g11 | 50 | 0.4913 | -0.04 | KS 0.921, chi2 0.903 | INFO | D1 |
+| deep_infinitesimal | 1 | r_L12_g11 | 50 | 0.4712 | -0.12 | KS 0.117, chi2 0.0776 | INFO | D1 |
+| ctm_base | 1 | r_E1_MZ | 50 | 0.5346 | +0.09 | KS 0.477, chi2 0.804 | PASS |  |
+| ctm_base | 1 | r_L1_MZ | 50 | 0.5019 | -0.02 | KS 0.546, chi2 0.437 | PASS |  |
+| ctm_base | 1 | r_A1_FS | 50 | 0.5103 | +0.02 | KS 0.517, chi2 0.641 | PASS |  |
+| ctm_base | 1 | r_E1_FS | 50 | 0.4037 | -0.33 | KS 0.0718, chi2 0.221 | PASS |  |
+| ctm_base | 1 | r_L1_FS | 50 | 0.5058 | +0.04 | KS 0.482, chi2 0.515 | PASS |  |
+| ctm_base | 1 | r_A1_MHS | 50 | 0.5555 | +0.19 | KS 0.21, chi2 0.0878 | PASS |  |
+| ctm_base | 1 | r_C1_MHS | 50 | 0.5817 | +0.27 | KS 0.0254, chi2 0.0605 | PASS |  |
+| ctm_base | 1 | r_E1_MHS | 50 | 0.5191 | +0.09 | KS 0.546, chi2 0.873 | PASS |  |
+| ctm_base | 1 | r_L1_MHS | 50 | 0.5888 | +0.27 | KS 0.0247, chi2 0.158 | PASS |  |
+| ctm_base | 1 | r_A1_PHS | 50 | 0.4693 | -0.10 | KS 0.536, chi2 0.804 | PASS |  |
+| ctm_base | 1 | r_C1_PHS | 50 | 0.5183 | +0.05 | KS 0.683, chi2 0.301 | PASS |  |
+| ctm_base | 1 | r_E1_PHS | 50 | 0.5603 | +0.24 | KS 0.112, chi2 0.198 | PASS |  |
+| ctm_base | 1 | r_L1_PHS | 50 | 0.4835 | -0.05 | KS 0.959, chi2 0.989 | PASS |  |
+| ctm_base | 1 | r_A1_MO | 50 | 0.5223 | +0.10 | KS 0.744, chi2 0.804 | PASS |  |
+| ctm_base | 1 | r_C1_MO | 50 | 0.5292 | +0.12 | KS 0.776, chi2 0.95 | PASS |  |
+| ctm_base | 1 | r_E1_MO | 50 | 0.5594 | +0.20 | KS 0.147, chi2 0.873 | PASS |  |
+| ctm_base | 1 | r_L1_MO | 50 | 0.5014 | +0.04 | KS 0.918, chi2 0.725 | PASS |  |
+| ctm_base | 1 | r_A1_FO | 50 | 0.5161 | +0.07 | KS 0.52, chi2 0.873 | PASS |  |
+| ctm_base | 1 | r_C1_FO | 50 | 0.5642 | +0.20 | KS 0.111, chi2 0.332 | PASS |  |
+| ctm_base | 1 | r_E1_FO | 50 | 0.5431 | +0.16 | KS 0.313, chi2 0.557 | PASS |  |
+| ctm_base | 1 | r_L1_FO | 50 | 0.5004 | +0.02 | KS 0.625, chi2 0.301 | PASS |  |
+| ctm_base | 1 | r_A1_1C | 50 | 0.5184 | +0.01 | KS 0.588, chi2 0.4 | PASS |  |
+| ctm_base | 1 | r_C1_1C | 50 | 0.4943 | -0.03 | KS 0.732, chi2 0.515 | PASS |  |
+| ctm_base | 1 | r_E1_1C | 50 | 0.5053 | -0.00 | KS 0.68, chi2 0.475 | PASS |  |
+| ctm_base | 1 | r_L1_1C | 50 | 0.4738 | -0.05 | KS 0.672, chi2 0.475 | PASS |  |
+| ctm_base | 1 | var_A1_g1 | 50 | 0.5124 | +0.04 | KS 0.422, chi2 0.246 | PASS |  |
+| ctm_base | 1 | var_C1_g1 | 50 | 0.4688 | -0.14 | KS 0.777, chi2 0.95 | PASS |  |
+| ctm_base | 1 | var_L1_g1 | 50 | 0.5708 | +0.21 | KS 0.084, chi2 0.684 | PASS |  |
+| ctm_base | 1 | var_A1_g2 | 50 | 0.525 | +0.08 | KS 0.768, chi2 0.903 | PASS |  |
+| ctm_base | 1 | var_C1_g2 | 50 | 0.5482 | +0.18 | KS 0.482, chi2 0.84 | PASS |  |
+| ctm_base | 1 | var_L1_g2 | 50 | 0.5293 | +0.09 | KS 0.39, chi2 0.437 | PASS |  |
+| ctm_base | 1 | var_A1_g3 | 50 | 0.5001 | -0.03 | KS 0.379, chi2 0.178 | PASS |  |
+| ctm_base | 1 | var_C1_g3 | 50 | 0.5258 | +0.06 | KS 0.164, chi2 0.198 | PASS |  |
+| ctm_base | 1 | var_L1_g3 | 50 | 0.4888 | -0.02 | KS 0.902, chi2 0.95 | PASS |  |
+| ctm_base | 1 | r_E2_MZ | 50 | 0.4909 | -0.15 | KS 0.774, chi2 0.475 | PASS |  |
+| ctm_base | 1 | r_L2_MZ | 50 | 0.4597 | -0.24 | KS 0.448, chi2 0.272 | PASS |  |
+| ctm_base | 1 | r_A2_FS | 50 | 0.499 | -0.03 | KS 0.861, chi2 0.84 | PASS |  |
+| ctm_base | 1 | r_E2_FS | 50 | 0.5649 | +0.17 | KS 0.137, chi2 0.332 | PASS |  |
+| ctm_base | 1 | r_L2_FS | 50 | 0.529 | +0.07 | KS 0.457, chi2 0.98 | PASS |  |
+| ctm_base | 1 | r_A2_MHS | 50 | 0.4963 | +0.02 | KS 0.564, chi2 0.684 | PASS |  |
+| ctm_base | 1 | r_C2_MHS | 50 | 0.5503 | +0.17 | KS 0.107, chi2 0.141 | PASS |  |
+| ctm_base | 1 | r_E2_MHS | 50 | 0.4815 | -0.11 | KS 0.404, chi2 0.365 | PASS |  |
+| ctm_base | 1 | r_L2_MHS | 50 | 0.5061 | +0.05 | KS 0.622, chi2 0.099 | PASS |  |
+| ctm_base | 1 | r_A2_PHS | 50 | 0.49 | -0.01 | KS 0.796, chi2 0.928 | PASS |  |
+| ctm_base | 1 | r_C2_PHS | 50 | 0.5232 | +0.11 | KS 0.87, chi2 0.332 | PASS |  |
+| ctm_base | 1 | r_E2_PHS | 50 | 0.555 | +0.14 | KS 0.0129, chi2 0.0244 | PASS |  |
+| ctm_base | 1 | r_L2_PHS | 50 | 0.4994 | -0.02 | KS 0.606, chi2 0.765 | PASS |  |
+| ctm_base | 1 | r_A2_MO | 50 | 0.5216 | +0.08 | KS 0.832, chi2 0.765 | PASS |  |
+| ctm_base | 1 | r_C2_MO | 50 | 0.5125 | +0.06 | KS 0.832, chi2 0.873 | PASS |  |
+| ctm_base | 1 | r_E2_MO | 50 | 0.5321 | +0.10 | KS 0.795, chi2 0.599 | PASS |  |
+| ctm_base | 1 | r_L2_MO | 50 | 0.5257 | +0.12 | KS 0.931, chi2 0.967 | PASS |  |
+| ctm_base | 1 | r_A2_FO | 50 | 0.5572 | +0.19 | KS 0.343, chi2 0.903 | PASS |  |
+| ctm_base | 1 | r_C2_FO | 50 | 0.5022 | -0.01 | KS 0.985, chi2 0.928 | PASS |  |
+| ctm_base | 1 | r_E2_FO | 50 | 0.5009 | +0.03 | KS 0.59, chi2 0.641 | PASS |  |
+| ctm_base | 1 | r_L2_FO | 50 | 0.4863 | -0.04 | KS 0.758, chi2 0.641 | PASS |  |
+| ctm_base | 1 | r_A2_1C | 50 | 0.4843 | -0.06 | KS 0.458, chi2 0.126 | PASS |  |
+| ctm_base | 1 | r_C2_1C | 50 | 0.5758 | +0.26 | KS 0.0638, chi2 0.515 | PASS |  |
+| ctm_base | 1 | r_E2_1C | 50 | 0.5754 | +0.20 | KS 0.0614, chi2 0.557 | PASS |  |
+| ctm_base | 1 | r_L2_1C | 50 | 0.5176 | +0.08 | KS 0.815, chi2 0.873 | PASS |  |
+| ctm_base | 1 | var_A2_g1 | 50 | 0.5417 | +0.14 | KS 0.242, chi2 0.437 | PASS |  |
+| ctm_base | 1 | var_C2_g1 | 50 | 0.5335 | +0.07 | KS 0.515, chi2 0.765 | PASS |  |
+| ctm_base | 1 | var_L2_g1 | 50 | 0.5838 | +0.28 | KS 0.16, chi2 0.332 | PASS |  |
+| ctm_base | 1 | var_A2_g2 | 50 | 0.4976 | +0.01 | KS 0.76, chi2 0.515 | PASS |  |
+| ctm_base | 1 | var_C2_g2 | 50 | 0.4698 | -0.07 | KS 0.578, chi2 0.95 | PASS |  |
+| ctm_base | 1 | var_L2_g2 | 50 | 0.4245 | -0.23 | KS 0.0985, chi2 0.0776 | PASS |  |
+| ctm_base | 1 | var_A2_g3 | 50 | 0.5098 | -0.01 | KS 0.659, chi2 0.765 | PASS |  |
+| ctm_base | 1 | var_C2_g3 | 50 | 0.5121 | +0.06 | KS 0.706, chi2 0.515 | PASS |  |
+| ctm_base | 1 | var_L2_g3 | 50 | 0.5404 | +0.13 | KS 0.351, chi2 0.599 | PASS |  |
+| ctm_base | 1 | r_A12_g1 | 50 | 0.4599 | -0.14 | KS 0.672, chi2 0.641 | PASS |  |
+| ctm_base | 1 | r_C12_g1 | 50 | 0.4765 | -0.11 | KS 0.79, chi2 0.332 | PASS |  |
+| ctm_base | 1 | r_E12_g1 | 50 | 0.5298 | +0.11 | KS 0.523, chi2 0.272 | PASS |  |
+| ctm_base | 1 | r_L12_g1 | 50 | 0.5003 | +0.01 | KS 0.938, chi2 0.95 | PASS |  |
+| ctm_base | 1 | r_A12_g2 | 50 | 0.4491 | -0.17 | KS 0.398, chi2 0.84 | PASS |  |
+| ctm_base | 1 | r_C12_g2 | 50 | 0.4477 | -0.12 | KS 0.321, chi2 0.804 | PASS |  |
+| ctm_base | 1 | r_E12_g2 | 50 | 0.5299 | +0.10 | KS 0.596, chi2 0.903 | PASS |  |
+| ctm_base | 1 | r_L12_g2 | 50 | 0.4425 | -0.22 | KS 0.573, chi2 0.221 | PASS |  |
+| ctm_base | 1 | r_A12_g3 | 50 | 0.4266 | -0.28 | KS 0.166, chi2 0.332 | PASS |  |
+| ctm_base | 1 | r_C12_g3 | 50 | 0.5167 | +0.03 | KS 0.816, chi2 0.804 | PASS |  |
+| ctm_base | 1 | r_E12_g3 | 50 | 0.4575 | -0.13 | KS 0.361, chi2 0.437 | PASS |  |
+| ctm_base | 1 | r_L12_g3 | 50 | 0.5163 | +0.06 | KS 0.715, chi2 0.967 | PASS |  |
+| ctm_analytic | 1 | r_E1_MZ | 50 | 0.5391 | +0.11 | KS 0.158, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_L1_MZ | 50 | 0.5096 | -0.00 | KS 0.469, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_A1_FS | 50 | 0.4981 | +0.01 | KS 0.483, chi2 0.725 | INFO | D2 |
+| ctm_analytic | 1 | r_E1_FS | 50 | 0.4064 | -0.34 | KS 0.0426, chi2 0.198 | INFO | D2 |
+| ctm_analytic | 1 | r_L1_FS | 50 | 0.5131 | +0.04 | KS 0.612, chi2 0.641 | INFO | D2 |
+| ctm_analytic | 1 | r_A1_MHS | 50 | 0.5603 | +0.20 | KS 0.0845, chi2 0.198 | INFO | D2 |
+| ctm_analytic | 1 | r_C1_MHS | 50 | 0.5829 | +0.27 | KS 0.0681, chi2 0.0188 | INFO | D2 |
+| ctm_analytic | 1 | r_E1_MHS | 50 | 0.5265 | +0.10 | KS 0.382, chi2 0.765 | INFO | D2 |
+| ctm_analytic | 1 | r_L1_MHS | 50 | 0.591 | +0.29 | KS 0.00778, chi2 0.00555 | INFO | D2 |
+| ctm_analytic | 1 | r_A1_PHS | 50 | 0.4714 | -0.10 | KS 0.658, chi2 0.804 | INFO | D2 |
+| ctm_analytic | 1 | r_C1_PHS | 50 | 0.511 | +0.05 | KS 0.624, chi2 0.641 | INFO | D2 |
+| ctm_analytic | 1 | r_E1_PHS | 50 | 0.5698 | +0.26 | KS 0.122, chi2 0.4 | INFO | D2 |
+| ctm_analytic | 1 | r_L1_PHS | 50 | 0.4838 | -0.06 | KS 0.98, chi2 0.84 | INFO | D2 |
+| ctm_analytic | 1 | r_A1_MO | 50 | 0.5227 | +0.09 | KS 0.629, chi2 0.98 | INFO | D2 |
+| ctm_analytic | 1 | r_C1_MO | 50 | 0.522 | +0.09 | KS 0.813, chi2 0.804 | INFO | D2 |
+| ctm_analytic | 1 | r_E1_MO | 50 | 0.5574 | +0.20 | KS 0.185, chi2 0.84 | INFO | D2 |
+| ctm_analytic | 1 | r_L1_MO | 50 | 0.5041 | +0.04 | KS 0.948, chi2 0.557 | INFO | D2 |
+| ctm_analytic | 1 | r_A1_FO | 50 | 0.5143 | +0.06 | KS 0.714, chi2 0.365 | INFO | D2 |
+| ctm_analytic | 1 | r_C1_FO | 50 | 0.5591 | +0.18 | KS 0.278, chi2 0.928 | INFO | D2 |
+| ctm_analytic | 1 | r_E1_FO | 50 | 0.548 | +0.17 | KS 0.39, chi2 0.557 | INFO | D2 |
+| ctm_analytic | 1 | r_L1_FO | 50 | 0.4907 | +0.00 | KS 0.649, chi2 0.246 | INFO | D2 |
+| ctm_analytic | 1 | r_A1_1C | 50 | 0.5072 | -0.01 | KS 0.664, chi2 0.903 | INFO | D2 |
+| ctm_analytic | 1 | r_C1_1C | 50 | 0.4959 | -0.03 | KS 0.557, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_E1_1C | 50 | 0.507 | -0.02 | KS 0.472, chi2 0.4 | INFO | D2 |
+| ctm_analytic | 1 | r_L1_1C | 50 | 0.4701 | -0.06 | KS 0.506, chi2 0.515 | INFO | D2 |
+| ctm_analytic | 1 | var_A1_g1 | 50 | 0.512 | +0.05 | KS 0.373, chi2 0.725 | INFO | D2 |
+| ctm_analytic | 1 | var_C1_g1 | 50 | 0.4685 | -0.11 | KS 0.505, chi2 0.515 | INFO | D2 |
+| ctm_analytic | 1 | var_L1_g1 | 50 | 0.5721 | +0.22 | KS 0.18, chi2 0.557 | INFO | D2 |
+| ctm_analytic | 1 | var_A1_g2 | 50 | 0.523 | +0.08 | KS 0.818, chi2 0.903 | INFO | D2 |
+| ctm_analytic | 1 | var_C1_g2 | 50 | 0.555 | +0.18 | KS 0.414, chi2 0.301 | INFO | D2 |
+| ctm_analytic | 1 | var_L1_g2 | 50 | 0.5328 | +0.10 | KS 0.447, chi2 0.198 | INFO | D2 |
+| ctm_analytic | 1 | var_A1_g3 | 50 | 0.4905 | -0.05 | KS 0.39, chi2 0.099 | INFO | D2 |
+| ctm_analytic | 1 | var_C1_g3 | 50 | 0.5304 | +0.08 | KS 0.0726, chi2 0.365 | INFO | D2 |
+| ctm_analytic | 1 | var_L1_g3 | 50 | 0.496 | -0.01 | KS 0.907, chi2 0.684 | INFO | D2 |
+| ctm_analytic | 1 | r_E2_MZ | 50 | 0.4842 | -0.18 | KS 0.654, chi2 0.301 | INFO | D2 |
+| ctm_analytic | 1 | r_L2_MZ | 50 | 0.4657 | -0.26 | KS 0.404, chi2 0.0469 | INFO | D2 |
+| ctm_analytic | 1 | r_A2_FS | 50 | 0.4939 | -0.06 | KS 0.915, chi2 0.804 | INFO | D2 |
+| ctm_analytic | 1 | r_E2_FS | 50 | 0.557 | +0.15 | KS 0.0417, chi2 0.0776 | INFO | D2 |
+| ctm_analytic | 1 | r_L2_FS | 50 | 0.5215 | +0.05 | KS 0.6, chi2 0.684 | INFO | D2 |
+| ctm_analytic | 1 | r_A2_MHS | 50 | 0.4902 | +0.01 | KS 0.477, chi2 0.301 | INFO | D2 |
+| ctm_analytic | 1 | r_C2_MHS | 50 | 0.5428 | +0.15 | KS 0.251, chi2 0.725 | INFO | D2 |
+| ctm_analytic | 1 | r_E2_MHS | 50 | 0.4894 | -0.08 | KS 0.553, chi2 0.475 | INFO | D2 |
+| ctm_analytic | 1 | r_L2_MHS | 50 | 0.502 | +0.05 | KS 0.677, chi2 0.475 | INFO | D2 |
+| ctm_analytic | 1 | r_A2_PHS | 50 | 0.5008 | +0.01 | KS 0.998, chi2 0.989 | INFO | D2 |
+| ctm_analytic | 1 | r_C2_PHS | 50 | 0.5315 | +0.14 | KS 0.754, chi2 0.475 | INFO | D2 |
+| ctm_analytic | 1 | r_E2_PHS | 50 | 0.5501 | +0.12 | KS 0.15, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_L2_PHS | 50 | 0.4937 | -0.02 | KS 0.75, chi2 0.158 | INFO | D2 |
+| ctm_analytic | 1 | r_A2_MO | 50 | 0.5199 | +0.08 | KS 0.889, chi2 0.684 | INFO | D2 |
+| ctm_analytic | 1 | r_C2_MO | 50 | 0.5066 | +0.04 | KS 0.851, chi2 0.725 | INFO | D2 |
+| ctm_analytic | 1 | r_E2_MO | 50 | 0.5284 | +0.10 | KS 0.596, chi2 0.475 | INFO | D2 |
+| ctm_analytic | 1 | r_L2_MO | 50 | 0.5237 | +0.11 | KS 0.812, chi2 0.765 | INFO | D2 |
+| ctm_analytic | 1 | r_A2_FO | 50 | 0.5586 | +0.18 | KS 0.199, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_C2_FO | 50 | 0.4933 | -0.03 | KS 0.876, chi2 0.515 | INFO | D2 |
+| ctm_analytic | 1 | r_E2_FO | 50 | 0.5014 | +0.02 | KS 0.619, chi2 0.873 | INFO | D2 |
+| ctm_analytic | 1 | r_L2_FO | 50 | 0.4914 | -0.03 | KS 0.349, chi2 0.725 | INFO | D2 |
+| ctm_analytic | 1 | r_A2_1C | 50 | 0.4881 | -0.07 | KS 0.307, chi2 0.0776 | INFO | D2 |
+| ctm_analytic | 1 | r_C2_1C | 50 | 0.576 | +0.25 | KS 0.0937, chi2 0.475 | INFO | D2 |
+| ctm_analytic | 1 | r_E2_1C | 50 | 0.573 | +0.19 | KS 0.0841, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_L2_1C | 50 | 0.5227 | +0.07 | KS 0.966, chi2 0.989 | INFO | D2 |
+| ctm_analytic | 1 | var_A2_g1 | 50 | 0.5457 | +0.14 | KS 0.267, chi2 0.301 | INFO | D2 |
+| ctm_analytic | 1 | var_C2_g1 | 50 | 0.5576 | +0.19 | KS 0.135, chi2 0.599 | INFO | D2 |
+| ctm_analytic | 1 | var_L2_g1 | 50 | 0.5849 | +0.30 | KS 0.0989, chi2 0.0878 | INFO | D2 |
+| ctm_analytic | 1 | var_A2_g2 | 50 | 0.4978 | -0.00 | KS 0.654, chi2 0.557 | INFO | D2 |
+| ctm_analytic | 1 | var_C2_g2 | 50 | 0.4896 | +0.01 | KS 0.576, chi2 0.641 | INFO | D2 |
+| ctm_analytic | 1 | var_L2_g2 | 50 | 0.4303 | -0.23 | KS 0.149, chi2 0.0413 | INFO | D2 |
+| ctm_analytic | 1 | var_A2_g3 | 50 | 0.5043 | -0.02 | KS 0.921, chi2 0.765 | INFO | D2 |
+| ctm_analytic | 1 | var_C2_g3 | 50 | 0.5133 | +0.08 | KS 0.71, chi2 0.903 | INFO | D2 |
+| ctm_analytic | 1 | var_L2_g3 | 50 | 0.5397 | +0.12 | KS 0.129, chi2 0.557 | INFO | D2 |
+| ctm_analytic | 1 | r_A12_g1 | 50 | 0.4599 | -0.14 | KS 0.375, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_C12_g1 | 50 | 0.4611 | -0.24 | KS 0.296, chi2 0.0279 | INFO | D2 |
+| ctm_analytic | 1 | r_E12_g1 | 50 | 0.5253 | +0.10 | KS 0.809, chi2 0.641 | INFO | D2 |
+| ctm_analytic | 1 | r_L12_g1 | 50 | 0.5005 | -0.01 | KS 0.928, chi2 0.725 | INFO | D2 |
+| ctm_analytic | 1 | r_A12_g2 | 50 | 0.4528 | -0.17 | KS 0.641, chi2 0.873 | INFO | D2 |
+| ctm_analytic | 1 | r_C12_g2 | 50 | 0.4423 | -0.15 | KS 0.081, chi2 0.599 | INFO | D2 |
+| ctm_analytic | 1 | r_E12_g2 | 50 | 0.5274 | +0.10 | KS 0.725, chi2 0.475 | INFO | D2 |
+| ctm_analytic | 1 | r_L12_g2 | 50 | 0.448 | -0.22 | KS 0.573, chi2 0.557 | INFO | D2 |
+| ctm_analytic | 1 | r_A12_g3 | 50 | 0.4295 | -0.27 | KS 0.0869, chi2 0.475 | INFO | D2 |
+| ctm_analytic | 1 | r_C12_g3 | 50 | 0.5144 | +0.01 | KS 0.616, chi2 0.437 | INFO | D2 |
+| ctm_analytic | 1 | r_E12_g3 | 50 | 0.463 | -0.13 | KS 0.708, chi2 0.903 | INFO | D2 |
+| ctm_analytic | 1 | r_L12_g3 | 50 | 0.5099 | +0.04 | KS 0.545, chi2 0.725 | INFO | D2 |
 | genedrop_base | 2 | ibd_FS | 30 | -0.0001176 | -0.71 | t 0.48 | PASS |  |
 | genedrop_base | 2 | ibd_MHS | 30 | 0.0001755 | +1.33 | t 0.192 | PASS |  |
 | genedrop_base | 2 | ibd_PHS | 30 | 9.577e-06 | +0.06 | t 0.95 | PASS |  |
@@ -625,13 +625,13 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.67e-05.
 | wf_structure | 3 | n_MHS_g4 | 100 | -1.53 | -0.35 | KS 0.908, t 0.725 | PASS |  |
 | wf_structure | 3 | n_PHS_g4 | 100 | 3.76 | +0.88 | KS 0.47, t 0.377 | PASS |  |
 | wf_structure | 3 | n_sib_mated_g4 | 100 | 0.26 | +0.95 | KS 0.583, t 0.342 | PASS |  |
-| std_mating | 3 | sex_males | 100 | 0.5234 | +0.05 | KS 0.667, chi2 0.76 | PASS |  |
-| std_mating | 3 | mz_pairs | 100 | 0.5194 | +0.03 | KS 0.869, chi2 0.817 | PASS |  |
-| std_mating | 3 | alloc_sumsq | 100 | 0.4411 | -0.12 | KS 0.00846, chi2 0.0062 | PASS |  |
-| std_mating | 3 | alloc_multi_mother | 100 | 0.5365 | +0.07 | KS 0.471, chi2 0.911 | PASS |  |
-| std_mating | 3 | n_couples | 100 | 0.4679 | -0.05 | KS 0.49, chi2 0.575 | PASS |  |
-| std_mating | 3 | n_mothers_multi | 100 | 0.5113 | +0.03 | KS 0.255, chi2 0.596 | PASS |  |
-| std_mating | 3 | n_fathers_multi | 100 | 0.4665 | -0.05 | KS 0.293, chi2 0.658 | PASS |  |
+| std_mating | 3 | sex_males | 100 | 0.5234 | +0.05 | KS 0.667, chi2 0.773 | PASS |  |
+| std_mating | 3 | mz_pairs | 100 | 0.5194 | +0.03 | KS 0.869, chi2 0.828 | PASS |  |
+| std_mating | 3 | alloc_sumsq | 100 | 0.4411 | -0.12 | KS 0.00846, chi2 0.0065 | PASS |  |
+| std_mating | 3 | alloc_multi_mother | 100 | 0.5365 | +0.07 | KS 0.471, chi2 0.92 | PASS |  |
+| std_mating | 3 | n_couples | 100 | 0.4679 | -0.05 | KS 0.49, chi2 0.587 | PASS |  |
+| std_mating | 3 | n_mothers_multi | 100 | 0.5113 | +0.03 | KS 0.255, chi2 0.608 | PASS |  |
+| std_mating | 3 | n_fathers_multi | 100 | 0.4665 | -0.05 | KS 0.293, chi2 0.67 | PASS |  |
 | std_structure | 3 | frac_female_g1 | 100 | 0.0055 | +1.71 | KS 0.47, t 0.0891 | PASS |  |
 | std_structure | 3 | n_mothers_g1 | 100 | 0.79 | +0.93 | KS 0.583, t 0.356 | PASS |  |
 | std_structure | 3 | n_fathers_g1 | 100 | 1.2 | +1.29 | KS 0.111, t 0.199 | PASS |  |
