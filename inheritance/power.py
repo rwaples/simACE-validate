@@ -74,7 +74,7 @@ BASE: dict[str, Any] = {
 
 #: Each cell changes BASE in one respect; ctm_base carries cases.yaml's ctm_base transmission.
 CELLS: dict[str, tuple[str, dict[str, Any]]] = {
-    "rm_base": ("rm_base: N 2000, G_ped 4, mating_lambda 0.5, random mating, no C transmission", {}),
+    "rm_base": ("N 2000, G_ped 4, mating_lambda 0.5, random mating, no C transmission", {}),
     "ctm_base": (
         "rm_base with b_m, b_f 0.5, 0.3 (trait 1) and 0.3, 0.5 (trait 2)",
         {
@@ -133,6 +133,22 @@ def _mutations() -> dict[str, Mutation]:
 
 
 MUTATIONS = _mutations()
+
+
+def in_domain(cell: str, name: str) -> bool:
+    """Whether the mutation scores a transmission simace can be configured with: b ≥ 0 and b_m² + b_f² ≤ 1 (ADR 0025)."""
+    mutation = MUTATIONS[name]
+    if mutation.key not in ("Ctm_maternal1", "Ctm_paternal1"):
+        return True
+    ctm = merged(BASE, CELLS[cell][1])["pedigree"]["trait1"].get("C_transmission", {})
+    scored = mutation.apply({"Ctm_maternal1": ctm.get("maternal", 0.0), "Ctm_paternal1": ctm.get("paternal", 0.0)})
+    b_m, b_f = scored["Ctm_maternal1"], scored["Ctm_paternal1"]
+    return b_m >= 0 and b_f >= 0 and b_m**2 + b_f**2 <= 1 + 1e-12
+
+
+def cell_mutations(cell: str) -> list[str]:
+    """The mutations a cell runs: every one in the configurable domain, null first."""
+    return [name for name in MUTATIONS if in_domain(cell, name)]
 
 
 def merged(base: dict[str, Any], change: dict[str, Any]) -> dict[str, Any]:
@@ -226,7 +242,10 @@ def study_replicate(cell: str, study_rep: int, names: list[str], work: Path, job
 def parse_span(text: str) -> list[int]:
     """``1-50`` or ``7`` as a list of study replicates."""
     lo, _, hi = text.partition("-")
-    return list(range(int(lo), int(hi or lo) + 1))
+    span = list(range(int(lo), int(hi or lo) + 1))
+    if not span or span[0] < 1:
+        raise ValueError(f"not a span of study replicates from 1 up: {text}")
+    return span
 
 
 def run_cell(cell: str, names: list[str], study_reps: list[int], parts: Path | None, jobs: int) -> dict[str, Any]:
@@ -255,57 +274,85 @@ def run_cell(cell: str, names: list[str], study_reps: list[int], parts: Path | N
 
 
 def summarize(cell: str, name: str, outcomes: list[dict[str, Any]]) -> str:
-    """One table row: verdict rejections, the target test's, by statistic, and the other tests'."""
+    """One table row: verdict rejections, the family size, the target test's, by statistic, and the other tests'.
+
+    Insufficient verdicts leave the rejection rate's denominator and are counted beside it.
+    """
     mutation = MUTATIONS[name]
-    n = len(outcomes)
-    k = sum(o["verdict"] == "fail" for o in outcomes)
     insufficient = sum(o["verdict"] == "insufficient" for o in outcomes)
+    n = len(outcomes) - insufficient
+    k = sum(o["verdict"] == "fail" for o in outcomes)
+    n_tests = "/".join(str(v) for v in sorted({o["n_tests"] for o in outcomes}))
 
     def test_of(record: str) -> str:
         return record.split("/")[0]
 
     target = mutation.test
-    in_target = [[r for r in o["failed"] if test_of(r) == target] for o in outcomes] if target else []
+    decided = [o for o in outcomes if o["verdict"] != "insufficient"]
+    in_target = [[r for r in o["failed"] if test_of(r) == target] for o in decided] if target else []
     t = sum(bool(f) for f in in_target)
     stats = {s: sum(any(r.endswith(s) for r in f) for f in in_target) for s in ("mean_z", "sd_z", "reps_over_bound")}
-    others = Counter(test for o in outcomes for test in {test_of(r) for r in o["failed"]} - {target})
+    others = Counter(test for o in decided for test in {test_of(r) for r in o["failed"]} - {target})
     target_cells = f"{t}/{n} | {stats['mean_z']} / {stats['sd_z']} / {stats['reps_over_bound']}" if target else "– | –"
     other = ", ".join(f"{test} ({c})" for test, c in others.most_common())
-    note = f" ({insufficient} insufficient)" if insufficient else ""
-    return f"| {cell} | {name} | {mutation.effect} | {k}/{n}{note} | {interval(k, n)} | {target_cells} | {other} |"
+    note = f" (+{insufficient} insufficient)" if insufficient else ""
+    return (
+        f"| {cell} | {name} | {mutation.effect} | {k}/{n}{note} | {interval(k, n)} | {n_tests} "
+        f"| {target_cells} | {other} |"
+    )
 
 
 def write_table(parts: list[dict[str, Any]], command: str) -> None:
-    """Write power_inheritance.md from the parts: to results/ when every cell has the default study reps."""
+    """Write power_inheritance.md from the parts.
+
+    To results/ when every cell has every in-domain mutation over the default study reps, else to .work/results/.
+    Parts must come from one simace and must not share a study replicate of a cell.
+    """
+    refs = sorted({p["simace"] for p in parts})
+    if len(refs) > 1:
+        raise SystemExit(f"parts from more than one simace: {'; '.join(refs)}")
     by_cell: dict[str, dict[str, dict[str, Any]]] = {}
     for p in parts:
-        by_cell.setdefault(p["cell"], {}).update(p["study_reps"])
+        reps = by_cell.setdefault(p["cell"], {})
+        if shared := sorted(set(reps) & set(p["study_reps"]), key=int):
+            raise SystemExit(f"{p['cell']}: study replicates {', '.join(shared)} are in more than one part")
+        reps.update(p["study_reps"])
+    names_by_cell = {
+        cell: [n for n in cell_mutations(cell) if all(n in o for o in reps.values())] for cell, reps in by_cell.items()
+    }
     full = set(by_cell) == set(CELLS) and all(
-        sorted(map(int, reps)) == list(range(1, DEFAULT_STUDY_REPS + 1)) for reps in by_cell.values()
+        sorted(map(int, reps)) == list(range(1, DEFAULT_STUDY_REPS + 1)) and names_by_cell[cell] == cell_mutations(cell)
+        for cell, reps in by_cell.items()
     )
-    refs = sorted({p["simace"] for p in parts})
     md = [
         "# Power of simace validate's inheritance tests",
         "",
-        f"Generated by `{command}` against {', '.join(refs)}; do not edit.",
+        f"Generated by `{command}` against {refs[0]}; do not edit.",
         f"A study replicate is one scenario of {REPS_PER_VERDICT} reps; it rejects when simace's scenario verdict",
         "(`decide(scenario_family(...))`, every registered calibrated test at familywise 0.05) is `fail` with",
         "the reps' report.yaml parameters scored as the mutation says. The interval is the exact 95% interval",
-        "of the rejection rate. *Target test* is the test that reads the mutated parameter; *by statistic*",
-        "counts study replicates where it failed on mean z / SD z / reps over bound.",
+        "of the rejection rate over the decided study replicates. *Tests* is the verdict's number of counted",
+        "statistics, which sets its per-statistic alpha 0.05/tests. *Target test* is the test that reads the",
+        "mutated parameter; *by statistic* counts study replicates where it failed on mean z / SD z / reps",
+        "over bound.",
+        "",
+        "Every check reads the mutated parameters, so a mutation can change which tests apply. With no true",
+        "C transmission, any b_f or b_m off 0 makes total_variance and cross_trait_rC not applicable",
+        "(simace analysis/validate/generation0.py), so those rows are decided on fewer tests than their null:",
+        "compare their *target test* column, not their verdicts, with the null. Mutations that score a",
+        "transmission simace cannot be configured with (b < 0, or b_m² + b_f² > 1, ADR 0025) are skipped.",
         "",
         "Cells:",
         "",
         *(f"- `{c}`: {CELLS[c][0]}" for c in CELLS if c in by_cell),
         "",
-        "| Cell | Mutation | Effect | Verdicts failing | 95% interval | Target test failing "
+        "| Cell | Mutation | Effect | Verdicts failing | 95% interval | Tests | Target test failing "
         "| By statistic (mean z / SD z / reps over bound) | Other tests failing |",
-        "|---|---|---|---|---|---|---|---|",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for cell in (c for c in CELLS if c in by_cell):
         reps = by_cell[cell]
-        names = [n for n in MUTATIONS if all(n in o for o in reps.values())]
-        md.extend(summarize(cell, name, [reps[j][name] for j in sorted(reps, key=int)]) for name in names)
+        md.extend(summarize(cell, name, [reps[j][name] for j in sorted(reps, key=int)]) for name in names_by_cell[cell])
     out = RESULTS if full else PARTIAL_RESULTS
     out.mkdir(parents=True, exist_ok=True)
     (out / "power_inheritance.md").write_text("\n".join(md) + "\n")
@@ -336,7 +383,17 @@ def main() -> None:
         parser.error(f"unknown cells: {', '.join(unknown)}")
     if unknown := sorted(set(names) - set(MUTATIONS)):
         parser.error(f"unknown mutations: {', '.join(unknown)}")
-    parts = [run_cell(cell, names, parse_span(args.study_reps), args.parts, args.jobs) for cell in cells]
+    try:
+        study_reps = parse_span(args.study_reps)
+    except ValueError as exc:
+        parser.error(str(exc))
+    parts = []
+    for cell in cells:
+        # The null always runs: it carries the cross-check against the real `simace validate`.
+        chosen = [n for n in cell_mutations(cell) if n == "null" or n in names]
+        if skipped := [n for n in names if n not in chosen]:
+            print(f"{cell}: skipping out-of-domain mutations {', '.join(skipped)}", flush=True)
+        parts.append(run_cell(cell, chosen, study_reps, args.parts, args.jobs))
     if not args.parts:
         write_table(parts, f"python -m inheritance.power --cell {args.cell} --study-reps {args.study_reps}")
 
