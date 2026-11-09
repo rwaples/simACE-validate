@@ -7,11 +7,12 @@ parent links directly, not from pedigree-graph.
 
 from __future__ import annotations
 
-import subprocess
 from typing import TYPE_CHECKING
 
 import numpy as np
 import polars as pl
+
+from subproc import run
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -61,7 +62,7 @@ def run_slim(
     """Run a slim/ script and return its pedigree with rows in id order and 0-based links (and twins, if written)."""
     extra = [arg for k, v in (defines or {}).items() for arg in ("-d", f"{k}={v}")]
     cmd = ["slim", "-d", f"N={N}", "-d", f"G={G}", "-d", f"SEED={seed}", *extra, "-d", f"OUT='{out}'", str(slim_script)]
-    subprocess.run(cmd, check=True, capture_output=True)
+    run(cmd)
     raw = pl.read_csv(out, separator="\t").sort("generation", "id")
     index = {pid: i for i, pid in enumerate(raw["id"].to_list())}
 

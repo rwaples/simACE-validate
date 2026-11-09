@@ -21,7 +21,6 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
@@ -38,6 +37,7 @@ from am.manifest import (
     reference_path,
 )
 from am.stats import flatten
+from subproc import run
 
 ENV = {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMBA_NUM_THREADS": NUMBA_THREADS}
 
@@ -69,10 +69,8 @@ def run_one(spec: dict, seed: int) -> dict:
     args = [
         str(a) for a in (seed, spec["N"], spec["M"], spec["G"], r_arg(spec), spec["traits"], spec["mate"], spec["C"])
     ]
-    out = subprocess.run(
+    out = run(
         [sys.executable, "-m", "am.run_xft", *args],
-        check=True,
-        capture_output=True,
         text=True,
         cwd=ROOT,
         env={**os.environ, **ENV},

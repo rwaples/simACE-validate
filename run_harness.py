@@ -39,6 +39,7 @@ from genedrop.pedsim import msprime_ibd, pedsim_ibd
 from simace_ts.score import case_rows, load_g6, load_parts
 from structure.mating import REPLACES_SIMACE, SLIM_MUTATIONS, mating_law, mating_stats
 from structure.stats import run_slim, structure_stats
+from subproc import run
 
 ROOT = Path(__file__).resolve().parent
 WORK = ROOT / ".work"
@@ -83,7 +84,7 @@ def simulate(case: dict, seed: int) -> Path:
     out = WORK / case["id"] / f"seed{seed}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
     cmd = ["simace", "simulate", f"--seed={seed}", *flags, f"--output-pedigree={out}"]
-    subprocess.run(cmd, check=True, capture_output=True, env=os.environ | SINGLE_THREAD)
+    run(cmd, env=os.environ | SINGLE_THREAD)
     SIMULATED[key] = out
     return out
 
@@ -107,12 +108,7 @@ def run_oracle(case: dict, chunk: int, seeds: list[int], pedigrees: list[Path]) 
     }
     Path(f"{stem}.in.json").write_text(json.dumps(payload))
     script = ROOT / "oracles" / f"{case['oracle']}.R"
-    subprocess.run(
-        ["Rscript", str(script), f"{stem}.in.json", f"{stem}.out.json"],
-        check=True,
-        capture_output=True,
-        env=os.environ | SINGLE_THREAD,
-    )
+    run(["Rscript", str(script), f"{stem}.in.json", f"{stem}.out.json"], env=os.environ | SINGLE_THREAD)
     return json.loads(Path(f"{stem}.out.json").read_text())
 
 
@@ -156,10 +152,8 @@ def genedrop_seed(case: dict, seed: int, pedigree: Path) -> dict[str, float]:
     """Layer 2, one seed: classify pairs and their kinship in R, then gene-drop."""
     pairs_path = pedigree.with_suffix(".pairs.parquet")
     f_path = pedigree.with_suffix(".F.parquet")
-    subprocess.run(
+    run(
         ["Rscript", str(ROOT / "oracles" / "pairs.R"), str(pedigree), str(pairs_path), str(f_path)],
-        check=True,
-        capture_output=True,
         env=os.environ | SINGLE_THREAD,
     )
     genome = Genome(**case["genome"])
