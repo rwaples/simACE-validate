@@ -1,0 +1,133 @@
+# ACE Simulation Configuration
+
+defaults:
+  # ── Globals ──────────────────────────────────────────────────────────────
+  seed: 42
+  replicates: 3
+  folder: base
+  N: 100000
+  G_ped: 6
+  G_pheno: 3
+  G_sim: 8
+  # Liability standardization mode: "none" | "global" | "per_generation".
+  # Legacy bools are accepted: true → "global", false → "none".
+  # Hazard-bearing models (frailty, cure_frailty, first_passage, adult.cox)
+  # additionally accept a per-trait override ``standardize_hazard`` inside
+  # ``phenotype.trait{N}.params`` that defaults to inheriting this value.
+  standardize: global
+  plot_format: png
+
+  # Post-hoc blended-diagnosis transform applied between phenotyping and
+  # EPIMIGHT. When non-null the fitACE `blended_phenotype` rule re-derives
+  # trait-1 case status from a per-generation blend of L1 and L2 liabilities;
+  # see notes/heritability/epimight_h2_temporal.md. Opaque to the simulator
+  # itself. Expected shape when set:
+  #   blended_diagnosis:
+  #     alpha_by_gen: {2: 0.0, ..., 11: 0.55}   # output-gen-keyed
+  #     K_by_gen:     {2: 0.03, ..., 11: 0.08}  # output-gen-keyed
+  blended_diagnosis: null
+
+  # ── Pedigree (structure + variance components) ──────────────────────────
+  pedigree:
+    # "standard" | "wright_fisher". See GLOSSARY.md and docs/adr/0002.
+    # mating_lambda, p_mztwin, assort1, assort2, assort_matrix are no-ops
+    # when mating_model is "wright_fisher"; explicit overrides of those
+    # keys in a WF scenario are rejected at config-load.
+    mating_model: standard
+    mating_lambda: 0.5
+    p_mztwin: 0.004
+    assort1: 0
+    assort2: 0
+    assort_matrix: null # optional full 2x2 R_mf matrix, e.g. [[0.3, 0.05], [0.05, 0.15]]
+    # C_transmission: share of each parent's C an offspring inherits, per
+    # trait, in [0, 1] with maternal**2 + paternal**2 <= 1. The configured C
+    # stays the total; a household draw tops up the rest. See ADR 0025.
+    trait1:
+      A: 0.5
+      C: 0.0
+      E: 0.5
+      C_transmission:
+        maternal: 0.0
+        paternal: 0.0
+    trait2:
+      A: 0.4
+      C: 0.2
+      E: 0.4
+      C_transmission:
+        maternal: 0.0
+        paternal: 0.0
+    rA: 0.0
+    rC: 0.0
+    rE: 0.0
+    # Scale each offspring's Mendelian residual by sqrt(1 - mean parental F)
+    # (ADR 0033). mode: "off" | approx | exact; quote "off", which YAML
+    # otherwise reads as false. depth (approx only): generations traced
+    # exactly, an integer >= 1.
+    inbreeding:
+      mode: "off"
+      depth: 6
+
+  # ── Phenotype ───────────────────────────────────────────────────────────
+  # model: frailty | cure_frailty | adult | first_passage
+  # params: model-specific parameters
+  #   frailty/cure_frailty: distribution key + hazard params
+  #   adult: method key (ltm/cox) + cip_x0, cip_k
+  phenotype:
+    trait1:
+      model: frailty
+      params:
+        distribution: weibull
+        scale: 2160
+        rho: 0.8
+      beta: 1.0
+      beta_sex: 0.0
+    trait2:
+      model: frailty
+      params:
+        distribution: weibull
+        scale: 333
+        rho: 1.2
+      beta: 1.5
+      beta_sex: 0.0
+
+  # ── Censoring ───────────────────────────────────────────────────────────
+  censoring:
+    max_age: 80
+    gen_censoring:
+      0: [80, 80]
+      1: [80, 80]
+      2: [80, 80]
+      3: [40, 80]
+      4: [0, 80]
+      5: [0, 45]
+    death_scale: 164
+    death_rho: 2.73
+
+  # ── Ascertainment ───────────────────────────────────────────────────────
+  # Unified post-censor data-reduction stage (per docs/adr/0001).  Two knobs
+  # combined into a single weighted-draw step: uniform dropout (random
+  # removal of individuals from the pedigree), then case-weighted N_sample
+  # selection from the post-dropout pool.  The output pedigree is the
+  # ancestor closure of the sampled IDs.
+  ascertainment:
+    N_sample: 0
+    case_ascertainment_ratio: 1
+    dropout_rate: 0
+
+  # ── Analysis ────────────────────────────────────────────────────────────
+  analysis:
+    # Deepest degree in the relationship pair-count tables (3 = includes 1C).
+    # Correlations always use RELATIONSHIP_TYPES. Mirror of
+    # simace.core.relationships.DEFAULT_MAX_DEGREE; keep the two in sync.
+    max_degree: 3
+    estimate_inbreeding: false
+    # When true, the effective_size rule skips building the full sparse
+    # kinship matrix and reports ne_coancestry as None.  Defaults to true:
+    # the coancestry DP dominates the rule's memory (~31x the per-individual
+    # slope of the other seven estimators) and OOMs at large N.  Set false
+    # per scenario to run Ne_C where the pedigree is small enough.
+    skip_ne_coancestry: true
+
+# Scenarios are defined in per-folder files: config/{folder}.yaml
+# Each file contains bare scenario dicts. The folder name is inferred from
+# the filename. See any existing config/*.yaml file for the format.
