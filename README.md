@@ -14,7 +14,11 @@ the harness's measured power is in [`results/power.md`](results/power.md)
 (layer 1), [`results/power_std_mating.md`](results/power_std_mating.md) and
 [`results/power_std_structure.md`](results/power_std_structure.md) (layer
 3b, simace v0.3.0; each merged from one `--parts` run per mutation) and
-[`results/power_am.md`](results/power_am.md) (layer 5).
+[`results/power_am.md`](results/power_am.md) (layer 5). The power of
+simACE's own `simace validate` inheritance tests (`household_draw`,
+`mendelian_residual`) at wrong scored parameters is in
+[`results/power_inheritance.md`](results/power_inheritance.md)
+(`inheritance/power.py`, issue #3).
 Every known model gap is explained in [`differences.md`](differences.md),
 and where each non-PASS row stands is in [`status.md`](status.md).
 
@@ -35,6 +39,7 @@ pixi run harness --only rm_base           # a subset; K and so alpha/K shrink; t
 pixi run harness --replicate 1            # the same cases on independent seeds; to .work/results/
 pixi run power                            # rejection rates at stated errors (rm_base, ctm_base)
 pixi run power --case std_mating          # any case whose oracle has mutations; to .work/results/power.md
+pixi run power-inheritance --cell rm_base --study-reps 1-10  # simace validate's inheritance tests (#3)
 pixi run lint
 pixi run -e xftsim xft-reference          # layer 5's xftsim reference samples (skips current ones)
 ```
