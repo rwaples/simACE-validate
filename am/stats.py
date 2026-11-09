@@ -83,6 +83,52 @@ def generation_stats(
     }
 
 
+def _half_sib_pairs(shared: np.ndarray, other: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Every unordered pair of offspring with the same `shared` parent and different `other` parents."""
+    i, j = _sib_pairs(np.asarray(shared, np.int64))
+    keep = other[i] != other[j]
+    return i[keep], j[keep]
+
+
+def ctm_stats(
+    c: np.ndarray,
+    y: np.ndarray,
+    mother: np.ndarray | None = None,
+    father: np.ndarray | None = None,
+    parent_c: np.ndarray | None = None,
+    parent_y: np.ndarray | None = None,
+) -> dict[str, float]:
+    """C-transmission statistics of one offspring generation (rwaples/simACE-validate#5).
+
+    c, y: offspring C and phenotype (liability). Without parents (simACE's first recorded
+    generation) only Var(C) is defined. MHS share the mother and not the father, PHS the
+    reverse; b_MP_L is the slope of offspring L on midparent L, (A + (b_m + b_f) C) / V_P
+    under random mating.
+    """
+    c = np.asarray(c, np.float64)
+    out = {"var_C": float(np.var(c, ddof=1))}
+    if mother is None:
+        return out
+    y = np.asarray(y, np.float64)
+    pc, py = np.asarray(parent_c, np.float64), np.asarray(parent_y, np.float64)
+    mother, father = np.asarray(mother, np.int64), np.asarray(father, np.int64)
+    mi, mj = _half_sib_pairs(mother, father)
+    pi, pj = _half_sib_pairs(father, mother)
+    mid = (py[mother] + py[father]) / 2
+    out |= {
+        "r_MO_C": _corr(pc[mother], c),
+        "r_FO_C": _corr(pc[father], c),
+        "r_MHS_C": _sym_corr(c, mi, mj),
+        "r_PHS_C": _sym_corr(c, pi, pj),
+        "r_MHS_L": _sym_corr(y, mi, mj),
+        "r_PHS_L": _sym_corr(y, pi, pj),
+        "n_mhs_pairs": float(len(mi)),
+        "n_phs_pairs": float(len(pi)),
+        "b_MP_L": float(np.cov(mid, y)[0, 1] / np.var(mid, ddof=1)),
+    }
+    return out
+
+
 def cross_trait_stats(
     v: list[tuple[np.ndarray, np.ndarray]],
     pv: list[tuple[np.ndarray, np.ndarray]],

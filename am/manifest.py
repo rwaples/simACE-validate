@@ -28,6 +28,9 @@ XFT_MUTATIONS = {
     "r_0": (lambda x: {**x, "r": 0.0, "r2": 0.0}, lambda x: x["r"] != 0),
     "mate_A": (lambda x: {**x, "mate": "additive"}, lambda x: x["r"] != 0),
     "mate_y1": (lambda x: {**x, "mate": "y1"}, lambda x: x["traits"] == 2 and x["r"] != 0 and x["r2"] == x["r"]),
+    # C transmission (rwaples/simACE-validate#5): the parents' coefficients swapped, or both halved
+    "ctm_swap": (lambda x: {**x, "bm": x["bf"], "bf": x["bm"]}, lambda x: x["bm"] != x["bf"]),
+    "ctm_half": (lambda x: {**x, "bm": x["bm"] / 2, "bf": x["bf"] / 2}, lambda x: x["bm"] != 0 or x["bf"] != 0),
 }
 
 
@@ -37,8 +40,12 @@ def derived_seed0(name: str) -> int:
 
 
 def defaults(xftsim: dict) -> dict:
-    """An xftsim spec with defaults filled in; r2 (trait 2's mate correlation, two traits) defaults to r."""
-    return {"traits": 1, "mate": "phenotype", "C": 0, "r2": xftsim["r"], **xftsim}
+    """An xftsim spec with defaults filled in; r2 (trait 2's mate correlation, two traits) defaults to r.
+
+    bm, bf: C transmission coefficients (0: none); pairing: lam (xftsim's linear assortative
+    regime) or halfsib (am/run_xft.py's random mating with half-sibs, r = 0).
+    """
+    return {"traits": 1, "mate": "phenotype", "C": 0, "r2": xftsim["r"], "bm": 0, "bf": 0, "pairing": "lam", **xftsim}
 
 
 def case_spec(case: dict) -> dict:
@@ -72,7 +79,7 @@ def xftsim_lock() -> tuple[str, str]:
 
 def full_spec(xftsim: dict) -> dict:
     """The case's xftsim block with defaults filled in, in a fixed key order."""
-    keys = ("N", "M", "G", "r", "r2", "traits", "mate", "C", "seed0", "R")
+    keys = ("N", "M", "G", "r", "r2", "traits", "mate", "C", "bm", "bf", "pairing", "seed0", "R")
     x = defaults(xftsim)
     return {k: x[k] for k in keys}
 
@@ -128,16 +135,23 @@ PER_TRAIT_ALL_G = ("var_A", "var_L")
 PER_TRAIT = ("r_mate_L", "r_mate_A", "r_FS_A", "r_FS_L", "r_PO_A", "r_PO_L")
 PER_TRAIT_INFO = ("r_MO_L", "r_FO_L")  # xftsim's "maternal" is a random label
 CROSS = ("r_w_A", "r_w_L", "r_mate_L12", "r_mate_L21", "r_mate_A12", "r_mate_A21")
+# C transmission (rwaples/simACE-validate#5). The coefficients follow xftsim's maternal label, so MO
+# and FO are scored; half-sib rows need the halfsib pairing. FS C is 1 on both sides, so it is not a row.
+CTM = ("r_MO_C", "r_FO_C", "b_MP_L")
+CTM_HALFSIB = ("r_MHS_C", "r_PHS_C", "r_MHS_L", "r_PHS_L")
 
 
-def schema(traits: int, G: int) -> tuple[list[str], list[str]]:
+def schema(traits: int, G: int, ctm: bool = False, halfsib: bool = False) -> tuple[list[str], list[str]]:
     """Return (scored, info) row names for a case."""
     suffixes = [""] if traits == 1 else ["", "_t2"]
     scored, info = [], []
     for t in suffixes:
         scored += [f"{s}{t}_g{g}" for s in PER_TRAIT_ALL_G for g in range(1, G + 1)]
         scored += [f"{s}{t}_g{g}" for s in PER_TRAIT for g in range(2, G + 1)]
-        info += [f"{s}{t}_g{g}" for s in PER_TRAIT_INFO for g in range(2, G + 1)]
+        (scored if ctm else info).extend(f"{s}{t}_g{g}" for s in PER_TRAIT_INFO for g in range(2, G + 1))
+    if ctm:
+        scored += [f"var_C_g{g}" for g in range(1, G + 1)]
+        scored += [f"{s}_g{g}" for s in CTM + (CTM_HALFSIB if halfsib else ()) for g in range(2, G + 1)]
     if traits == 2:
         scored += [f"{s}_g{g}" for s in CROSS for g in range(2, G + 1)]
     return scored, info

@@ -10,7 +10,7 @@ from __future__ import annotations
 import numpy as np
 import polars as pl
 
-from am.stats import cross_trait_stats, generation_stats
+from am.stats import cross_trait_stats, ctm_stats, generation_stats
 
 
 def _values(frame: pl.DataFrame, traits: int) -> list[tuple[np.ndarray, np.ndarray]]:
@@ -23,8 +23,11 @@ def _suffixed(d: dict, t: int) -> dict:
     return d if t == 0 else {f"{k}_t{t + 1}": v for k, v in d.items()}
 
 
-def pedigree_rows(ped: pl.DataFrame, traits: int) -> list[dict]:
-    """Per-generation statistics of one pedigree, one dict per g (with key `generation`)."""
+def pedigree_rows(ped: pl.DataFrame, traits: int, ctm: bool = False) -> list[dict]:
+    """Per-generation statistics of one pedigree, one dict per g (with key `generation`).
+
+    ctm adds trait 1's C-transmission statistics (`am.stats.ctm_stats`).
+    """
     ped = ped.sort("id")
     rows = []
     prev = None
@@ -35,6 +38,8 @@ def pedigree_rows(ped: pl.DataFrame, traits: int) -> list[dict]:
         if prev is None:
             for t, (a, y) in enumerate(v):
                 row.update(_suffixed({"var_A": float(np.var(a, ddof=1)), "var_L": float(np.var(y, ddof=1))}, t))
+            if ctm:
+                row.update(ctm_stats(cur["C1"].to_numpy(), v[0][1]))
         else:
             pid = prev["id"].to_numpy()
             mother, father = cur["mother"].to_numpy(), cur["father"].to_numpy()
@@ -46,6 +51,8 @@ def pedigree_rows(ped: pl.DataFrame, traits: int) -> list[dict]:
                 row.update(_suffixed(generation_stats(v[t][0], v[t][1], pos, fos, pv[t][0], pv[t][1]), t))
             if traits == 2:
                 row.update(cross_trait_stats(v, pv, pos, fos))
+            if ctm:
+                row.update(ctm_stats(cur["C1"].to_numpy(), v[0][1], pos, fos, prev["C1"].to_numpy(), pv[0][1]))
         rows.append(row)
         prev = cur
     return rows

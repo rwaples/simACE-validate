@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Pilot runs for issue #4: simACE assortative mating vs xftsim LinearAssortativeMatingRegime.
 # Pilot seeds (GLOSSARY) come from 9000001.., a range never scored.
-# Usage: [CELLS=all|c|rank1] bash am/pilot.sh OUTDIR [JOBS]
+# Usage: [CELLS=all|c|rank1|ctm] bash am/pilot.sh OUTDIR [JOBS]
+#   CELLS=ctm runs only the C-transmission cells (#5), on pilot seeds 9300001..
 #   CELLS=c runs only the household-C cells (C = 0.2, single trait), added after the rest.
 #   CELLS=rank1 runs only the unequal-r two-trait cell (r1 0.4, r2 0.1, rank 1; am/run_xft.py R1/R2).
 # Writes OUTDIR/xft.jsonl and OUTDIR/simace.jsonl, one JSON line per run.
@@ -29,6 +30,15 @@ xft() { # seed m r traits [C]
 }
 for i in $(seq 1 $R); do
   s=$((9000000 + i))
+  if [ "$cells" = ctm ]; then
+    # C transmission (#5): b_m 0.5, b_f 0.3, C 0.2; random mating with half-sibs, and AM at r 0.5
+    s=$((9300000 + i))
+    echo "$dpy -m am.run_simace $s $N $G 0 $out/tmp 1 0.2 0.5 0.3 > $out/tmp/sim/s${s}_ctm_r0.json" >> "$tasks"
+    echo "$dpy -m am.run_simace $s $N $G 0.5 $out/tmp 1 0.2 0.5 0.3 > $out/tmp/sim/s${s}_ctm_r05.json" >> "$tasks"
+    echo "$xpy -m am.run_xft $s $N 1000 $G 0 1 phenotype 0.2 0.5 0.3 halfsib > $out/tmp/xft/s${s}_ctm_r0.json" >> "$tasks"
+    echo "$xpy -m am.run_xft $s $N 1000 $G 0.5 1 phenotype 0.2 0.5 0.3 lam > $out/tmp/xft/s${s}_ctm_r05.json" >> "$tasks"
+    continue
+  fi
   if [ "$cells" = rank1 ]; then
     r1=0.4 r2=0.1
     sim $s $r1/$r2 2

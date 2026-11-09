@@ -30,7 +30,18 @@ scaled by sqrt(C), into the child's y. Children of one mother share that
 draw, and it is independent of the parents' own y, as simACE's household C
 is (household = mother). E is then 1 - h2 - C.
 
-Usage: python -m am.run_xft SEED N M G R [TRAITS [MATE [C]]]
+BM, BF > 0 (C > 0, one trait) add simACE's vertical C transmission (ADR 0025 in
+simACE; rwaples/simACE-validate#5): a phenotype c = BM c_mother + BF c_father +
+sqrt(C (1 - BM^2 - BF^2)) hh_mother, one LinearVerticalComponent writing that value into
+both c and y (normalize=False). The household term has the fixed random-mating residual
+variance, where simACE tops up from the realised covariance (differences.md D5). Founders'
+parental c inputs are drawn N(0, C), so founder Var(c) is C.
+
+PAIRING halfsib (r = 0) replaces LinearAssortativeMatingRegime by
+RandomHalfSibMatingRegime, which gives some individuals two or more partners, so the
+pedigree has maternal and paternal half-sibs.
+
+Usage: python -m am.run_xft SEED N M G R [TRAITS [MATE [C [BM [BF [PAIRING]]]]]]
 Generation g in the output is the offspring of g rounds of mating (g = 0 are
 the founders).
 """
@@ -47,7 +58,7 @@ import numba as nb  # noqa: E402
 import numpy as np  # noqa: E402
 import xftsim as xft  # noqa: E402
 
-from am.stats import cross_trait_stats, generation_stats  # noqa: E402
+from am.stats import cross_trait_stats, ctm_stats, generation_stats  # noqa: E402
 
 seed, n, m, g = (int(a) for a in sys.argv[1:5])
 traits = int(sys.argv[6]) if len(sys.argv) > 6 else 1
@@ -68,6 +79,14 @@ if mate == "y1" and (traits != 2 or rank1):
 c = float(sys.argv[8]) if len(sys.argv) > 8 else 0.0
 if c and traits != 1:
     raise SystemExit("C > 0 needs TRAITS 1")
+bm = float(sys.argv[9]) if len(sys.argv) > 9 else 0.0
+bf = float(sys.argv[10]) if len(sys.argv) > 10 else 0.0
+pairing = sys.argv[11] if len(sys.argv) > 11 else "lam"
+ctm = bm > 0 or bf > 0
+if ctm and not (c > 0 and bm**2 + bf**2 < 1):
+    raise SystemExit("BM, BF need C > 0 and BM^2 + BF^2 < 1")
+if pairing not in ("lam", "halfsib") or (pairing == "halfsib" and (r1 != 0 or traits != 1)):
+    raise SystemExit("PAIRING is lam or halfsib; halfsib needs R 0 and TRAITS 1")
 h2 = 0.5
 np.random.seed(seed)
 
@@ -149,6 +168,46 @@ class Rank1AssortativeMatingRegime(xft.mate.MatingRegime):
         return self.enumerate_assignment(pairs_f, pairs_m, haplotypes, phenotypes)
 
 
+class RandomHalfSibMatingRegime(xft.mate.MatingRegime):
+    """Random mating that makes half-sibs: n couples drawn with replacement, each with two offspring.
+
+    Built on xftsim's MatingRegime API (get_potential_mates, enumerate_assignment), written for
+    rwaples/simACE-validate#5 without reading any xftsim regime's source. Each of the n couples
+    (n = the smaller side) takes a uniform random member of each side, independently and with
+    replacement, so partner counts are about Poisson(1) and a member with two or more partners
+    has half-sib offspring. A couple drawn twice is redrawn, so couples are distinct; constant N
+    follows from two offspring per couple.
+    """
+
+    def __init__(self):
+        """Two offspring per couple; enumerate_assignment receives each couple once."""
+        super().__init__(
+            offspring_per_pair=xft.utils.ConstantCount(2),
+            mates_per_female=xft.utils.ConstantCount(1),
+            female_offspring_per_pair="balanced",
+            sex_aware=False,
+            exhaustive=True,
+            component_index=None,
+            haplotypes=False,
+        )
+
+    def mate(self, haplotypes=None, phenotypes=None, control=None):
+        """Draw the couples and return xftsim's MateAssignment."""
+        females, males = self.get_potential_mates(haplotypes, phenotypes)
+        n_f, n_m = len(females), len(males)
+        k = min(n_f, n_m)
+        f = np.random.randint(n_f, size=k)
+        m = np.random.randint(n_m, size=k)
+        while True:
+            _, first = np.unique(f * n_m + m, return_index=True)
+            dup = np.setdiff1d(np.arange(k), first)
+            if not len(dup):
+                break
+            f[dup] = np.random.randint(n_f, size=len(dup))
+            m[dup] = np.random.randint(n_m, size=len(dup))
+        return self.enumerate_assignment(females[f], males[m], haplotypes, phenotypes)
+
+
 t0 = time.perf_counter()
 haps = xft.founders.founder_haplotypes_uniform_AFs(n=n, m=m)
 vind = haps.xft.get_variant_indexer()
@@ -165,6 +224,31 @@ if c == 0:
             xft.arch.AdditiveGeneticComponent(effects),
             xft.arch.AdditiveNoiseComponent([1 - h2] * traits, phenotype_name=names),
             xft.arch.SumAllTransformation(iind),
+        ]
+    )
+elif ctm:
+    v_in = xft.index.ComponentIndex(
+        ["c", "c", "hh"], ["phenotype"] * 3, [0, 1, 0]
+    )  # mother's c, father's c, mother's hh
+    v_in.comp_type = "output"
+    coef = [bm, bf, np.sqrt(c * (1 - bm**2 - bf**2))]
+    arch = xft.arch.Architecture(
+        components=[
+            xft.arch.AdditiveGeneticComponent(effects),
+            xft.arch.AdditiveNoiseComponent([1 - h2 - c, 1.0], phenotype_name=["y", "hh"]),
+            xft.arch.LinearVerticalComponent(
+                input_cindex=v_in,
+                output_cindex=xft.index.ComponentIndex(["c", "y"], ["vertical", "vertical"], [-1, -1]),
+                founder_variances=[c, c, 1.0],
+                coefficient_matrix=np.array([coef, coef]),
+                normalize=False,
+            ),
+            xft.arch.SumAllTransformation(
+                xft.index.ComponentIndex(
+                    ["y", "y", "y", "c", "hh"],
+                    ["additiveGenetic", "additiveNoise", "vertical", "vertical", "additiveNoise"],
+                )
+            ),
         ]
     )
 else:
@@ -190,7 +274,9 @@ else:
     )
 rmap = xft.reproduce.RecombinationMap.constant_map_from_haplotypes(haps, p=0.5)
 mate_cindex = xft.index.ComponentIndex.from_product(mate_index[0], [mate_index[1]])
-if rank1:
+if pairing == "halfsib":
+    mating = RandomHalfSibMatingRegime()
+elif rank1:
     mating = Rank1AssortativeMatingRegime(mate_cindex, np.sqrt([r1, r2]), mates_per_female=1, offspring_per_pair=2)
 else:
     mating = xft.mate.LinearAssortativeMatingRegime(
@@ -219,6 +305,13 @@ def frame(gen):
     return np.asarray(ph.iid.values), [(col(p, "additiveGenetic"), col(p, "phenotype")) for p in names]
 
 
+def c_of(gen):
+    """The c phenotype of generation gen, in xftsim's sample order (C transmission only)."""
+    ph = sim.phenotype_store[gen]
+    keys = zip(ph.phenotype_name.values, ph.component_name.values, ph.vorigin_relative.values)  # noqa: B905  (Python 3.9)
+    return np.asarray(ph.data[:, list(keys).index(("c", "phenotype", -1))])
+
+
 def suffixed(d, t):
     """Trait 1 keys unchanged; trait 2 keys get `_t2`."""
     return d if t == 0 else {f"{k}_t{t + 1}": v for k, v in d.items()}
@@ -243,6 +336,8 @@ for gen in range(1, g + 1):
         row.update(suffixed(generation_stats(v[t][0], v[t][1], mother, father, pv[t][0], pv[t][1]), t))
     if traits == 2:
         row.update(cross_trait_stats(v, pv, mother, father))
+    if ctm:
+        row.update(ctm_stats(c_of(gen), v[0][1], mother, father, c_of(gen - 1), pv[0][1]))
     rows.append(row)
 
 print(
@@ -258,6 +353,9 @@ print(
             "traits": traits,
             "mate": mate,
             "C": c,
+            "bm": bm,
+            "bf": bf,
+            "pairing": pairing,
             "h2": h2,
             "wall_s": round(time.perf_counter() - t0, 2),
             "maxrss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),

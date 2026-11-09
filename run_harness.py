@@ -28,7 +28,7 @@ import polars as pl
 import yaml
 from scipy import stats
 
-from am.bulmer import bulmer2, predict1
+from am.bulmer import bulmer2, predict1, predict_ctm
 from am.manifest import case_spec, derived, manifest, read_reference, schema
 from am.simace_stats import pedigree_rows
 from am.stats import flatten
@@ -284,6 +284,8 @@ def check_matched(case: dict) -> None:
     want = {"N": x["N"], "G-ped": x["G"], "G-sim": x["G"], "mating-model": "standard", "mating-lambda": 0.5}
     want |= {"p-mztwin": 0, "A1": 0.5, "C1": c, "E1": 0.5 - c}
     want |= {"A2": 0.5, "C2": 0, "E2": 0.5, "rA": 0, "rC": 0, "rE": 0, "assort1": r}
+    if ctm(x):
+        want |= {"Ctm-maternal1": x["bm"], "Ctm-paternal1": x["bf"]}
     if traits == 2:
         cross = r if r2 == r else math.sqrt(r * r2)  # rank 1 (am/run_xft.py)
         want |= {"assort2": r2, "assort-matrix": json.dumps([[r, cross], [cross, r2]])}
@@ -298,11 +300,24 @@ def check_matched(case: dict) -> None:
         raise ValueError(f"{case['id']}: simulate does not match the xftsim spec: {'; '.join(bad)}")
 
 
+def ctm(spec: dict) -> bool:
+    """Whether an xftsim spec has vertical C transmission (rwaples/simACE-validate#5)."""
+    return spec["bm"] != 0 or spec["bf"] != 0
+
+
 def bulmer_prediction(case: dict, stat: str) -> float | None:
-    """The infinitesimal Bulmer expectation of a scored row, or None (INFO column of ADR 0003, decision 1)."""
+    """The first-order expectation of a scored row, or None (INFO column of ADR 0003, decision 1).
+
+    Bulmer's recursion without C transmission. With it, the random-mating law
+    (`am.bulmer.predict_ctm`) at r = 0; under AM only Var(C), which simACE's realised top-up holds
+    at C (simACE ADR 0025 §3).
+    """
     x = case_spec(case)
     name, g = stat.rsplit("_g", 1)
     g = int(g)
+    if ctm(x):
+        law = predict_ctm(0.5, x["C"], 0.5 - x["C"], x["bm"], x["bf"])
+        return law.get(name) if x["r"] == 0 or name == "var_C" else None
     if x["traits"] == 1:
         return predict1(0.5, 0.5, x["r"], g, c=x["C"]).get(name)
     r, r2 = x["r"], x["r2"]
@@ -326,19 +341,28 @@ def run_xftsim(case: dict, pool: ThreadPoolExecutor, pedigrees: list[Path], seed
         ours_name, ours_spec = derived(base, "null_xft", int(case["id"].rsplit("~", 1)[1]))
         ours = read_reference(ours_name, manifest(ours_name, ours_spec))
     else:
-        traits = spec["traits"]
-        ours = list(pool.map(lambda p: flatten(pedigree_rows(pl.read_parquet(p), traits)), pedigrees))
-    scored, info = schema(case_spec(case)["traits"], case_spec(case)["G"])
+        traits, with_c = spec["traits"], ctm(spec)
+        ours = list(pool.map(lambda p: flatten(pedigree_rows(pl.read_parquet(p), traits, with_c)), pedigrees))
+    x = case_spec(case)
+    scored, info = schema(x["traits"], x["G"], ctm(x), x["pairing"] == "halfsib")
     rows = []
     for stat in scored + info:
         a = np.array([o[stat] for o in ours])
         b = np.array([t[stat] for t in theirs])
         rows.append(row(case, stat, welch(a, b), info=stat in info))
+    if mutation is not None:
+        return rows
+    # INFO: each side against the first-order law; under C transmission the xftsim side too,
+    # since its fixed household residual is the law simACE's realised top-up departs from (D5)
+    prefix = "law" if ctm(x) else "bulmer"
+    sides = (("", ours), ("xftsim:", theirs)) if ctm(x) else (("", ours),)
     for stat in scored:
         pred = bulmer_prediction(case, stat)
-        if pred is not None and mutation is None:
-            a = np.array([o[stat] for o in ours])
-            rows.append(row(case, f"bulmer:{stat}", mean_zero(a - pred), info=True))
+        if pred is None:
+            continue
+        for side, values in sides:
+            a = np.array([o[stat] for o in values])
+            rows.append(row(case, f"{prefix}:{side}{stat}", mean_zero(a - pred), info=True))
     return rows
 
 
