@@ -1,3 +1,5 @@
+b_m 0.5, b_f 0.3, C 0.2, G 6
+
 ## r = 0.0 (simACE 40 seeds, xftsim 40 seeds)
 
 | stat | g | simACE | xftsim | law | Welch p | MDD (R 100) |

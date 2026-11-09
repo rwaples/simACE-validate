@@ -19,7 +19,6 @@ from scipy import stats as st
 
 from am.bulmer import predict_ctm
 
-BM, BF, C = 0.5, 0.3, 0.2
 ALPHA_K = 0.05 / 1461
 R_TARGET = 100
 STATS = [
@@ -44,17 +43,20 @@ STATS = [
 ]
 
 
-def load(path: Path) -> dict[float, list[dict]]:
-    """Records by r, each as {stat_g: value} (generation 0 dropped)."""
-    out = defaultdict(list)
+def load(path: Path) -> tuple[dict[float, list[dict]], set[tuple]]:
+    """C-transmission records by r, each as {stat_g: value} (generation 0 dropped), and their (bm, bf, C, g).
+
+    Records without transmission (another pilot cell in the same directory) are skipped.
+    """
+    out, params = defaultdict(list), set()
     for line in path.read_text().splitlines():
-        if line.strip():
-            rec = json.loads(line)
-            flat = {
-                f"{k}_g{row['generation']}": v for row in rec["rows"] if row["generation"] > 0 for k, v in row.items()
-            }
-            out[float(rec["r"])].append(flat)
-    return out
+        rec = json.loads(line) if line.strip() else {}
+        if not (rec.get("bm") or rec.get("bf")):
+            continue
+        params.add((rec["bm"], rec["bf"], rec["C"], rec["g"]))
+        flat = {f"{k}_g{row['generation']}": v for row in rec["rows"] if row["generation"] > 0 for k, v in row.items()}
+        out[float(rec["r"])].append(flat)
+    return out, params
 
 
 def mdd(sa: float, sb: float) -> float:
@@ -66,8 +68,12 @@ def mdd(sa: float, sb: float) -> float:
 def main() -> None:
     """Print the tables."""
     root = Path(sys.argv[1])
-    sim, xft = load(root / "simace.jsonl"), load(root / "xft.jsonl")
-    law = predict_ctm(0.5, C, 0.5 - C, BM, BF)
+    (sim, p_sim), (xft, p_xft) = load(root / "simace.jsonl"), load(root / "xft.jsonl")
+    if len(p_sim | p_xft) != 1:
+        raise SystemExit(f"want one (bm, bf, C, G) across both sides, got {sorted(p_sim | p_xft)}")
+    ((bm, bf, c, G),) = p_sim | p_xft
+    law = predict_ctm(0.5, c, 0.5 - c, bm, bf)
+    print(f"b_m {bm}, b_f {bf}, C {c}, G {G}\n")
     for r in sorted(sim):
         a_runs, b_runs = sim[r], xft[r]
         print(f"## r = {r} (simACE {len(a_runs)} seeds, xftsim {len(b_runs)} seeds)\n")
@@ -75,7 +81,7 @@ def main() -> None:
         print("|---|---|---|---|---|---|---|")
         ps = []
         for s in STATS:
-            for g in range(1, 7):
+            for g in range(1, G + 1):
                 key = f"{s}_g{g}"
                 a = np.array([x[key] for x in a_runs if key in x], float)
                 b = np.array([x[key] for x in b_runs if key in x], float)
@@ -97,10 +103,10 @@ def main() -> None:
         print("Check 3: Var(C) minus C by generation, mean (95% CI)\n")
         print("| g | simACE (realised top-up) | xftsim (fixed residual) |")
         print("|---|---|---|")
-        for g in range(1, 7):
+        for g in range(1, G + 1):
             cells = []
             for runs in (a_runs, b_runs):
-                d = np.array([x[f"var_C_g{g}"] for x in runs]) - C
+                d = np.array([x[f"var_C_g{g}"] for x in runs]) - c
                 h = st.t.ppf(0.975, len(d) - 1) * d.std(ddof=1) / np.sqrt(len(d))
                 cells.append(f"{d.mean():+.4f} ({d.mean() - h:+.4f}, {d.mean() + h:+.4f})")
             print(f"| {g} | {cells[0]} | {cells[1]} |")

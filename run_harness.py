@@ -286,10 +286,17 @@ def check_matched(case: dict) -> None:
     want |= {"A2": 0.5, "C2": 0, "E2": 0.5, "rA": 0, "rC": 0, "rE": 0, "assort1": r}
     if ctm(x):
         want |= {"Ctm-maternal1": x["bm"], "Ctm-paternal1": x["bf"]}
+    bad = []
+    # am/run_xft.py takes transmission as bm > 0 or bf > 0, so a negative coefficient would split the sides
+    if not (0 <= x["bm"] < 1 and 0 <= x["bf"] < 1):
+        bad.append("xftsim bm and bf must lie in [0, 1)")
+    # the half-sib regime pairs min(side sizes) couples, and xftsim halves an odd N unevenly, so N would shrink
+    if x["pairing"] == "halfsib" and x["N"] % 2:
+        bad.append("the halfsib pairing needs an even N")
     if traits == 2:
         cross = r if r2 == r else math.sqrt(r * r2)  # rank 1 (am/run_xft.py)
         want |= {"assort2": r2, "assort-matrix": json.dumps([[r, cross], [cross, r2]])}
-    bad = [f"{k}={sim.get(k)!r} (want {v!r})" for k, v in want.items() if sim.get(k) != v]
+    bad += [f"{k}={sim.get(k)!r} (want {v!r})" for k, v in want.items() if sim.get(k) != v]
     extra = set(sim) - set(want) - ({"assort2"} if traits == 1 else set())
     bad += [f"{k} is not modelled by the xftsim configuration" for k in sorted(extra)]
     if traits == 1 and sim.get("assort2", 0) != 0:

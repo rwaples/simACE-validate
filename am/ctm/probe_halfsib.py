@@ -17,6 +17,8 @@ from pathlib import Path
 import numpy as np
 import polars as pl
 
+from am.stats import _half_sib_pairs, _sib_pairs
+
 seed, n, g = (int(a) for a in sys.argv[1:4])
 bm, bf, c = (float(a) for a in sys.argv[4:7])
 out = Path(sys.argv[7]) / f"halfsib_s{seed}.parquet"
@@ -42,20 +44,14 @@ parent_c = dict(zip(full["id"].to_list(), full["C1"].to_list(), strict=True))
 mother, father = ped["mother"].to_numpy(), ped["father"].to_numpy()
 c1, hh = ped["C1"].to_numpy(), ped["household_id"].to_numpy()
 
+_, couple = np.unique(mother.astype(np.int64) * (int(father.max()) + 1) + father, return_inverse=True)
+pairs = {
+    "MHS": _half_sib_pairs(mother, father),  # the pair definitions layer 5 scores (am/stats.py)
+    "PHS": _half_sib_pairs(father, mother),
+    "FS": _sib_pairs(couple),
+}
 rows = []
-for kind, same, other in (("MHS", mother, father), ("PHS", father, mother), ("FS", mother, father)):
-    order = np.argsort(same, kind="stable")
-    pi, pj = [], []
-    s = same[order]
-    starts = np.flatnonzero(np.r_[True, s[1:] != s[:-1]])
-    for a, b in zip(starts, np.r_[starts[1:], len(s)], strict=True):
-        idx = order[a:b]
-        ii, jj = np.triu_indices(len(idx), 1)
-        pi.append(idx[ii])
-        pj.append(idx[jj])
-    pi, pj = np.concatenate(pi), np.concatenate(pj)
-    keep = (other[pi] == other[pj]) if kind == "FS" else (other[pi] != other[pj])
-    pi, pj = pi[keep], pj[keep]
+for kind, (pi, pj) in pairs.items():
     x, y = np.r_[c1[pi], c1[pj]], np.r_[c1[pj], c1[pi]]
     rows.append({
         "pair": kind,

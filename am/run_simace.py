@@ -43,9 +43,11 @@ if r1 != r2 and (traits != 2 or min(r1, r2) <= 0):
     raise SystemExit("R1/R2 needs TRAITS 2 and R1, R2 > 0")
 r = r1 if r1 == r2 else sys.argv[4]
 c = float(sys.argv[7]) if len(sys.argv) > 7 else 0.0
+if len(sys.argv) == 9:
+    raise SystemExit("BM needs BF")
 bm, bf = (float(a) for a in sys.argv[8:10]) if len(sys.argv) > 9 else (0.0, 0.0)
 ctm = ["--Ctm-maternal1", str(bm), "--Ctm-paternal1", str(bf)] if bm or bf else []
-out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r1}-{r2}_t{traits}_c{c}.parquet"
+out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r1}-{r2}_t{traits}_c{c}_bm{bm}_bf{bf}.parquet"
 out.parent.mkdir(parents=True, exist_ok=True)
 
 am = ["--assort1", str(r1)]

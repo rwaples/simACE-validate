@@ -10,10 +10,18 @@ shared file differs beyond TOL, or a file is missing from NEW_DIR.
 """
 
 import json
+import math
 import sys
 from pathlib import Path
 
 TOL = 1e-12
+
+
+def diff(a: float, b: float) -> float:
+    """Absolute difference; 0 when both are NaN (half-sib rows of a regime without half-sibs), inf when one is."""
+    if math.isnan(a) or math.isnan(b):
+        return 0.0 if math.isnan(a) and math.isnan(b) else math.inf
+    return abs(a - b)
 
 
 def main() -> int:
@@ -35,7 +43,10 @@ def main() -> int:
             set(x["stats"]) == set(y["stats"]) for x, y in zip(ra, rb, strict=True)
         )
         if same_shape:
-            gap = max(abs(x["stats"][k] - y["stats"][k]) for x, y in zip(ra, rb, strict=True) for k in x["stats"])
+            gap = max(
+                (diff(x["stats"][k], y["stats"][k]) for x, y in zip(ra, rb, strict=True) for k in x["stats"]),
+                default=0.0,
+            )
         else:
             gap = float("inf")
         ok = gap <= TOL
