@@ -280,13 +280,23 @@ The cases are:
   vertical component;
 - `am2_r02` and `am2_r04`: two-trait AM, with every mate correlation r
   (`assort1 = assort2 = r` and `assort_matrix [[r, r], [r, r]]`). That is
-  the law of xftsim's `LinearAssortativeMatingRegime` on two phenotypes.
+  the law of xftsim's `LinearAssortativeMatingRegime` on two phenotypes;
+- `ctm_rm` and `ctm_am`: vertical C transmission (simACE ADR 0025; b_m
+  0.5, b_f 0.3, C 0.2). xftsim's vertical component reads the parents' c
+  and the mother's household draw. `ctm_rm` is random mating with
+  half-sibs, through our own `RandomHalfSibMatingRegime`, and is scored.
+  `ctm_am` is AM at 0.5 and is INFO: xftsim's fixed household residual
+  differs from simACE's realised top-up there by design
+  ([D5](differences.md)).
 
 Per generation, the cases compare:
 - Var(A) and Var(L);
 - the mate correlations on L and on A;
 - the full-sib and parent–offspring correlations of A and L;
-- for two traits, the within-person and cross-trait mate correlations.
+- for two traits, the within-person and cross-trait mate correlations;
+- under C transmission, Var(C), the mother– and father–offspring
+  correlations of C and L, the midparent slope, and (`ctm_rm`) the
+  maternal and paternal half-sib correlations of C and L.
 
 **How it is scored:**
 - xftsim's side is a committed **reference sample** (`am/reference/`), R
@@ -318,6 +328,6 @@ of the Mendelian residual.
 Not covered yet ([`status.md`](status.md)):
 
 - assortative mating with two traits and C > 0, with correlated traits, with two-trait
-  cross terms other than √(r1·r2) (including simACE's derived one), or combined with C
-  transmission; layer 5 covers single-trait AM and two-trait AM with a rank-1 mate
+  cross terms other than √(r1·r2) (including simACE's derived one); AM combined with C
+  transmission is reported (INFO, D5) but not scored; layer 5 covers single-trait AM and two-trait AM with a rank-1 mate
   correlation matrix (every correlation equal, or r1 0.4 and r2 0.1)

@@ -557,7 +557,8 @@ and with `bulmer2`. At r = 0.4, g = 6:
     simACE's derived one (`_cross_am_matrix`), which is 0 for independent
     traits;
   - correlated traits;
-  - AM combined with C transmission (rwaples/simACE-validate#5).
+  - AM combined with C transmission (rwaples/simACE-validate#5); reported
+    as INFO since the amendment of 2026-11-09 (differences.md D5).
 - xftsim's environment is Python 3.9 with numba 0.56.4 and numpy 1.23 (pixi
   env `xftsim`, no default feature). It is installed, never vendored (ADR
   0001 §7), and no xftsim code is copied: `Rank1AssortativeMatingRegime` is
@@ -567,12 +568,99 @@ and with `bulmer2`. At r = 0.4, g = 6:
 
 ## Open items
 
-- **rwaples/simACE-validate#5: C transmission against xftsim** (ADR 0025;
-  check 2 of #4, promoted). It chains the parents' c through a vertical
-  component, plus the household term above. Not built, pending approval.
-  Constraints found here that apply to it:
-  - xftsim's built-in regimes make no half-sibs (decision 2), so the MHS
-    (1 − b_f²) and PHS (b_f²) rows need a regime of our own. That would be
-    our code on xftsim's side, which weakens independence.
-  - Its reference samples would follow decision 8's manifest design. The
-    household construction already lives in `am/run_xft.py`.
+- None. rwaples/simACE-validate#5 (C transmission) is built; see the
+  amendment below.
+
+## Amendment 2026-11-09: vertical C transmission (rwaples/simACE-validate#5)
+
+simACE ADR 0025 sets c_child = b_m c_mother + b_f c_father + u, with u one
+draw per mother whose covariance is the configured C minus the realised
+covariance S of the transmitted part. Layer 1 (`ctm_base`) checks the code
+against that law but cannot question the law. This amendment adds two
+layer-5 cases that compare it with xftsim. The user chose design B on
+2026-11-09: layer 5 extended in place, a half-sib regime of our own, and
+every reference regenerated on GenomeDK.
+
+**Probes** (`am/ctm/`; outputs quoted in the session handoff
+`notes/handoff-sv-issue-5.md`):
+
+- *Graph.* xftsim builds c in two ways (`am/ctm/probe_graph.py`):
+  - one `LinearVerticalComponent` reads (c of the mother, c of the father,
+    hh of the mother) and writes the same value into `c.vertical` and
+    `y.vertical`;
+  - or c is summed first and copied into y by a proband-level
+    `LinearTransformationComponent`, whose input must be labelled
+    `comp_type = "outcome"`. Labelled `"output"`, it duplicates the column
+    and founder initialisation raises `InvalidIndexError`.
+  - In both, the inputs equal the parents' c exactly, and y − A − E = c
+    exactly. `am/run_xft.py` uses the first construction, with
+    `normalize=False`.
+- *Households.* simACE assigns households by mother (v0.3.0
+  `simulate.py:1136`, `:1184`), and the transmitted part uses each child's
+  own father (`:1332`). Over 8 seeds at N 20000
+  (`am/ctm/probe_halfsib.py`), every MHS pair shares a household and no
+  PHS pair does. The mother's private draw hh reproduces that.
+- *Founders.* simACE draws founder C iid N(0, C) (`simulate.py:1746`).
+  `founder_variances` (C, C, 1) gives xftsim's founders Var(c) = C.
+
+**Decisions.**
+
+1. **Two cases.**
+   - `ctm_rm`: b_m 0.5, b_f 0.3, C 0.2, r 0. Scored.
+   - `ctm_am`: the same at r 0.5. Every row INFO (differences.md D5),
+     since there xftsim's fixed household residual C(1 − b_m² − b_f²)
+     departs by design from simACE's realised top-up.
+   - Both: R = 100 per side, simACE seeds 8400 and 8600, xftsim seeds
+     19200 and 19400.
+2. **The half-sib regime.** `RandomHalfSibMatingRegime` (`am/run_xft.py`)
+   draws N/2 couples, each taking a uniform random member of each side with
+   replacement, and redraws any duplicate couple. Partner counts are then
+   about Poisson(1), and each couple has two offspring.
+   - It was written on xftsim's `MatingRegime` interface
+     (`get_potential_mates`, `enumerate_assignment`) without reading any
+     xftsim regime's source. A probe showed that `enumerate_assignment`
+     keeps a female listed with two distinct males as two couples.
+   - Meiosis, transmission and the household draw stay xftsim's. The
+     pairing law of `ctm_rm` is ours, as `am2_r0401`'s is.
+3. **Rows.**
+   - On top of the 42 single-trait rows:
+     - Var(C) at g = 1 to 6;
+     - r_MO_C, r_FO_C and the midparent slope b_MP_L at g = 2 to 6;
+     - r_MO_L and r_FO_L, scored here. xftsim's maternal label is the
+       member whose c is weighted by b_m and whose draw the children share,
+       so the two rows are well defined;
+     - for `ctm_rm`, the MHS and PHS correlations of C and L.
+   - The full-sib C correlation is 1 on both sides, so it is not a row.
+   - `ctm_rm` has 93 Welch rows (`schema`). INFO rows `law:<row>` and
+     `law:xftsim:<row>` hold each side's one-sample t against the
+     random-mating law (`am.bulmer.predict_ctm`). Under AM, that is Var(C)
+     against C only.
+4. **Power.** Two mutations of the reference: `ctm_swap` (b_m and b_f
+   swapped) and `ctm_half` (both halved). At 10 reps (results/power_ctm.md),
+   both reject 10/10 and `null` rejects 0/10.
+5. **K.** `ctm_rm` adds 93 p-values. `ctm_am` adds none, since its rows are
+   INFO. K grows from 1368 to 1461, so alpha/K falls for every row.
+6. **Regeneration.** The spec keys bm, bf and pairing, and the new code in
+   the hashed files, change every reference's manifest. All 18 existing
+   references were rebuilt at the same seeds, on GenomeDK (jobs 7742108 to
+   7742111, archive of 544f816). They hold the same draws as the old ones:
+   the same seeds and statistics, with every value within 1.33·10⁻¹⁵ of
+   the old (`tools/compare_reference_records.py`). None is byte-identical,
+   because the cluster's CPU rounds reductions differently in the last bits.
+   On the laptop, seed 0 of `am_r05` and of `amc_r05` reproduced the old
+   records exactly.
+
+**Pilot** (40 seeds per side, 9300001 to 9300040; `am/pilot/ctm_summary.md`):
+
+- *Random mating.* 93 rows; smallest Welch p 0.0034 (`r_PHS_C_g4`); 6 rows
+  below 0.05, against 4.7 expected.
+- *Check 3, under AM.* simACE's Var(C) − C stays within ±0.0015 at every g.
+  xftsim's grows from +0.0063 (g = 1) to +0.0122 (g = 6), with 95% CIs
+  excluding 0. The mates' c are correlated, so the cross term
+  2 b_m b_f Cov(c_m, c_f) enters the transmitted variance. The fixed
+  residual does not subtract it; simACE's realised top-up does.
+
+**Harness run of 2026-11-09** (K 1461, alpha/K 3.42·10⁻⁵): `ctm_rm`'s 93
+rows all PASS (smallest p 0.0145). No earlier row changed status. Under AM,
+`ctm_am` gives Var(C) − C of −0.00076 to +0.00061 for simACE (|t| ≤ 1.63)
+and +0.0060 to +0.0116 for xftsim (t +14.1 to +26.5).
