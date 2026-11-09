@@ -8,9 +8,9 @@ is the SD ratio simACE / gene-drop over seeds. Layer 4: a scored row is like lay
 realised truth); an exact row has no p-value and is FAIL when any entry mismatches, with center the
 largest difference and effect the number of mismatching (seed, architecture) entries.
 
-**Totals:** INFO 914, PASS 972
+**Totals:** INFO 1185, PASS 1065
 
-simace 0.3.0 (v0.3.0); alpha/K = 3.65e-05.
+simace 0.3.0 (v0.3.0); alpha/K = 3.42e-05.
 
 | Case | Layer | Statistic | n | Center | Effect | p | Status | Id |
 |---|---|---|---|---|---|---|---|---|
@@ -1888,6 +1888,370 @@ simace 0.3.0 (v0.3.0); alpha/K = 3.65e-05.
 | amc_r05 | 5 | bulmer:r_PO_L_g4 | 100 | 0.0001706 | +0.17 | t 0.862 | INFO |  |
 | amc_r05 | 5 | bulmer:r_PO_L_g5 | 100 | 0.0002588 | +0.27 | t 0.787 | INFO |  |
 | amc_r05 | 5 | bulmer:r_PO_L_g6 | 100 | 0.0005954 | +0.65 | t 0.515 | INFO |  |
+| ctm_rm | 5 | var_A_g1 | 100 | 0.0007531 | +0.64 | t 0.526 | PASS |  |
+| ctm_rm | 5 | var_A_g2 | 100 | 0.0004825 | +0.36 | t 0.72 | PASS |  |
+| ctm_rm | 5 | var_A_g3 | 100 | -0.0004932 | -0.40 | t 0.686 | PASS |  |
+| ctm_rm | 5 | var_A_g4 | 100 | -0.001241 | -0.96 | t 0.34 | PASS |  |
+| ctm_rm | 5 | var_A_g5 | 100 | -0.0009484 | -0.72 | t 0.475 | PASS |  |
+| ctm_rm | 5 | var_A_g6 | 100 | -0.0006188 | -0.46 | t 0.644 | PASS |  |
+| ctm_rm | 5 | var_L_g1 | 100 | 0.0005071 | +0.21 | t 0.833 | PASS |  |
+| ctm_rm | 5 | var_L_g2 | 100 | -0.002677 | -1.04 | t 0.3 | PASS |  |
+| ctm_rm | 5 | var_L_g3 | 100 | -0.001313 | -0.53 | t 0.6 | PASS |  |
+| ctm_rm | 5 | var_L_g4 | 100 | -0.001669 | -0.74 | t 0.46 | PASS |  |
+| ctm_rm | 5 | var_L_g5 | 100 | -0.0008498 | -0.35 | t 0.727 | PASS |  |
+| ctm_rm | 5 | var_L_g6 | 100 | 0.001221 | +0.49 | t 0.628 | PASS |  |
+| ctm_rm | 5 | r_mate_L_g2 | 100 | -0.001883 | -0.96 | t 0.339 | PASS |  |
+| ctm_rm | 5 | r_mate_L_g3 | 100 | 0.003062 | +1.49 | t 0.138 | PASS |  |
+| ctm_rm | 5 | r_mate_L_g4 | 100 | 0.0003107 | +0.15 | t 0.88 | PASS |  |
+| ctm_rm | 5 | r_mate_L_g5 | 100 | 1.829e-05 | +0.01 | t 0.993 | PASS |  |
+| ctm_rm | 5 | r_mate_L_g6 | 100 | -0.001832 | -0.94 | t 0.348 | PASS |  |
+| ctm_rm | 5 | r_mate_A_g2 | 100 | 0.001414 | +0.73 | t 0.468 | PASS |  |
+| ctm_rm | 5 | r_mate_A_g3 | 100 | 0.001379 | +0.73 | t 0.469 | PASS |  |
+| ctm_rm | 5 | r_mate_A_g4 | 100 | 0.0006588 | +0.30 | t 0.768 | PASS |  |
+| ctm_rm | 5 | r_mate_A_g5 | 100 | -0.0004763 | -0.25 | t 0.801 | PASS |  |
+| ctm_rm | 5 | r_mate_A_g6 | 100 | -0.002847 | -1.42 | t 0.156 | PASS |  |
+| ctm_rm | 5 | r_FS_A_g2 | 100 | -0.0002079 | -0.12 | t 0.904 | PASS |  |
+| ctm_rm | 5 | r_FS_A_g3 | 100 | -0.004224 | -2.47 | t 0.0145 | PASS |  |
+| ctm_rm | 5 | r_FS_A_g4 | 100 | 0.0004767 | +0.26 | t 0.793 | PASS |  |
+| ctm_rm | 5 | r_FS_A_g5 | 100 | 0.000473 | +0.27 | t 0.791 | PASS |  |
+| ctm_rm | 5 | r_FS_A_g6 | 100 | -0.001322 | -0.70 | t 0.484 | PASS |  |
+| ctm_rm | 5 | r_FS_L_g2 | 100 | -0.002181 | -1.22 | t 0.223 | PASS |  |
+| ctm_rm | 5 | r_FS_L_g3 | 100 | -0.000331 | -0.16 | t 0.87 | PASS |  |
+| ctm_rm | 5 | r_FS_L_g4 | 100 | -0.0006205 | -0.37 | t 0.715 | PASS |  |
+| ctm_rm | 5 | r_FS_L_g5 | 100 | -0.001877 | -1.10 | t 0.271 | PASS |  |
+| ctm_rm | 5 | r_FS_L_g6 | 100 | -0.001395 | -0.79 | t 0.43 | PASS |  |
+| ctm_rm | 5 | r_PO_A_g2 | 100 | 0.0003776 | +0.38 | t 0.708 | PASS |  |
+| ctm_rm | 5 | r_PO_A_g3 | 100 | -0.0002711 | -0.28 | t 0.782 | PASS |  |
+| ctm_rm | 5 | r_PO_A_g4 | 100 | -0.0002254 | -0.21 | t 0.832 | PASS |  |
+| ctm_rm | 5 | r_PO_A_g5 | 100 | -0.0002361 | -0.26 | t 0.797 | PASS |  |
+| ctm_rm | 5 | r_PO_A_g6 | 100 | -0.001363 | -1.44 | t 0.151 | PASS |  |
+| ctm_rm | 5 | r_PO_L_g2 | 100 | -4.004e-05 | -0.03 | t 0.974 | PASS |  |
+| ctm_rm | 5 | r_PO_L_g3 | 100 | 0.0006101 | +0.46 | t 0.644 | PASS |  |
+| ctm_rm | 5 | r_PO_L_g4 | 100 | 1.935e-05 | +0.02 | t 0.987 | PASS |  |
+| ctm_rm | 5 | r_PO_L_g5 | 100 | -0.0012 | -0.97 | t 0.331 | PASS |  |
+| ctm_rm | 5 | r_PO_L_g6 | 100 | -0.0007558 | -0.66 | t 0.512 | PASS |  |
+| ctm_rm | 5 | r_MO_L_g2 | 100 | -0.0002454 | -0.13 | t 0.894 | PASS |  |
+| ctm_rm | 5 | r_MO_L_g3 | 100 | -0.0009457 | -0.51 | t 0.609 | PASS |  |
+| ctm_rm | 5 | r_MO_L_g4 | 100 | -0.001553 | -0.94 | t 0.348 | PASS |  |
+| ctm_rm | 5 | r_MO_L_g5 | 100 | -0.001357 | -0.80 | t 0.423 | PASS |  |
+| ctm_rm | 5 | r_MO_L_g6 | 100 | -0.0007334 | -0.45 | t 0.651 | PASS |  |
+| ctm_rm | 5 | r_FO_L_g2 | 100 | 0.0001639 | +0.11 | t 0.914 | PASS |  |
+| ctm_rm | 5 | r_FO_L_g3 | 100 | 0.002232 | +1.30 | t 0.195 | PASS |  |
+| ctm_rm | 5 | r_FO_L_g4 | 100 | 0.001485 | +0.91 | t 0.364 | PASS |  |
+| ctm_rm | 5 | r_FO_L_g5 | 100 | -0.001074 | -0.61 | t 0.541 | PASS |  |
+| ctm_rm | 5 | r_FO_L_g6 | 100 | -0.0008632 | -0.51 | t 0.611 | PASS |  |
+| ctm_rm | 5 | var_C_g1 | 100 | -0.0003584 | -0.46 | t 0.645 | PASS |  |
+| ctm_rm | 5 | var_C_g2 | 100 | -0.0004369 | -0.63 | t 0.53 | PASS |  |
+| ctm_rm | 5 | var_C_g3 | 100 | 0.0002651 | +0.36 | t 0.723 | PASS |  |
+| ctm_rm | 5 | var_C_g4 | 100 | -0.001326 | -1.82 | t 0.07 | PASS |  |
+| ctm_rm | 5 | var_C_g5 | 100 | -0.0008598 | -1.11 | t 0.27 | PASS |  |
+| ctm_rm | 5 | var_C_g6 | 100 | 0.0004101 | +0.58 | t 0.565 | PASS |  |
+| ctm_rm | 5 | r_MO_C_g2 | 100 | 0.001304 | +0.59 | t 0.557 | PASS |  |
+| ctm_rm | 5 | r_MO_C_g3 | 100 | -0.002689 | -1.37 | t 0.172 | PASS |  |
+| ctm_rm | 5 | r_MO_C_g4 | 100 | -0.001746 | -0.82 | t 0.414 | PASS |  |
+| ctm_rm | 5 | r_MO_C_g5 | 100 | -0.00486 | -2.25 | t 0.0255 | PASS |  |
+| ctm_rm | 5 | r_MO_C_g6 | 100 | 0.0001538 | +0.07 | t 0.946 | PASS |  |
+| ctm_rm | 5 | r_FO_C_g2 | 100 | -0.003618 | -1.99 | t 0.0485 | PASS |  |
+| ctm_rm | 5 | r_FO_C_g3 | 100 | -0.004564 | -2.19 | t 0.0295 | PASS |  |
+| ctm_rm | 5 | r_FO_C_g4 | 100 | -6.995e-05 | -0.03 | t 0.973 | PASS |  |
+| ctm_rm | 5 | r_FO_C_g5 | 100 | -0.000836 | -0.41 | t 0.685 | PASS |  |
+| ctm_rm | 5 | r_FO_C_g6 | 100 | 0.0005594 | +0.25 | t 0.799 | PASS |  |
+| ctm_rm | 5 | b_MP_L_g2 | 100 | -0.0002515 | -0.11 | t 0.915 | PASS |  |
+| ctm_rm | 5 | b_MP_L_g3 | 100 | -0.0001358 | -0.06 | t 0.953 | PASS |  |
+| ctm_rm | 5 | b_MP_L_g4 | 100 | -0.0001979 | -0.09 | t 0.927 | PASS |  |
+| ctm_rm | 5 | b_MP_L_g5 | 100 | -0.001125 | -0.46 | t 0.649 | PASS |  |
+| ctm_rm | 5 | b_MP_L_g6 | 100 | 0.0002553 | +0.11 | t 0.913 | PASS |  |
+| ctm_rm | 5 | r_MHS_C_g2 | 100 | 0.0004688 | +0.45 | t 0.654 | PASS |  |
+| ctm_rm | 5 | r_MHS_C_g3 | 100 | 0.0001141 | +0.11 | t 0.913 | PASS |  |
+| ctm_rm | 5 | r_MHS_C_g4 | 100 | -0.0008338 | -0.87 | t 0.387 | PASS |  |
+| ctm_rm | 5 | r_MHS_C_g5 | 100 | 0.0006458 | +0.63 | t 0.528 | PASS |  |
+| ctm_rm | 5 | r_MHS_C_g6 | 100 | 0.001332 | +1.24 | t 0.216 | PASS |  |
+| ctm_rm | 5 | r_PHS_C_g2 | 100 | -0.006588 | -1.54 | t 0.126 | PASS |  |
+| ctm_rm | 5 | r_PHS_C_g3 | 100 | -0.008152 | -1.67 | t 0.0972 | PASS |  |
+| ctm_rm | 5 | r_PHS_C_g4 | 100 | 0.003218 | +0.63 | t 0.531 | PASS |  |
+| ctm_rm | 5 | r_PHS_C_g5 | 100 | 0.003961 | +0.86 | t 0.39 | PASS |  |
+| ctm_rm | 5 | r_PHS_C_g6 | 100 | 5.998e-06 | +0.00 | t 0.999 | PASS |  |
+| ctm_rm | 5 | r_MHS_L_g2 | 100 | 0.0005205 | +0.15 | t 0.879 | PASS |  |
+| ctm_rm | 5 | r_MHS_L_g3 | 100 | -0.003205 | -0.96 | t 0.337 | PASS |  |
+| ctm_rm | 5 | r_MHS_L_g4 | 100 | -0.003257 | -1.03 | t 0.306 | PASS |  |
+| ctm_rm | 5 | r_MHS_L_g5 | 100 | -0.007072 | -2.32 | t 0.0215 | PASS |  |
+| ctm_rm | 5 | r_MHS_L_g6 | 100 | 0.00214 | +0.64 | t 0.523 | PASS |  |
+| ctm_rm | 5 | r_PHS_L_g2 | 100 | -0.0032 | -0.98 | t 0.33 | PASS |  |
+| ctm_rm | 5 | r_PHS_L_g3 | 100 | 0.001075 | +0.36 | t 0.723 | PASS |  |
+| ctm_rm | 5 | r_PHS_L_g4 | 100 | 0.002637 | +0.77 | t 0.44 | PASS |  |
+| ctm_rm | 5 | r_PHS_L_g5 | 100 | 0.0004132 | +0.12 | t 0.904 | PASS |  |
+| ctm_rm | 5 | r_PHS_L_g6 | 100 | -0.002162 | -0.64 | t 0.522 | PASS |  |
+| ctm_rm | 5 | law:var_A_g1 | 100 | 0.0009672 | +1.21 | t 0.227 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_A_g1 | 100 | 0.000214 | +0.24 | t 0.808 | INFO |  |
+| ctm_rm | 5 | law:var_A_g2 | 100 | -0.0004161 | -0.43 | t 0.666 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_A_g2 | 100 | -0.0008986 | -0.96 | t 0.339 | INFO |  |
+| ctm_rm | 5 | law:var_A_g3 | 100 | -0.0004217 | -0.49 | t 0.625 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_A_g3 | 100 | 7.157e-05 | +0.08 | t 0.934 | INFO |  |
+| ctm_rm | 5 | law:var_A_g4 | 100 | -0.001158 | -1.27 | t 0.205 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_A_g4 | 100 | 8.284e-05 | +0.09 | t 0.929 | INFO |  |
+| ctm_rm | 5 | law:var_A_g5 | 100 | -0.000214 | -0.22 | t 0.828 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_A_g5 | 100 | 0.0007344 | +0.82 | t 0.413 | INFO |  |
+| ctm_rm | 5 | law:var_A_g6 | 100 | -0.0001745 | -0.19 | t 0.849 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_A_g6 | 100 | 0.0004443 | +0.45 | t 0.651 | INFO |  |
+| ctm_rm | 5 | law:var_L_g1 | 100 | 0.002391 | +1.45 | t 0.151 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_L_g1 | 100 | 0.001884 | +1.09 | t 0.28 | INFO |  |
+| ctm_rm | 5 | law:var_L_g2 | 100 | -0.00229 | -1.31 | t 0.194 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_L_g2 | 100 | 0.0003875 | +0.20 | t 0.838 | INFO |  |
+| ctm_rm | 5 | law:var_L_g3 | 100 | -0.001281 | -0.74 | t 0.458 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_L_g3 | 100 | 3.224e-05 | +0.02 | t 0.986 | INFO |  |
+| ctm_rm | 5 | law:var_L_g4 | 100 | -0.001081 | -0.70 | t 0.485 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_L_g4 | 100 | 0.0005878 | +0.36 | t 0.721 | INFO |  |
+| ctm_rm | 5 | law:var_L_g5 | 100 | 0.0001093 | +0.06 | t 0.951 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_L_g5 | 100 | 0.0009592 | +0.57 | t 0.57 | INFO |  |
+| ctm_rm | 5 | law:var_L_g6 | 100 | 0.002145 | +1.14 | t 0.257 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_L_g6 | 100 | 0.0009236 | +0.55 | t 0.582 | INFO |  |
+| ctm_rm | 5 | law:r_mate_L_g2 | 100 | 0.0006581 | +0.49 | t 0.622 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_L_g2 | 100 | 0.002542 | +1.76 | t 0.0819 | INFO |  |
+| ctm_rm | 5 | law:r_mate_L_g3 | 100 | 0.001408 | +1.01 | t 0.315 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_L_g3 | 100 | -0.001654 | -1.09 | t 0.277 | INFO |  |
+| ctm_rm | 5 | law:r_mate_L_g4 | 100 | 0.001091 | +0.80 | t 0.426 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_L_g4 | 100 | 0.0007803 | +0.51 | t 0.611 | INFO |  |
+| ctm_rm | 5 | law:r_mate_L_g5 | 100 | -0.0002322 | -0.16 | t 0.871 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_L_g5 | 100 | -0.0002504 | -0.19 | t 0.85 | INFO |  |
+| ctm_rm | 5 | law:r_mate_L_g6 | 100 | -0.001458 | -1.08 | t 0.284 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_L_g6 | 100 | 0.0003739 | +0.27 | t 0.79 | INFO |  |
+| ctm_rm | 5 | law:r_mate_A_g2 | 100 | 0.001615 | +1.16 | t 0.249 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_A_g2 | 100 | 0.0002004 | +0.15 | t 0.883 | INFO |  |
+| ctm_rm | 5 | law:r_mate_A_g3 | 100 | 0.0007634 | +0.61 | t 0.541 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_A_g3 | 100 | -0.0006156 | -0.43 | t 0.669 | INFO |  |
+| ctm_rm | 5 | law:r_mate_A_g4 | 100 | 0.001111 | +0.69 | t 0.494 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_A_g4 | 100 | 0.0004518 | +0.30 | t 0.769 | INFO |  |
+| ctm_rm | 5 | law:r_mate_A_g5 | 100 | -0.0004856 | -0.42 | t 0.672 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_A_g5 | 100 | -9.274e-06 | -0.01 | t 0.995 | INFO |  |
+| ctm_rm | 5 | law:r_mate_A_g6 | 100 | -0.0005101 | -0.37 | t 0.711 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_mate_A_g6 | 100 | 0.002337 | +1.60 | t 0.112 | INFO |  |
+| ctm_rm | 5 | law:r_FS_A_g2 | 100 | -0.0003626 | -0.28 | t 0.78 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_A_g2 | 100 | -0.0001547 | -0.14 | t 0.892 | INFO |  |
+| ctm_rm | 5 | law:r_FS_A_g3 | 100 | -0.00305 | -2.31 | t 0.0231 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_A_g3 | 100 | 0.001174 | +1.08 | t 0.284 | INFO |  |
+| ctm_rm | 5 | law:r_FS_A_g4 | 100 | -4.608e-05 | -0.03 | t 0.974 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_A_g4 | 100 | -0.0005228 | -0.45 | t 0.657 | INFO |  |
+| ctm_rm | 5 | law:r_FS_A_g5 | 100 | -0.0002018 | -0.15 | t 0.877 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_A_g5 | 100 | -0.0006748 | -0.56 | t 0.578 | INFO |  |
+| ctm_rm | 5 | law:r_FS_A_g6 | 100 | -0.001994 | -1.44 | t 0.153 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_A_g6 | 100 | -0.0006725 | -0.53 | t 0.6 | INFO |  |
+| ctm_rm | 5 | law:r_FS_L_g2 | 100 | -0.001819 | -1.47 | t 0.145 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_L_g2 | 100 | 0.0003627 | +0.28 | t 0.778 | INFO |  |
+| ctm_rm | 5 | law:r_FS_L_g3 | 100 | -0.001476 | -1.00 | t 0.322 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_L_g3 | 100 | -0.001145 | -0.83 | t 0.407 | INFO |  |
+| ctm_rm | 5 | law:r_FS_L_g4 | 100 | -0.001135 | -0.90 | t 0.368 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_L_g4 | 100 | -0.0005147 | -0.45 | t 0.653 | INFO |  |
+| ctm_rm | 5 | law:r_FS_L_g5 | 100 | -0.001029 | -0.76 | t 0.45 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_L_g5 | 100 | 0.0008478 | +0.83 | t 0.408 | INFO |  |
+| ctm_rm | 5 | law:r_FS_L_g6 | 100 | -0.0006081 | -0.43 | t 0.666 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FS_L_g6 | 100 | 0.0007871 | +0.74 | t 0.462 | INFO |  |
+| ctm_rm | 5 | law:r_PO_A_g2 | 100 | 0.0001468 | +0.19 | t 0.848 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_A_g2 | 100 | -0.0002308 | -0.35 | t 0.726 | INFO |  |
+| ctm_rm | 5 | law:r_PO_A_g3 | 100 | -0.0006742 | -0.96 | t 0.339 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_A_g3 | 100 | -0.0004031 | -0.59 | t 0.555 | INFO |  |
+| ctm_rm | 5 | law:r_PO_A_g4 | 100 | 0.0001383 | +0.18 | t 0.86 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_A_g4 | 100 | 0.0003638 | +0.51 | t 0.613 | INFO |  |
+| ctm_rm | 5 | law:r_PO_A_g5 | 100 | 2.99e-05 | +0.05 | t 0.959 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_A_g5 | 100 | 0.000266 | +0.37 | t 0.709 | INFO |  |
+| ctm_rm | 5 | law:r_PO_A_g6 | 100 | -0.0008909 | -1.32 | t 0.188 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_A_g6 | 100 | 0.0004723 | +0.71 | t 0.479 | INFO |  |
+| ctm_rm | 5 | law:r_PO_L_g2 | 100 | 0.0006758 | +0.73 | t 0.465 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_L_g2 | 100 | 0.0007159 | +0.88 | t 0.383 | INFO |  |
+| ctm_rm | 5 | law:r_PO_L_g3 | 100 | -0.0002183 | -0.24 | t 0.807 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_L_g3 | 100 | -0.0008284 | -0.85 | t 0.395 | INFO |  |
+| ctm_rm | 5 | law:r_PO_L_g4 | 100 | -1.815e-05 | -0.02 | t 0.983 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_L_g4 | 100 | -3.75e-05 | -0.05 | t 0.963 | INFO |  |
+| ctm_rm | 5 | law:r_PO_L_g5 | 100 | -0.0003884 | -0.45 | t 0.653 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_L_g5 | 100 | 0.0008119 | +0.92 | t 0.359 | INFO |  |
+| ctm_rm | 5 | law:r_PO_L_g6 | 100 | -0.0001733 | -0.20 | t 0.838 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PO_L_g6 | 100 | 0.0005825 | +0.75 | t 0.457 | INFO |  |
+| ctm_rm | 5 | law:r_MO_L_g2 | 100 | 0.0002812 | +0.21 | t 0.836 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_L_g2 | 100 | 0.0005266 | +0.43 | t 0.672 | INFO |  |
+| ctm_rm | 5 | law:r_MO_L_g3 | 100 | -0.0001971 | -0.16 | t 0.872 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_L_g3 | 100 | 0.0007486 | +0.54 | t 0.589 | INFO |  |
+| ctm_rm | 5 | law:r_MO_L_g4 | 100 | -0.0008934 | -0.79 | t 0.429 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_L_g4 | 100 | 0.0006599 | +0.55 | t 0.586 | INFO |  |
+| ctm_rm | 5 | law:r_MO_L_g5 | 100 | -9.726e-05 | -0.08 | t 0.935 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_L_g5 | 100 | 0.00126 | +1.05 | t 0.296 | INFO |  |
+| ctm_rm | 5 | law:r_MO_L_g6 | 100 | -0.0005201 | -0.50 | t 0.621 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_L_g6 | 100 | 0.0002133 | +0.17 | t 0.863 | INFO |  |
+| ctm_rm | 5 | law:r_FO_L_g2 | 100 | 0.001103 | +0.94 | t 0.35 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_L_g2 | 100 | 0.0009388 | +0.97 | t 0.333 | INFO |  |
+| ctm_rm | 5 | law:r_FO_L_g3 | 100 | -0.0002094 | -0.17 | t 0.867 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_L_g3 | 100 | -0.002441 | -2.08 | t 0.0404 | INFO |  |
+| ctm_rm | 5 | law:r_FO_L_g4 | 100 | 0.0008579 | +0.71 | t 0.479 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_L_g4 | 100 | -0.0006275 | -0.57 | t 0.57 | INFO |  |
+| ctm_rm | 5 | law:r_FO_L_g5 | 100 | -0.0006822 | -0.57 | t 0.57 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_L_g5 | 100 | 0.0003914 | +0.31 | t 0.761 | INFO |  |
+| ctm_rm | 5 | law:r_FO_L_g6 | 100 | 0.0001229 | +0.10 | t 0.919 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_L_g6 | 100 | 0.0009861 | +0.83 | t 0.409 | INFO |  |
+| ctm_rm | 5 | law:var_C_g1 | 100 | 0.000406 | +0.80 | t 0.426 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_C_g1 | 100 | 0.0007644 | +1.30 | t 0.195 | INFO |  |
+| ctm_rm | 5 | law:var_C_g2 | 100 | -0.0008999 | -1.97 | t 0.0511 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_C_g2 | 100 | -0.0004629 | -0.88 | t 0.38 | INFO |  |
+| ctm_rm | 5 | law:var_C_g3 | 100 | -0.0001952 | -0.39 | t 0.7 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_C_g3 | 100 | -0.0004604 | -0.84 | t 0.404 | INFO |  |
+| ctm_rm | 5 | law:var_C_g4 | 100 | -0.0008858 | -1.84 | t 0.0692 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_C_g4 | 100 | 0.0004402 | +0.81 | t 0.421 | INFO |  |
+| ctm_rm | 5 | law:var_C_g5 | 100 | -3.791e-05 | -0.07 | t 0.944 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_C_g5 | 100 | 0.0008219 | +1.46 | t 0.147 | INFO |  |
+| ctm_rm | 5 | law:var_C_g6 | 100 | 0.0008471 | +1.97 | t 0.0511 | INFO |  |
+| ctm_rm | 5 | law:xftsim:var_C_g6 | 100 | 0.0004371 | +0.77 | t 0.443 | INFO |  |
+| ctm_rm | 5 | law:r_MO_C_g2 | 100 | 0.001181 | +0.78 | t 0.439 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_C_g2 | 100 | -0.0001229 | -0.08 | t 0.939 | INFO |  |
+| ctm_rm | 5 | law:r_MO_C_g3 | 100 | -0.002219 | -1.69 | t 0.0949 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_C_g3 | 100 | 0.0004702 | +0.32 | t 0.747 | INFO |  |
+| ctm_rm | 5 | law:r_MO_C_g4 | 100 | -0.001948 | -1.23 | t 0.223 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_C_g4 | 100 | -0.0002018 | -0.14 | t 0.888 | INFO |  |
+| ctm_rm | 5 | law:r_MO_C_g5 | 100 | -0.002592 | -1.88 | t 0.0633 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_C_g5 | 100 | 0.002267 | +1.37 | t 0.175 | INFO |  |
+| ctm_rm | 5 | law:r_MO_C_g6 | 100 | -0.0002997 | -0.18 | t 0.861 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MO_C_g6 | 100 | -0.0004535 | -0.30 | t 0.764 | INFO |  |
+| ctm_rm | 5 | law:r_FO_C_g2 | 100 | -0.003266 | -2.35 | t 0.0207 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_C_g2 | 100 | 0.0003525 | +0.30 | t 0.766 | INFO |  |
+| ctm_rm | 5 | law:r_FO_C_g3 | 100 | -0.005281 | -3.42 | t 0.000914 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_C_g3 | 100 | -0.0007177 | -0.51 | t 0.608 | INFO |  |
+| ctm_rm | 5 | law:r_FO_C_g4 | 100 | 0.0008322 | +0.59 | t 0.56 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_C_g4 | 100 | 0.0009022 | +0.59 | t 0.556 | INFO |  |
+| ctm_rm | 5 | law:r_FO_C_g5 | 100 | 0.000114 | +0.07 | t 0.942 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_C_g5 | 100 | 0.00095 | +0.72 | t 0.475 | INFO |  |
+| ctm_rm | 5 | law:r_FO_C_g6 | 100 | 0.001245 | +0.75 | t 0.453 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_FO_C_g6 | 100 | 0.000686 | +0.48 | t 0.636 | INFO |  |
+| ctm_rm | 5 | law:b_MP_L_g2 | 100 | 4.638e-05 | +0.03 | t 0.977 | INFO |  |
+| ctm_rm | 5 | law:xftsim:b_MP_L_g2 | 100 | 0.0002978 | +0.17 | t 0.863 | INFO |  |
+| ctm_rm | 5 | law:b_MP_L_g3 | 100 | -0.0006954 | -0.46 | t 0.646 | INFO |  |
+| ctm_rm | 5 | law:xftsim:b_MP_L_g3 | 100 | -0.0005596 | -0.32 | t 0.747 | INFO |  |
+| ctm_rm | 5 | law:b_MP_L_g4 | 100 | -0.0006508 | -0.43 | t 0.671 | INFO |  |
+| ctm_rm | 5 | law:xftsim:b_MP_L_g4 | 100 | -0.0004528 | -0.30 | t 0.765 | INFO |  |
+| ctm_rm | 5 | law:b_MP_L_g5 | 100 | 0.0002416 | +0.15 | t 0.884 | INFO |  |
+| ctm_rm | 5 | law:xftsim:b_MP_L_g5 | 100 | 0.001367 | +0.75 | t 0.456 | INFO |  |
+| ctm_rm | 5 | law:b_MP_L_g6 | 100 | 0.0009018 | +0.52 | t 0.602 | INFO |  |
+| ctm_rm | 5 | law:xftsim:b_MP_L_g6 | 100 | 0.0006465 | +0.42 | t 0.679 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_C_g2 | 100 | -0.001197 | -1.33 | t 0.187 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_C_g2 | 100 | -0.001666 | -3.17 | t 0.00201 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_C_g3 | 100 | -0.000164 | -0.20 | t 0.844 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_C_g3 | 100 | -0.0002781 | -0.44 | t 0.658 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_C_g4 | 100 | -0.001077 | -1.43 | t 0.157 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_C_g4 | 100 | -0.0002436 | -0.41 | t 0.683 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_C_g5 | 100 | 0.0009675 | +1.09 | t 0.279 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_C_g5 | 100 | 0.0003217 | +0.64 | t 0.526 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_C_g6 | 100 | 0.0001386 | +0.15 | t 0.879 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_C_g6 | 100 | -0.001193 | -2.07 | t 0.0409 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_C_g2 | 100 | -0.006114 | -1.61 | t 0.111 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_C_g2 | 100 | 0.0004732 | +0.24 | t 0.811 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_C_g3 | 100 | -0.009726 | -2.28 | t 0.0249 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_C_g3 | 100 | -0.001574 | -0.66 | t 0.508 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_C_g4 | 100 | 0.0005523 | +0.12 | t 0.905 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_C_g4 | 100 | -0.002665 | -1.18 | t 0.241 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_C_g5 | 100 | 0.005026 | +1.24 | t 0.218 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_C_g5 | 100 | 0.001064 | +0.49 | t 0.624 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_C_g6 | 100 | 0.0004159 | +0.09 | t 0.93 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_C_g6 | 100 | 0.0004099 | +0.19 | t 0.853 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_L_g2 | 100 | -0.002239 | -0.78 | t 0.435 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_L_g2 | 100 | -0.002759 | -1.46 | t 0.146 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_L_g3 | 100 | -0.003513 | -1.27 | t 0.208 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_L_g3 | 100 | -0.000308 | -0.17 | t 0.868 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_L_g4 | 100 | -0.001579 | -0.62 | t 0.535 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_L_g4 | 100 | 0.001678 | +0.88 | t 0.38 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_L_g5 | 100 | -0.004888 | -1.92 | t 0.0583 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_L_g5 | 100 | 0.002184 | +1.31 | t 0.193 | INFO |  |
+| ctm_rm | 5 | law:r_MHS_L_g6 | 100 | -3.062e-05 | -0.01 | t 0.991 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_MHS_L_g6 | 100 | -0.00217 | -1.24 | t 0.218 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_L_g2 | 100 | -0.004403 | -1.51 | t 0.135 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_L_g2 | 100 | -0.001203 | -0.82 | t 0.416 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_L_g3 | 100 | -0.00111 | -0.43 | t 0.67 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_L_g3 | 100 | -0.002185 | -1.40 | t 0.163 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_L_g4 | 100 | 0.002636 | +0.90 | t 0.37 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_L_g4 | 100 | -1.282e-06 | -0.00 | t 0.999 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_L_g5 | 100 | 0.000949 | +0.32 | t 0.753 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_L_g5 | 100 | 0.0005358 | +0.33 | t 0.742 | INFO |  |
+| ctm_rm | 5 | law:r_PHS_L_g6 | 100 | -0.003654 | -1.28 | t 0.204 | INFO |  |
+| ctm_rm | 5 | law:xftsim:r_PHS_L_g6 | 100 | -0.001493 | -0.84 | t 0.403 | INFO |  |
+| ctm_am | 5 | var_A_g1 | 100 | -0.001956 | -1.43 | t 0.156 | INFO | D5 |
+| ctm_am | 5 | var_A_g2 | 100 | 3.69e-05 | +0.02 | t 0.982 | INFO | D5 |
+| ctm_am | 5 | var_A_g3 | 100 | 0.001214 | +0.69 | t 0.491 | INFO | D5 |
+| ctm_am | 5 | var_A_g4 | 100 | -0.00017 | -0.10 | t 0.923 | INFO | D5 |
+| ctm_am | 5 | var_A_g5 | 100 | 0.002974 | +1.59 | t 0.115 | INFO | D5 |
+| ctm_am | 5 | var_A_g6 | 100 | 0.002617 | +1.36 | t 0.174 | INFO | D5 |
+| ctm_am | 5 | var_L_g1 | 100 | -0.005404 | -2.05 | t 0.0419 | INFO | D5 |
+| ctm_am | 5 | var_L_g2 | 100 | -0.01348 | -4.43 | t 1.58e-05 | INFO | D5 |
+| ctm_am | 5 | var_L_g3 | 100 | -0.01069 | -3.33 | t 0.00105 | INFO | D5 |
+| ctm_am | 5 | var_L_g4 | 100 | -0.01661 | -5.52 | t 1.06e-07 | INFO | D5 |
+| ctm_am | 5 | var_L_g5 | 100 | -0.01297 | -4.04 | t 7.63e-05 | INFO | D5 |
+| ctm_am | 5 | var_L_g6 | 100 | -0.01481 | -4.26 | t 3.19e-05 | INFO | D5 |
+| ctm_am | 5 | r_mate_L_g2 | 100 | 0.001613 | +1.60 | t 0.113 | INFO | D5 |
+| ctm_am | 5 | r_mate_L_g3 | 100 | 0.0003337 | +0.31 | t 0.759 | INFO | D5 |
+| ctm_am | 5 | r_mate_L_g4 | 100 | 4.757e-05 | +0.05 | t 0.961 | INFO | D5 |
+| ctm_am | 5 | r_mate_L_g5 | 100 | -0.00122 | -1.09 | t 0.278 | INFO | D5 |
+| ctm_am | 5 | r_mate_L_g6 | 100 | 0.000615 | +0.53 | t 0.596 | INFO | D5 |
+| ctm_am | 5 | r_mate_A_g2 | 100 | 0.005378 | +3.39 | t 0.000847 | INFO | D5 |
+| ctm_am | 5 | r_mate_A_g3 | 100 | 0.002415 | +1.44 | t 0.153 | INFO | D5 |
+| ctm_am | 5 | r_mate_A_g4 | 100 | -0.0001772 | -0.10 | t 0.917 | INFO | D5 |
+| ctm_am | 5 | r_mate_A_g5 | 100 | 0.002532 | +1.56 | t 0.12 | INFO | D5 |
+| ctm_am | 5 | r_mate_A_g6 | 100 | 0.002505 | +1.53 | t 0.127 | INFO | D5 |
+| ctm_am | 5 | r_FS_A_g2 | 100 | 0.0009251 | +0.58 | t 0.564 | INFO | D5 |
+| ctm_am | 5 | r_FS_A_g3 | 100 | -0.000427 | -0.29 | t 0.772 | INFO | D5 |
+| ctm_am | 5 | r_FS_A_g4 | 100 | 0.0009408 | +0.64 | t 0.526 | INFO | D5 |
+| ctm_am | 5 | r_FS_A_g5 | 100 | 0.001004 | +0.73 | t 0.464 | INFO | D5 |
+| ctm_am | 5 | r_FS_A_g6 | 100 | 0.003396 | +2.48 | t 0.0141 | INFO | D5 |
+| ctm_am | 5 | r_FS_L_g2 | 100 | -0.00522 | -3.10 | t 0.00225 | INFO | D5 |
+| ctm_am | 5 | r_FS_L_g3 | 100 | -0.003216 | -1.96 | t 0.0515 | INFO | D5 |
+| ctm_am | 5 | r_FS_L_g4 | 100 | -0.003907 | -2.41 | t 0.0168 | INFO | D5 |
+| ctm_am | 5 | r_FS_L_g5 | 100 | -0.004572 | -2.63 | t 0.00927 | INFO | D5 |
+| ctm_am | 5 | r_FS_L_g6 | 100 | -0.003458 | -2.05 | t 0.0415 | INFO | D5 |
+| ctm_am | 5 | r_PO_A_g2 | 100 | 0.0009932 | +1.20 | t 0.231 | INFO | D5 |
+| ctm_am | 5 | r_PO_A_g3 | 100 | 0.0005252 | +0.60 | t 0.548 | INFO | D5 |
+| ctm_am | 5 | r_PO_A_g4 | 100 | 0.0001381 | +0.17 | t 0.867 | INFO | D5 |
+| ctm_am | 5 | r_PO_A_g5 | 100 | 0.001293 | +1.62 | t 0.107 | INFO | D5 |
+| ctm_am | 5 | r_PO_A_g6 | 100 | 0.001744 | +2.12 | t 0.0351 | INFO | D5 |
+| ctm_am | 5 | r_PO_L_g2 | 100 | -0.0007633 | -0.75 | t 0.453 | INFO | D5 |
+| ctm_am | 5 | r_PO_L_g3 | 100 | -0.0006275 | -0.56 | t 0.574 | INFO | D5 |
+| ctm_am | 5 | r_PO_L_g4 | 100 | -0.0002903 | -0.28 | t 0.781 | INFO | D5 |
+| ctm_am | 5 | r_PO_L_g5 | 100 | -0.001888 | -1.78 | t 0.0774 | INFO | D5 |
+| ctm_am | 5 | r_PO_L_g6 | 100 | -0.0002147 | -0.21 | t 0.833 | INFO | D5 |
+| ctm_am | 5 | r_MO_L_g2 | 100 | -0.0008533 | -0.67 | t 0.502 | INFO | D5 |
+| ctm_am | 5 | r_MO_L_g3 | 100 | -0.0008972 | -0.65 | t 0.515 | INFO | D5 |
+| ctm_am | 5 | r_MO_L_g4 | 100 | -0.001238 | -1.06 | t 0.293 | INFO | D5 |
+| ctm_am | 5 | r_MO_L_g5 | 100 | -0.001437 | -1.13 | t 0.259 | INFO | D5 |
+| ctm_am | 5 | r_MO_L_g6 | 100 | -0.000516 | -0.42 | t 0.678 | INFO | D5 |
+| ctm_am | 5 | r_FO_L_g2 | 100 | -0.0006417 | -0.54 | t 0.592 | INFO | D5 |
+| ctm_am | 5 | r_FO_L_g3 | 100 | -0.0003408 | -0.27 | t 0.784 | INFO | D5 |
+| ctm_am | 5 | r_FO_L_g4 | 100 | 0.0007142 | +0.52 | t 0.602 | INFO | D5 |
+| ctm_am | 5 | r_FO_L_g5 | 100 | -0.002299 | -1.77 | t 0.0776 | INFO | D5 |
+| ctm_am | 5 | r_FO_L_g6 | 100 | 0.0001217 | +0.10 | t 0.919 | INFO | D5 |
+| ctm_am | 5 | var_C_g1 | 100 | -0.006256 | -9.93 | t 4.12e-19 | INFO | D5 |
+| ctm_am | 5 | var_C_g2 | 100 | -0.009445 | -14.18 | t 9.1e-32 | INFO | D5 |
+| ctm_am | 5 | var_C_g3 | 100 | -0.01 | -15.69 | t 1.94e-36 | INFO | D5 |
+| ctm_am | 5 | var_C_g4 | 100 | -0.01208 | -18.62 | t 3.97e-45 | INFO | D5 |
+| ctm_am | 5 | var_C_g5 | 100 | -0.01124 | -16.79 | t 7.61e-40 | INFO | D5 |
+| ctm_am | 5 | var_C_g6 | 100 | -0.0123 | -18.58 | t 2.83e-45 | INFO | D5 |
+| ctm_am | 5 | r_MO_C_g2 | 100 | 0.002494 | +1.25 | t 0.211 | INFO | D5 |
+| ctm_am | 5 | r_MO_C_g3 | 100 | -0.0008802 | -0.48 | t 0.634 | INFO | D5 |
+| ctm_am | 5 | r_MO_C_g4 | 100 | 0.002283 | +1.15 | t 0.252 | INFO | D5 |
+| ctm_am | 5 | r_MO_C_g5 | 100 | -0.002317 | -1.13 | t 0.26 | INFO | D5 |
+| ctm_am | 5 | r_MO_C_g6 | 100 | -0.001285 | -0.72 | t 0.475 | INFO | D5 |
+| ctm_am | 5 | r_FO_C_g2 | 100 | 0.002108 | +1.07 | t 0.287 | INFO | D5 |
+| ctm_am | 5 | r_FO_C_g3 | 100 | -0.000327 | -0.16 | t 0.874 | INFO | D5 |
+| ctm_am | 5 | r_FO_C_g4 | 100 | -0.00155 | -0.78 | t 0.436 | INFO | D5 |
+| ctm_am | 5 | r_FO_C_g5 | 100 | -0.004082 | -2.13 | t 0.0343 | INFO | D5 |
+| ctm_am | 5 | r_FO_C_g6 | 100 | -0.005083 | -2.41 | t 0.017 | INFO | D5 |
+| ctm_am | 5 | b_MP_L_g2 | 100 | -0.003394 | -1.95 | t 0.0531 | INFO | D5 |
+| ctm_am | 5 | b_MP_L_g3 | 100 | 0.0008723 | +0.52 | t 0.602 | INFO | D5 |
+| ctm_am | 5 | b_MP_L_g4 | 100 | -0.001557 | -0.96 | t 0.338 | INFO | D5 |
+| ctm_am | 5 | b_MP_L_g5 | 100 | -0.0005789 | -0.37 | t 0.71 | INFO | D5 |
+| ctm_am | 5 | b_MP_L_g6 | 100 | -0.002064 | -1.25 | t 0.214 | INFO | D5 |
+| ctm_am | 5 | law:var_C_g1 | 100 | -0.0002136 | -0.46 | t 0.644 | INFO | D5 |
+| ctm_am | 5 | law:xftsim:var_C_g1 | 100 | 0.006043 | +14.06 | t 2.51e-25 | INFO | D5 |
+| ctm_am | 5 | law:var_C_g2 | 100 | 2.477e-05 | +0.05 | t 0.961 | INFO | D5 |
+| ctm_am | 5 | law:xftsim:var_C_g2 | 100 | 0.00947 | +21.86 | t 1.14e-39 | INFO | D5 |
+| ctm_am | 5 | law:var_C_g3 | 100 | 0.000609 | +1.28 | t 0.203 | INFO | D5 |
+| ctm_am | 5 | law:xftsim:var_C_g3 | 100 | 0.01061 | +24.96 | t 1.65e-44 | INFO | D5 |
+| ctm_am | 5 | law:var_C_g4 | 100 | -0.000725 | -1.49 | t 0.14 | INFO | D5 |
+| ctm_am | 5 | law:xftsim:var_C_g4 | 100 | 0.01136 | +26.53 | t 8.57e-47 | INFO | D5 |
+| ctm_am | 5 | law:var_C_g5 | 100 | 5.485e-05 | +0.12 | t 0.904 | INFO | D5 |
+| ctm_am | 5 | law:xftsim:var_C_g5 | 100 | 0.01129 | +22.98 | t 1.82e-41 | INFO | D5 |
+| ctm_am | 5 | law:var_C_g6 | 100 | -0.0007584 | -1.63 | t 0.106 | INFO | D5 |
+| ctm_am | 5 | law:xftsim:var_C_g6 | 100 | 0.01155 | +24.48 | t 8.86e-44 | INFO | D5 |
 | am_finite_m | 5 | m250_r05-m4000_r05:var_A_g1 | 100 | -0.001038 | -0.93 | t 0.354 | INFO |  |
 | am_finite_m | 5 | m250_r05-m4000_r05:var_A_g2 | 100 | 9.417e-06 | +0.01 | t 0.995 | INFO |  |
 | am_finite_m | 5 | m250_r05-m4000_r05:var_A_g3 | 100 | -0.002933 | -1.92 | t 0.0568 | INFO |  |
@@ -1909,14 +2273,14 @@ seeds, which is out of reach (ADR 0002 item 10).
 
 | Case | Statistic | n | Per-seed SD | Minimum detectable gap |
 |---|---|---|---|---|
-| simace_ts_p2 | lc_FS | 50 | 0.003389 | 0.002583 |
-| simace_ts_p2 | lc_MHS | 50 | 0.006977 | 0.005318 |
-| simace_ts_p2 | lc_PHS | 50 | 0.005829 | 0.004444 |
-| simace_ts_p2 | lc_MO | 50 | 0.00358 | 0.002729 |
-| simace_ts_p2 | lc_FO | 50 | 0.003953 | 0.003014 |
-| simace_ts_p2 | po_g8_slope | 50 | 0.007067 | 0.005387 |
-| simace_ts_p2 | po_g8_r | 50 | 0.004843 | 0.003692 |
-| simace_ts_p2 | po_g9_slope | 50 | 0.009094 | 0.006932 |
-| simace_ts_p2 | po_g9_r | 50 | 0.00632 | 0.004817 |
-| simace_ts_p2 | dz_L | 50 | 0.002123 | 0.001618 |
-| simace_ts_p2 | po_L_slope | 50 | 0.003088 | 0.002354 |
+| simace_ts_p2 | lc_FS | 50 | 0.003389 | 0.002593 |
+| simace_ts_p2 | lc_MHS | 50 | 0.006977 | 0.005338 |
+| simace_ts_p2 | lc_PHS | 50 | 0.005829 | 0.00446 |
+| simace_ts_p2 | lc_MO | 50 | 0.00358 | 0.002739 |
+| simace_ts_p2 | lc_FO | 50 | 0.003953 | 0.003025 |
+| simace_ts_p2 | po_g8_slope | 50 | 0.007067 | 0.005407 |
+| simace_ts_p2 | po_g8_r | 50 | 0.004843 | 0.003705 |
+| simace_ts_p2 | po_g9_slope | 50 | 0.009094 | 0.006958 |
+| simace_ts_p2 | po_g9_r | 50 | 0.00632 | 0.004835 |
+| simace_ts_p2 | dz_L | 50 | 0.002123 | 0.001624 |
+| simace_ts_p2 | po_L_slope | 50 | 0.003088 | 0.002362 |

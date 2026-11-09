@@ -5,7 +5,7 @@ Usage: python -m am.ctm.summarize PILOT_DIR   (reads simace.jsonl and xft.jsonl 
 For each cell (r 0: random mating with half-sibs; r 0.5: LAM) and each statistic and generation:
 simACE and xftsim mean (SE), the random-mating law (`am.bulmer.predict_ctm`, r 0 only), the
 Welch p, and the minimum mean gap a Welch t at R = 100 per side detects with 80% power at
-alpha/K = 0.05/1440 (the K this case brings the harness to). Then check 3: Var(C) by
+alpha/K = 0.05/1461 (the K this case brings the harness to). Then check 3: Var(C) by
 generation on each side against C, under AM.
 """
 
@@ -20,7 +20,7 @@ from scipy import stats as st
 from am.bulmer import predict_ctm
 
 BM, BF, C = 0.5, 0.3, 0.2
-ALPHA_K = 0.05 / 1440
+ALPHA_K = 0.05 / 1461
 R_TARGET = 100
 STATS = [
     "var_A",
