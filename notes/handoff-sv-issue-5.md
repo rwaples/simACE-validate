@@ -27,7 +27,20 @@ Commits on `sv-issue-5` (`git log -1 --format='%h %s'` for each):
 - `544f816 Add C-transmission cases to layer 5 (simACE-validate#5)`
 - `13ce008 Regenerate layer-5 references and score C transmission`
 - `8aa6bba Record C transmission against xftsim (simACE-validate#5)`
-- this note, committed after them
+- `8656672 Add the sv-issue-5 handoff note`
+- `bb2e820 Fix the review findings on the C-transmission branch` (after `/code-review high`)
+
+### Review findings left unchanged
+
+`/code-review high` on `main...HEAD` (544f816 to 8656672) raised 10 candidates, unverified by
+its own pass. Six were fixed in bb2e820. These were not changed:
+
+- `am/run_xft.py`: odd N shrinks the half-sib regime's population; the transmission test there
+  is `bm > 0 or bf > 0`; `c_of` repeats `frame`'s lookup. The file is hashed into every
+  reference manifest, so editing it would mean regenerating all 22 references. `check_matched`
+  now refuses odd N under `halfsib` and b outside [0, 1), so no accepted case reaches them.
+- `am/ctm/summarize.py` re-implements `mdd` and `load` from `am/summarize.py`: that module's
+  records carry no C-transmission fields, so sharing them would not shorten the code.
 
 ### The issue's open questions (probes in `am/ctm/`)
 
@@ -79,7 +92,7 @@ am_r05 and amc_r05 reproduced the old records exactly.
 ## Checks run
 
 - `pixi run lint`: "All checks passed!", "84 files already formatted".
-- `pixi run test-pipeline`: "120 passed, 3 warnings", exit 0.
+- `pixi run test-pipeline`: "120 passed, 3 warnings", exit 0 (again after bb2e820, with lint clean).
 - `pixi run harness` (full, exit 0): "Totals: INFO 1185, PASS 1065" against the
   baseline INFO 914, PASS 972 (K 1368). K is 1461, alpha/K 3.42e-05. Of 1886 shared rows, 0
   changed status, 0 were removed; 364 were added: ctm_rm 93 PASS and 186 INFO, ctm_am 85
