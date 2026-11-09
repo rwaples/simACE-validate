@@ -41,11 +41,13 @@ import yaml
 
 from power import interval
 from run_harness import PARTIAL_RESULTS, RESULTS, case_seed, simace_ref
-from subproc import run
+from subproc import ToolError, run
 
 #: simace v0.3.0's ``config/_default.yaml`` (git blob de155750a2a7), which the wheel does not ship.
 CONFIG = Path(__file__).parent / "config"
 FOLDER = "inhpow"
+#: `simace validate <scenario>`'s exit status for a ``fail`` verdict (simace cli/validate.py).
+VERDICT_FAIL_EXIT = 3
 REPS_PER_VERDICT = 20  # min_reps of both tests (simace analysis/validate/on_demand.py)
 DEFAULT_STUDY_REPS = 100
 DELTAS = (0.05, 0.1, 0.2, 0.3, 0.5)
@@ -154,10 +156,14 @@ def failed_records(decided: dict[str, Any]) -> list[str]:
 
 
 def _cli_verdict(scenario: str, roots: list[str], results: Path) -> dict[str, Any]:
-    """Run the real ``simace validate <scenario>`` and return its verdict without the header."""
+    """Run the real ``simace validate <scenario>`` and return its verdict; it exits 3 on a ``fail`` verdict."""
     from simace.analysis.validate.verdict import load_verdict
 
-    run(["simace", "validate", scenario, "--no-plots", *roots])
+    try:
+        run(["simace", "validate", scenario, "--no-plots", *roots])
+    except ToolError as exc:
+        if exc.returncode != VERDICT_FAIL_EXIT:
+            raise
     loaded = load_verdict(results / FOLDER / scenario / "validation_summary.yaml")
     if loaded is None:
         raise RuntimeError(f"simace validate {scenario} wrote no verdict")
@@ -224,17 +230,27 @@ def parse_span(text: str) -> list[int]:
 
 
 def run_cell(cell: str, names: list[str], study_reps: list[int], parts: Path | None, jobs: int) -> dict[str, Any]:
-    """Run study replicates of one cell; return (and, with ``parts``, write) the per-replicate outcomes."""
-    by_rep: dict[str, dict[str, Any]] = {}
+    """Run study replicates of one cell; return the per-replicate outcomes.
+
+    With ``parts``, the part file is rewritten after each study replicate, and a rerun resumes from it.
+    """
+    path = parts / f"{cell}~{study_reps[0]}-{study_reps[-1]}.json" if parts is not None else None
+    part = {"cell": cell, "mutations": names, "study_reps": {}, "simace": simace_ref()}
+    if path is not None and path.exists():
+        part = json.loads(path.read_text())
+        if part["mutations"] != names or part["simace"] != simace_ref():
+            raise SystemExit(f"{path} holds other mutations or another simace; move it away to restart")
     for j in study_reps:
+        if str(j) in part["study_reps"]:
+            continue
         with tempfile.TemporaryDirectory(prefix=f"inhpow_{cell}_{j}_") as tmp:
-            by_rep[str(j)] = study_replicate(cell, j, names, Path(tmp), jobs)
-        line = ", ".join(f"{n} {o['verdict']}" for n, o in by_rep[str(j)].items() if o["verdict"] != "pass")
+            outcome = study_replicate(cell, j, names, Path(tmp), jobs)
+        part["study_reps"][str(j)] = outcome
+        line = ", ".join(f"{n} {o['verdict']}" for n, o in outcome.items() if o["verdict"] != "pass")
         print(f"{cell} study rep {j}: {line or 'every mutation passes'}", flush=True)
-    part = {"cell": cell, "mutations": names, "study_reps": by_rep, "simace": simace_ref()}
-    if parts is not None:
-        parts.mkdir(parents=True, exist_ok=True)
-        (parts / f"{cell}~{study_reps[0]}-{study_reps[-1]}.json").write_text(json.dumps(part))
+        if path is not None:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(part))
     return part
 
 
