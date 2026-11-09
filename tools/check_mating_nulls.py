@@ -12,7 +12,8 @@
    case's p_mz and at p_mz = 0.9, where couples carry several MZ pairs and
    the N // 2 cap on t binds. This is a consistency check of the
    derivations, not evidence about simACE (the harness is).
-3. twin_births against the enumerated multivariate hypergeometric law,
+3. twin_births and numpy's multivariate hypergeometric sampler against
+   the enumerated law,
    and twins_by_couple's draws respect the births.
 4. The MZ and order invariants raise on hand-broken pedigrees and accept
    valid ones, including a couple with two MZ pairs, and read each
@@ -106,21 +107,29 @@ PLACEMENT_CASES = [(np.array([1, 2, 3]), 3), (np.array([2, 2, 1, 4]), 4), (np.ar
 
 
 def check_placement(rng: np.random.Generator) -> list[tuple[str, float]]:
-    """Chi-square of twin_births' per-couple counts against the enumerated multivariate hypergeometric law."""
+    """Chi-square of each twin-placement sampler against the enumerated multivariate hypergeometric law.
+
+    twin_births places the allocation rows' twin births; numpy's sampler
+    places the placement rows' (placement_draws).
+    """
+    samplers = {
+        "twin_births": lambda b, t, m: twin_births(rng, np.repeat(b[None], m, axis=0), t),
+        "multivariate_hypergeometric": lambda b, t, m: rng.multivariate_hypergeometric(b, t, size=m),
+    }
     out = []
     for b, t in PLACEMENT_CASES:
         cells = [x for x in itertools.product(*(range(v + 1) for v in b)) if sum(x) == t]
         exact = np.array([math.prod(math.comb(v, xi) for v, xi in zip(b, x, strict=True)) for x in cells])
         exp = exact / math.comb(int(b.sum()), t) * 100_000
-        draws = twin_births(rng, np.repeat(b[None], 100_000, axis=0), t)
         index = {x: i for i, x in enumerate(cells)}
-        obs = np.bincount([index[tuple(r)] for r in draws.tolist()], minlength=len(cells))
-        out.append(
-            (
-                f"twin_births b={b.tolist()} t={t} (chi-square, {len(cells)} cells, min expected {exp.min():.0f})",
-                float(stats.chisquare(obs, exp).pvalue),
+        for label, draw in samplers.items():
+            obs = np.bincount([index[tuple(r)] for r in draw(b, t, 100_000).tolist()], minlength=len(cells))
+            out.append(
+                (
+                    f"{label} b={b.tolist()} t={t} (chi-square, {len(cells)} cells, min expected {exp.min():.0f})",
+                    float(stats.chisquare(obs, exp).pvalue),
+                )
             )
-        )
     return out
 
 
@@ -339,14 +348,15 @@ def main() -> int:
     failed = False
     for name, ped in valid_pedigrees().items():
         try:
-            (gen,) = generations(ped)
+            gens = generations(ped)
         except ValueError as exc:
             print(f"FAIL valid pedigree '{name}' raises: {exc}")
             failed = True
         else:
-            ok = gen.twins.tolist() == VALID_TWINS[name]
+            twins = [gen.twins.tolist() for gen in gens]
+            ok = twins == [VALID_TWINS.get(name)]
             failed |= not ok
-            print(f"{'ok  ' if ok else 'FAIL'} valid pedigree '{name}' passes, MZ pairs by couple {gen.twins.tolist()}")
+            print(f"{'ok  ' if ok else 'FAIL'} valid pedigree '{name}' passes, MZ pairs by couple {twins}")
     checks = [
         *check_surjection(rng),
         *check_surjection_large(rng),

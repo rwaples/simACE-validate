@@ -65,8 +65,10 @@ Conditioning. A generation's children are the next generation's parents, so
 summed statistics would condition on earlier outcomes. Instead each row takes
 one randomised PIT u_g per generation, under the law of generation g given
 everything before it. Mating depends on the past only through the parents'
-sexes, and each row's other conditioning (t_g, the couples) is drawn apart
-from the row's own randomness. So u_1..u_{G-1} are iid U(0, 1), and their
+sexes, and each row's other conditioning (t_g, the couples, and for the
+placement rows each couple's births b_k) is drawn apart from the row's own
+randomness: the births are allocated before the twin births are placed among
+them. So u_1..u_{G-1} are iid U(0, 1), and their
 Stouffer combination is one exactly uniform PIT per pedigree, scored over
 seeds by calibration.calibrate (ADR 0001 §2).
 
@@ -141,6 +143,7 @@ class Generation:
     couple_father: np.ndarray
     mother_couples: np.ndarray  # per couple: how many couples its mother has
     twins: np.ndarray  # per couple: MZ pairs, x_k
+    births: np.ndarray  # per couple: births, b_k = c_k - x_k
 
 
 def n_multi(owners: np.ndarray) -> int:
@@ -197,6 +200,7 @@ def generations(ped: pl.DataFrame) -> list[Generation]:
         if runs != len(counts):
             raise ValueError(f"generation {g}: a couple's children are not one block of consecutive ids")
         first = check_twins(g, kids, gen, sex, twin)
+        twins = np.bincount(np.ravel(couple)[np.searchsorted(kids, first)], minlength=len(counts))
         second = twin[first]
         if np.any(mother[first] != mother[second]) or np.any(father[first] != father[second]):
             raise ValueError(f"generation {g}: an MZ pair has different parents")
@@ -211,7 +215,8 @@ def generations(ped: pl.DataFrame) -> list[Generation]:
                 couple_mother=keys[0],
                 couple_father=keys[1],
                 mother_couples=occurrences(keys[0]),
-                twins=np.bincount(np.ravel(couple)[np.searchsorted(kids, first)], minlength=len(counts)),
+                twins=twins,
+                births=counts - twins,
             )
         )
     return out
@@ -390,17 +395,16 @@ def placement_stats(twins: np.ndarray, births: np.ndarray) -> np.ndarray:
 
 def placement_draws(rng: np.random.Generator, gen: Generation, m: int, mutation: str | None) -> np.ndarray:
     """Return m null draws of placement_stats given the couples' births b (R5), shape (m, 2)."""
-    births = gen.counts - gen.twins
     if mutation == "twins_by_couple":
-        x = twins_by_couple(rng, births, gen.n_mz, m)
+        x = twins_by_couple(rng, gen.births, gen.n_mz, m)
     else:
-        x = twin_births(rng, np.repeat(births[None], m, axis=0), gen.n_mz)
-    return placement_stats(x, births)
+        x = rng.multivariate_hypergeometric(gen.births, gen.n_mz, size=m)
+    return placement_stats(x, gen.births)
 
 
 def observed_placement(gen: Generation) -> np.ndarray:
     """Return the observed placement_stats."""
-    return placement_stats(gen.twins, gen.counts - gen.twins)
+    return placement_stats(gen.twins, gen.births)
 
 
 def trimmed_slots(rng: np.random.Generator, owners: np.ndarray, target: int) -> np.ndarray:
