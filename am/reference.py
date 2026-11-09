@@ -66,9 +66,8 @@ def current(name: str, expected: dict) -> bool:
 
 def run_one(spec: dict, seed: int) -> dict:
     """One xftsim run of the spec at `seed`, as {seed, stats}."""
-    args = [
-        str(a) for a in (seed, spec["N"], spec["M"], spec["G"], r_arg(spec), spec["traits"], spec["mate"], spec["C"])
-    ]
+    tail = (spec[k] for k in ("traits", "mate", "C", "bm", "bf", "pairing"))
+    args = [str(a) for a in (seed, spec["N"], spec["M"], spec["G"], r_arg(spec), *tail)]
     out = run(
         [sys.executable, "-m", "am.run_xft", *args],
         text=True,

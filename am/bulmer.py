@@ -99,3 +99,36 @@ def predict1(v0: float, s: float, r: float, g: int, c: float = 0.0) -> dict[str,
         "r_MO_L": po_l,
         "r_FO_L": po_l,
     }
+
+
+def predict_ctm(a: float, c: float, e: float, bm: float, bf: float) -> dict[str, float]:
+    """Random-mating expectation of every statistic under vertical C transmission (simACE ADR 0025).
+
+    C is stationary at c (simACE tops it up to c each generation; the fixed residual
+    c (1 - bm^2 - bf^2) keeps it there in expectation). A relative pair's C covariance is
+    gamma c with gamma MO bm, FO bf, FS 1, MHS 1 - bf^2, PHS bf^2 (simACE `_SHARED_C`), so
+    r(L) = 2 kinship a + gamma c over V_L = a + c + e, and the midparent slope is
+    (a + (bm + bf) c) / V_L.
+    """
+    v = a + c + e
+    mo, fo = (a / 2 + bm * c) / v, (a / 2 + bf * c) / v
+    return {
+        "var_A": a,
+        "var_L": v,
+        "var_C": c,
+        "r_mate_L": 0.0,
+        "r_mate_A": 0.0,
+        "r_FS_A": 0.5,
+        "r_FS_L": (a / 2 + c) / v,
+        "r_PO_A": 0.5,
+        "r_PO_L": (mo + fo) / 2,
+        "r_MO_L": mo,
+        "r_FO_L": fo,
+        "r_MO_C": bm,
+        "r_FO_C": bf,
+        "r_MHS_C": 1 - bf**2,
+        "r_PHS_C": bf**2,
+        "r_MHS_L": (a / 4 + (1 - bf**2) * c) / v,
+        "r_PHS_L": (a / 4 + bf**2 * c) / v,
+        "b_MP_L": (a + (bm + bf) * c) / v,
+    }

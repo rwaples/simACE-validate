@@ -55,6 +55,8 @@ MUTATIONS = {
         "r_0": "xftsim reference at random mating",
         "mate_A": "xftsim reference mating on the additive genetic value instead of the phenotype",
         "mate_y1": "two traits: xftsim reference mating on trait 1 alone",
+        "ctm_swap": "C transmission: xftsim reference with b_m and b_f swapped",
+        "ctm_half": "C transmission: xftsim reference with b_m and b_f halved",
     },
 }
 

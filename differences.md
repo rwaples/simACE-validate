@@ -64,6 +64,12 @@ So these diagnostics cannot tell the two laws apart with three recorded
 generations at N = 2000. ctm_base still checks simACE against the law it
 documents.
 
+Layer 5 (rwaples/simACE-validate#5) now compares the realised law with an
+independent simulator. `ctm_rm` (random mating) scores simACE against
+xftsim, whose household term has the fixed residual. Under random mating
+the two rules agree in expectation. Under assortative mating they differ by
+design, which D5 measures.
+
 ## D3. Gaussian liability in simACE's phenotype and analysis stages
 
 Some of simACE's stages assume liability is Gaussian, by design:
@@ -143,10 +149,13 @@ the two population laws agree to first order. They agree only approximately:
   `am/run_xft.py` builds one: the mother's private noise draw, passed to
   her children by a vertical component (ADR 0003, Context). It is checked
   for one trait (`amc_r05`, C 0.2, r 0.5).
-  - xftsim's built-in regimes make no half-sibs, so the maternal/paternal
-    half-sib split of C is not compared.
-  - Two-trait AM with C, and C transmission (rwaples/simACE-validate#5),
-    are not checked.
+  - xftsim's built-in regimes make no half-sibs. Only `ctm_rm` compares
+    the maternal/paternal half-sib split of C, through our own
+    `RandomHalfSibMatingRegime`, at random mating (ADR 0003, amendment of
+    2026-11-09).
+  - C transmission is checked for one trait at b_m 0.5, b_f 0.3, C 0.2:
+    scored under random mating (`ctm_rm`), and INFO under AM (`ctm_am`,
+    D5). Two-trait AM with C is not checked.
 - **Finite loci.** xftsim has M = 1000 unlinked loci, while simACE is
   infinitesimal. Case `am_finite_m` (INFO) compares xftsim at M = 250 with
   M = 4000, at r = 0.5 and 0.8. Its rows give the mean Var(A) gap and Welch
@@ -179,4 +188,50 @@ the two population laws agree to first order. They agree only approximately:
   independent traits.
 - **Labels.** xftsim pairs a random split of the population, so its
   "mother" and "father" are labels. The mother–offspring and
-  father–offspring rows are INFO.
+  father–offspring rows are INFO, except under C transmission: there the
+  maternal label is the member whose c is weighted by b_m and whose
+  household draw the children share, so those rows are scored.
+
+## D5. C transmission under assortative mating: realised top-up or fixed residual
+
+Under vertical C transmission with assortative mating (AM), the mates' C
+are correlated. The transmitted part's variance then gains the cross term
+2 b_m b_f Cov(c_mother, c_father).
+
+- **simACE** tops the household draw up from the realised covariance
+  (simACE ADR 0025 §3, `_transmitted_c`). Each generation's Var(C) is
+  therefore the configured C in expectation, cross term included; the
+  realised value scatters around it by the household draw's sampling error.
+- **xftsim** (`am/run_xft.py`) draws the household term with the fixed
+  random-mating residual C (1 − b_m² − b_f²). The cross term is added on
+  top, and Var(C) drifts above C.
+
+Case `ctm_am` (b_m 0.5, b_f 0.3, C 0.2, r 0.5) reports every row as INFO.
+Its `law:var_C_g*` and `law:xftsim:var_C_g*` rows give each side's Var(C)
+minus C. The 40-seed pilot (`am/pilot/ctm_summary.md`) gives Var(C) − C
+with 95% CI:
+
+| g | simACE (realised) | xftsim (fixed) |
+|---|---|---|
+| 1 | −0.0000 (−0.0017, +0.0017) | +0.0063 (+0.0050, +0.0076) |
+| 2 | +0.0015 (−0.0001, +0.0031) | +0.0088 (+0.0076, +0.0100) |
+| 3 | +0.0003 (−0.0012, +0.0019) | +0.0105 (+0.0090, +0.0120) |
+| 4 | −0.0000 (−0.0014, +0.0014) | +0.0113 (+0.0101, +0.0125) |
+| 5 | −0.0006 (−0.0021, +0.0008) | +0.0117 (+0.0103, +0.0130) |
+| 6 | −0.0008 (−0.0026, +0.0011) | +0.0122 (+0.0109, +0.0135) |
+
+The harness run of 2026-11-09 (100 seeds per side) agrees. simACE's
+Var(C) − C is −0.00076 to +0.00061 over g, |t| ≤ 1.63. xftsim's is
++0.0060 to +0.0116, t +14.1 to +26.5.
+
+So simACE keeps Var(C) at the configured total in expectation under AM,
+as its ADR says.
+The fixed rule drifts by about 6% of C by g = 6 at this setting. In that
+run, 21 of ctm_am's 73 Welch rows have p below 0.05. Gaps are simACE minus
+xftsim:
+
+- Var(C): −0.0063 to −0.0123, p 4.1e-19 to 2.8e-45 (all six g);
+- Var(L): −0.0054 to −0.0166 (all six g; p 0.042 to 1.1e-7);
+- full-sib r(L): −0.0035 to −0.0052 (g 2, 4, 5, 6);
+- r_FO_C at g 5 and 6, r_mate_A at g 2, r_FS_A and r_PO_A at g 6, all with
+  p ≥ 8.5e-4.

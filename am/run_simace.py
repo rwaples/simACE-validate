@@ -16,7 +16,10 @@ mating_lambda 0.5, G_sim = G_ped = g.
 C > 0 (one trait only) sets trait 1's household C to C and its E to 0.5 - C,
 matching run_xft.py's household C.
 
-Usage: python -m am.run_simace SEED N G R OUTDIR [TRAITS [C]]
+BM, BF set trait 1's C transmission (--Ctm-maternal1, --Ctm-paternal1; simACE
+ADR 0025) and add the C-transmission statistics, as run_xft.py's BM and BF.
+
+Usage: python -m am.run_simace SEED N G R OUTDIR [TRAITS [C [BM BF]]]
 The output's generation g is the offspring of g rounds of mating, as in
 run_xft.py: simACE's recorded generation k follows k + 1 matings
 (ADR 0001 §3), so it is reported as g = k + 1. Founders (g = 0) are not
@@ -40,7 +43,11 @@ if r1 != r2 and (traits != 2 or min(r1, r2) <= 0):
     raise SystemExit("R1/R2 needs TRAITS 2 and R1, R2 > 0")
 r = r1 if r1 == r2 else sys.argv[4]
 c = float(sys.argv[7]) if len(sys.argv) > 7 else 0.0
-out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r1}-{r2}_t{traits}_c{c}.parquet"
+if len(sys.argv) == 9:
+    raise SystemExit("BM needs BF")
+bm, bf = (float(a) for a in sys.argv[8:10]) if len(sys.argv) > 9 else (0.0, 0.0)
+ctm = ["--Ctm-maternal1", str(bm), "--Ctm-paternal1", str(bf)] if bm or bf else []
+out = Path(sys.argv[5]) / f"simace_s{seed}_n{n}_r{r1}-{r2}_t{traits}_c{c}_bm{bm}_bf{bf}.parquet"
 out.parent.mkdir(parents=True, exist_ok=True)
 
 am = ["--assort1", str(r1)]
@@ -86,6 +93,7 @@ subprocess.run(
         "--rE",
         "0",
         *am,
+        *ctm,
         "--output-pedigree",
         str(out),
     ],
@@ -93,7 +101,7 @@ subprocess.run(
 )
 ped = pl.read_parquet(out)
 version = subprocess.run(["simace", "--version"], capture_output=True, text=True, check=True).stdout.strip()
-rows = pedigree_rows(ped, traits)
+rows = pedigree_rows(ped, traits, bool(ctm))
 out.unlink()
 
 print(
@@ -107,6 +115,8 @@ print(
             "r": r,
             "traits": traits,
             "C": c,
+            "bm": bm,
+            "bf": bf,
             "h2": 0.5,
             "wall_s": round(time.perf_counter() - t0, 2),
             "rows": rows,

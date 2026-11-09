@@ -315,6 +315,40 @@ cases:
     R: 100
     xftsim: {N: 10000, M: 1000, G: 6, r: 0.5, traits: 1, C: 0.2, seed0: 18800, R: 100}
 
+  # C transmission (simACE ADR 0025; rwaples/simACE-validate#5): c = b_m c_mother + b_f c_father + a
+  # household draw by mother. xftsim builds c with one LinearVerticalComponent whose household term has
+  # the fixed random-mating residual C (1 - b_m^2 - b_f^2); simACE tops up from the realised covariance.
+  - id: ctm_rm
+    layer: 5
+    oracle: xftsim
+    note: C transmission b_m 0.5, b_f 0.3, C 0.2 under random mating; xftsim pairs by am/run_xft.py's half-sib regime
+    simulate:
+      <<: *am
+      C1: 0.2
+      E1: 0.3
+      Ctm-maternal1: 0.5
+      Ctm-paternal1: 0.3
+    seed0: 8400
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0, traits: 1, C: 0.2, bm: 0.5, bf: 0.3, pairing: halfsib, seed0: 19200, R: 100}
+
+  - id: ctm_am
+    layer: 5
+    oracle: xftsim
+    note: ctm_rm's transmission under AM at 0.5; simACE's realised top-up against xftsim's fixed residual (check 3 of #5)
+    simulate:
+      <<: *am
+      C1: 0.2
+      E1: 0.3
+      Ctm-maternal1: 0.5
+      Ctm-paternal1: 0.3
+      assort1: 0.5
+    seed0: 8600
+    R: 100
+    xftsim: {N: 10000, M: 1000, G: 6, r: 0.5, traits: 1, C: 0.2, bm: 0.5, bf: 0.3, seed0: 19400, R: 100}
+    expect: info
+    id_diff: D5
+
   - id: am_finite_m
     layer: 5
     oracle: xftsim_finite_m
