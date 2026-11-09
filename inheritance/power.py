@@ -269,7 +269,10 @@ def run_cell(cell: str, names: list[str], study_reps: list[int], parts: Path | N
         print(f"{cell} study rep {j}: {line or 'every mutation passes'}", flush=True)
         if path is not None:
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(part))
+            # A job killed mid-write must leave the previous checkpoint, not a truncated one.
+            tmp_path = path.with_suffix(".json.tmp")
+            tmp_path.write_text(json.dumps(part))
+            tmp_path.replace(path)
     return part
 
 
