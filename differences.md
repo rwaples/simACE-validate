@@ -200,7 +200,8 @@ are correlated. The transmitted part's variance then gains the cross term
 
 - **simACE** tops the household draw up from the realised covariance
   (simACE ADR 0025 §3, `_transmitted_c`). Each generation's Var(C) is
-  therefore the configured C, cross term included.
+  therefore the configured C in expectation, cross term included; the
+  realised value scatters around it by the household draw's sampling error.
 - **xftsim** (`am/run_xft.py`) draws the household term with the fixed
   random-mating residual C (1 − b_m² − b_f²). The cross term is added on
   top, and Var(C) drifts above C.
@@ -223,7 +224,8 @@ The harness run of 2026-11-09 (100 seeds per side) agrees. simACE's
 Var(C) − C is −0.00076 to +0.00061 over g, |t| ≤ 1.63. xftsim's is
 +0.0060 to +0.0116, t +14.1 to +26.5.
 
-So simACE keeps Var(C) at the configured total under AM, as its ADR says.
+So simACE keeps Var(C) at the configured total in expectation under AM,
+as its ADR says.
 The fixed rule drifts by about 6% of C by g = 6 at this setting. In that
 run, 21 of ctm_am's 73 Welch rows have p below 0.05. Gaps are simACE minus
 xftsim:
