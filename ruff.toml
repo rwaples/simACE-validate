@@ -16,6 +16,7 @@ ignore = [
 [lint.per-file-ignores]
 "tskit_pipeline/tests/**" = ["D"]  # test docstrings, as in simACE
 "simace_ts/tests/**" = ["D"]
+"tests/**" = ["D"]
 
 [lint.flake8-type-checking]
 strict = true
@@ -24,7 +25,7 @@ strict = true
 convention = "google"
 
 [lint.isort]
-known-first-party = ["calibration", "genedrop", "run_harness"]
+known-first-party = ["calibration", "genedrop", "run_harness", "subproc"]
 
 [format]
 quote-style = "double"

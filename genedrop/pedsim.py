@@ -11,7 +11,6 @@ This checks the gene-drop that layer 2 uses, not simACE.
 
 from __future__ import annotations
 
-import subprocess
 from collections import defaultdict
 from typing import TYPE_CHECKING
 
@@ -19,6 +18,7 @@ import numpy as np
 import polars as pl
 
 from genedrop.drop import BP_PER_MORGAN, Genome, drop
+from subproc import run
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -59,7 +59,7 @@ def pedsim_ibd(binary: Path, work: Path, genome: Genome, copies: int, seed: int)
     def_path, map_path = write_inputs(work, genome, copies)
     out = work / "pedsim"
     cmd = [str(binary), "-d", str(def_path), "-m", str(map_path), "-o", str(out), "--pois", "--nogz"]
-    subprocess.run([*cmd, "--seed", str(seed)], check=True, capture_output=True)
+    run([*cmd, "--seed", str(seed)])
     shared: dict[tuple[str, str], float] = defaultdict(float)
     for line in out.with_suffix(".seg").read_text().splitlines():
         s1, s2, _, _, _, kind, _, _, cm = line.split()
